@@ -1,0 +1,446 @@
+openapi: 3.0.0
+x-stoplight:
+  id: 1tyya1kdtk4lw
+servers:
+  - description: Shadeform Production
+    url: https://api.shadeform.ai/v1
+info:
+  description: 'Shadeform is a single API and platform for deploying and managing cloud GPUs. Shadeform supports integrations with 12+ cloud providers. You can use Shadeform to integrate with your existing cloud provider account or launch GPU instances directly into Shade Cloud, a collection of Shadeform owned accounts. Use Shade Cloud to centralize account management, billing, and quota access. For more information, checkout www.shadeform.ai.'
+  version: 1.0.0
+  title: Shadeform API
+  contact:
+    name: Ronald Ding
+    email: ronald@shadeform.ai
+    url: www.shadeform.ai
+security:
+  - ApiKeyAuth: []
+paths:
+  /instances:
+    get:
+      summary: /instances
+      operationId: instances
+      description: 'Get all active and pending instances for the account associated with the api key passed in through the x-api-key header. When an instance is created, it should immediately be displayed as an item in the response of this API.'
+      responses:
+        '200':
+          description: Returns an InstancesResponse object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstancesResponse'
+      x-stoplight:
+        id: 5dx55d6yeks76
+  /instances/types:
+    get:
+      summary: /instances/types
+      operationId: GetInstanceTypes
+      description: 'This API returns all of the GPU instance types supported by Shadeform. GPUs type and GPU count are standardized to a Shade Instance Type. Therefore, the Shade Instance Type and cloud together denote a particular GPU instance type within Shadeform. Shadeform tracks the real-time availability of all GPU instances in the underlying cloud provider.'
+      responses:
+        '200':
+          description: Returns an InstanceTypesResponse object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceTypesResponse'
+      x-stoplight:
+        id: r42s3agkhgnin
+  /instances/create:
+    post:
+      summary: /instances/create
+      operationId: Create
+      description: 'Create and launch an instance with the selected cloud provider, GPU, region, and launch configurations.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRequest'
+      responses:
+        '200':
+          description: Returns a CreateResponse object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateResponse'
+      x-stoplight:
+        id: 5wq6flu8oht9c
+  '/instances/{id}/info':
+    get:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+          schema:
+            type: string
+            minimum: 1
+          description: The instance id
+      summary: /instances/{id}/info
+      operationId: instances/info
+      description: Get details for an instance. The instance may be in any status.
+      responses:
+        '200':
+          description: Returns an instance object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+      x-stoplight:
+        id: g32ktbwpgymwi
+  '/instances/{id}/delete':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        schema:
+          type: string
+          minimum: 1
+        description: The instance id
+    post:
+      summary: /instances/{id}/delete
+      operationId: Delete
+      description: Delete an instance. Some cloud providers may only allow the deletion of instances after leaving the pending state.
+      responses:
+        '200':
+          description: Confirms the deletion of an instance
+      x-stoplight:
+        id: o812m999dmd0j
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  schemas:
+    InstanceTypesResponse:
+      description: Response of /instances/types
+      type: object
+      required:
+        - instance_types
+      properties:
+        instance_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/InstanceType'
+      x-stoplight:
+        id: jyyuedk1mjwhm
+    InstanceType:
+      description: Information about a specific instance type offered by Shadeform. Each instance type represents a GPU instance in a particular cloud.
+      type: object
+      required:
+        - cloud
+        - region
+        - shade_instance_type
+        - cloud_instance_type
+        - configuration
+        - hourly_price
+        - availability
+      properties:
+        cloud:
+          $ref: '#/components/schemas/Cloud'
+        region:
+          $ref: '#/components/schemas/Region'
+        shade_instance_type:
+          $ref: '#/components/schemas/ShadeInstanceType'
+        cloud_instance_type:
+          $ref: '#/components/schemas/CloudInstanceType'
+        configuration:
+          $ref: '#/components/schemas/Configuration'
+        hourly_price:
+          $ref: '#/components/schemas/HourlyPrice'
+        availability:
+          type: array
+          items:
+            $ref: '#/components/schemas/Availability'
+      x-stoplight:
+        id: 2f6xv2h2n0q2t
+    InstancesResponse:
+      type: object
+      required:
+        - instances
+      properties:
+        instances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Instance'
+      x-stoplight:
+        id: lagtvzllnksx4
+    Instance:
+      type: object
+      required:
+        - id
+        - cloud
+        - region
+        - shade_instance_type
+        - cloud_instance_type
+        - cloud_assigned_id
+        - shade_cloud
+        - name
+        - configuration
+        - ip
+        - ssh_user
+        - ssh_port
+        - status
+        - cost_estimate
+        - hourly_price
+        - created_at
+        - deleted_at
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        cloud:
+          $ref: '#/components/schemas/Cloud'
+        region:
+          $ref: '#/components/schemas/Region'
+        shade_instance_type:
+          $ref: '#/components/schemas/ShadeInstanceType'
+        cloud_instance_type:
+          $ref: '#/components/schemas/CloudInstanceType'
+        cloud_assigned_id:
+          $ref: '#/components/schemas/CloudAssignedId'
+        shade_cloud:
+          $ref: '#/components/schemas/ShadeCloud'
+        name:
+          $ref: '#/components/schemas/Name'
+        configuration:
+          $ref: '#/components/schemas/Configuration'
+        ip:
+          $ref: '#/components/schemas/Ip'
+        ssh_user:
+          $ref: '#/components/schemas/SshUser'
+        ssh_port:
+          $ref: '#/components/schemas/SshPort'
+        status:
+          $ref: '#/components/schemas/Status'
+        cost_estimate:
+          $ref: '#/components/schemas/CostEstimate'
+        hourly_price:
+          $ref: '#/components/schemas/HourlyPrice'
+        launch_configuration:
+          $ref: '#/components/schemas/LaunchConfiguration'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        deleted_at:
+          $ref: '#/components/schemas/DeletedAt'
+      x-stoplight:
+        id: j2a59ehkvhre3
+    Configuration:
+      type: object
+      required:
+        - memory_in_gb
+        - storage_in_gb
+        - vcpus
+        - num_gpus
+        - gpu_type
+        - interconnect
+      properties:
+        memory_in_gb:
+          type: integer
+          example: 12
+          description: The amount of memory for the instance in gigabytes. Note that this is not VRAM. VRAM is determined by the GPU type and the number of GPUs.
+        storage_in_gb:
+          type: integer
+          example: 256
+          description: 'The amount of storage for the instance. If this storage is too low for the instance type, please email founders@shadeform.ai as the storage may be adjustable.'
+        vcpus:
+          type: integer
+          example: 6
+          description: The number of vCPUs for the instance.
+        num_gpus:
+          type: integer
+          example: 1
+          description: The number of GPUs for the instance.
+        gpu_type:
+          type: string
+          example: A100
+          description: The type of GPU for the instance.
+        interconnect:
+          type: string
+          example: pcie
+          description: The type of interconnect for the GPU.
+      x-stoplight:
+        id: 0glb2h673rdhq
+    Availability:
+      type: object
+      required:
+        - region
+        - available
+      properties:
+        region:
+          $ref: '#/components/schemas/Region'
+        available:
+          type: boolean
+          example: true
+          description: Indicate whether the instance is available in the region
+      x-stoplight:
+        id: 54yjsz6ztekt3
+    CreateRequest:
+      type: object
+      required:
+        - cloud
+        - region
+        - shade_instance_type
+        - shade_cloud
+        - name
+      properties:
+        cloud:
+          $ref: '#/components/schemas/Cloud'
+        region:
+          $ref: '#/components/schemas/Region'
+        shade_instance_type:
+          $ref: '#/components/schemas/ShadeInstanceType'
+        shade_cloud:
+          $ref: '#/components/schemas/ShadeCloud'
+        name:
+          $ref: '#/components/schemas/Name'
+        launch_configuration:
+          $ref: '#/components/schemas/LaunchConfiguration'
+      x-stoplight:
+        id: pue1x4td0w83n
+    LaunchConfiguration:
+      type: object
+      required:
+        - type
+        - image
+      description: Defines steps that can be automatically run on the instance after launching
+      properties:
+        type:
+          type: string
+          example: docker
+          enum:
+            - docker
+          description: Specifies the type of launch configuration. Currently only 'docker' is supported.
+        image:
+          type: string
+          example: pytorch/pytorch
+          description: 'When the docker launch configuration type is specified, this field describes the docker image to be pulled and run on the instance at startup.'
+      x-stoplight:
+        id: z27tx9ztzv8ej
+    CreateResponse:
+      type: object
+      required:
+        - id
+        - cloud_assigned_id
+      description: Response of the /instances/create API call
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        cloud_assigned_id:
+          $ref: '#/components/schemas/CloudAssignedId'
+      x-stoplight:
+        id: ezbmepat4b29w
+    Cloud:
+      type: string
+      example: tensordock
+      enum:
+        - aws
+        - azure
+        - lambdalabs
+        - tensordock
+        - runpod
+        - latitude
+        - jarvislabs
+        - oblivus
+        - paperspace
+        - datacrunch
+        - massedcompute
+        - vultr
+      description: 'Specifies the underlying cloud provider that the instance is launched in. For the latest list of supported clouds, call the /instances/types API for all clouds.'
+      x-stoplight:
+        id: npt3dkfedoche
+    Region:
+      type: string
+      example: na-us-bos-1
+      description: 'Specifies the region in the underlying cloud provider that the instance is launched in. For the latest list of supported regions per cloud, call the instances/types API for all regions.'
+      x-stoplight:
+        id: 8ji7lnatzoyyj
+    Id:
+      type: string
+      format: uuid
+      example: d290f1ee-6c54-4b01-90e6-d701748f0851
+      description: 'The unique identifier for an instance managed by Shadeform. Used in the endpoint for the /instances/{id}/info and /instances/{id}/delete APIs.'
+      x-stoplight:
+        id: 9jjlvd3fss27h
+    CloudAssignedId:
+      type: string
+      example: 13b057d7-e266-4869-985f-760fe75a78b3
+      description: The unique identifier of the instance issued by the underlying cloud provider. This value is not useful at this time.
+      x-stoplight:
+        id: wuqm5ebf311og
+    Name:
+      type: string
+      example: cool-gpu-server
+      description: The name of the instance
+      x-stoplight:
+        id: n4r8q04u2ogri
+    ShadeInstanceType:
+      type: string
+      example: A100
+      description: 'The Shadeform standardized instance identifier for instances with a specific GPU configuration. We map the standardized Shade Instance Type to each cloud provider''s instance type. For example, launching an ''A100'' Shade Instance Type in TensorDock and in Paperspace will ensure that both instances will have an A100 GPU.'
+      x-stoplight:
+        id: pk7bnuvtk7kka
+    ShadeCloud:
+      type: boolean
+      example: true
+      description: 'If Shade Cloud is true, the instance will be launched in Shadeform''s managed account. If Shade Cloud is false, Shadeform will check if you have provided an API Access Key for the specified cloud and launch the instance into your own cloud provider account. To launch in your own cloud provider account, you need to add your API Access Key for the cloud via the Shadeform Cloud Access Settings page at https://platform.shadeform.ai/settings/cloudaccess.'
+      x-stoplight:
+        id: huk63zjn5c4ov
+    CloudInstanceType:
+      type: string
+      example: A100_PCIE_40GB
+      description: 'The instance type for the underlying cloud provider. The CloudInstanceType is determined by the combination of the shade_instance_type, cloud, and num_gpus fields'
+      x-stoplight:
+        id: mmvjjzz1oto2z
+    HourlyPrice:
+      type: integer
+      example: 210
+      description: The base hourly price of the instance in cents. This cost does not include the Shadeform platform fee.
+      x-stoplight:
+        id: do34m8l80xay1
+    Ip:
+      type: string
+      example: 1.0.0.1
+      description: 'The public IP address of the instance. In select cases, it may also be the DNS.'
+      x-stoplight:
+        id: stslnxqnc26yc
+    SshUser:
+      type: string
+      example: shadeform
+      description: The SSH user used to SSH into the instance.
+      x-stoplight:
+        id: flm43qecxrgx5
+    SshPort:
+      type: integer
+      example: 22
+      description: 'The SSH port of the instance. In most cases, this will be port 22 but for some clouds, this may be a different port.'
+      x-stoplight:
+        id: z1vkmklpjmljf
+    Status:
+      type: string
+      example: active
+      enum:
+        - pending
+        - active
+        - deleted
+      description: The status of the instance.
+      x-stoplight:
+        id: sny3doke2i0fx
+    CostEstimate:
+      type: string
+      example: '103.4'
+      description: The cost incurred by the instance. This cost is only the cost billed by Shadeform. This does not include the underlying cloud provider cost if you are managing instances in your own cloud provider account.
+      x-stoplight:
+        id: kbvc6vnst38ek
+    CreatedAt:
+      type: string
+      format: date-time
+      example: '2016-08-29T09:12:33.001Z'
+      description: The timestamp of when the instance was created in UTC.
+      x-stoplight:
+        id: 3nyzdfd0v931b
+    DeletedAt:
+      type: string
+      format: date-time
+      example: '2016-08-29T09:12:33.001Z'
+      description: The timestamp of when the instance was deleted in UTC
+      x-stoplight:
+        id: vuc99xxs6tg0o

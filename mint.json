@@ -64,9 +64,11 @@
     {
       "group": "Endpoint Examples",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        "api-reference/endpoint/instancestypes",
+        "api-reference/endpoint/instances",
+        "api-reference/endpoint/instancescreate",
+        "api-reference/endpoint/instances-info",
+        "api-reference/endpoint/instances-delete"
       ]
     }
   ],
@@ -74,5 +76,6 @@
     "twitter": "https://twitter.com/mintlify",
     "github": "https://github.com/mintlify",
     "linkedin": "https://www.linkedin.com/company/mintsearch"
-  }
+  },
+  "openapi": ["/openapi.yaml"]
 }
