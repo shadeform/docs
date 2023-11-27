@@ -5,7 +5,7 @@
     "dark": "/logo/dark-shadeform.svg",
     "light": "/logo/light-shadeform.svg"
   },
-  "favicon": "/solo-logo.svg",
+  "favicon": "/icon.png",
   "colors": {
     "primary": "#113458",
     "light": "#FFFFFF",
