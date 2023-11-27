@@ -61,7 +61,8 @@
   "footerSocials": {
     "twitter": "https://twitter.com/shadeformai",
     "github": "https://github.com/shadeform",
-    "linkedin": "https://www.linkedin.com/company/shadeformai"
+    "linkedin": "https://www.linkedin.com/company/shadeformai",
+    "discord": "https://discord.gg/dCEd77nQYc"
   },
   "openapi": ["/openapi.yaml"]
 }
