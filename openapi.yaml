@@ -144,7 +144,18 @@ components:
         cloud_instance_type:
           $ref: '#/components/schemas/CloudInstanceType'
         configuration:
-          $ref: '#/components/schemas/Configuration'
+          allOf:
+            - $ref: '#/components/schemas/Configuration'
+            - type: object
+              required:
+                - os_options
+              properties:
+                os_options:
+                  type: array
+                  items:
+                    type: string
+                    example: ubuntu_22_shade_os
+                  description: The list of available operating systems for the instance.
         hourly_price:
           $ref: '#/components/schemas/HourlyPrice'
         availability:
@@ -202,7 +213,16 @@ components:
         name:
           $ref: '#/components/schemas/Name'
         configuration:
-          $ref: '#/components/schemas/Configuration'
+          allOf:
+            - $ref: '#/components/schemas/Configuration'
+            - type: object
+              required:
+              - os
+              properties:
+                os:
+                  type: string
+                  example: ubuntu_22_shade_os
+                  description: The operating system of the instance.
         ip:
           $ref: '#/components/schemas/Ip'
         ssh_user:
@@ -232,6 +252,8 @@ components:
         - num_gpus
         - gpu_type
         - interconnect
+        - os
+        - os_options
       properties:
         memory_in_gb:
           type: integer
