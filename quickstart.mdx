@@ -2,85 +2,136 @@
 title: 'Quickstart'
 description: 'Start building awesome documentation in under 5 minutes'
 ---
+# Getting Started
 
-## Setup your development
+## Launch GPUs through the Shadeform Console
 
-Learn how to update your docs locally and and deploy them to the public.
+### 1. Creating an account
 
-### Edit and preview
+Get started using Shadeform by going to [Shadeform.ai](https://shadeform.ai) and clicking “Sign up for free”. Once you sign up, you’ll be prompted to enter your first name, last name, and organization info.
 
-<AccordionGroup>
-  <Accordion icon="github" title="Clone your docs locally">
-    During the onboarding process, we created a repository on your Github with
-    your docs content. You can find this repository on our
-    [dashboard](https://dashboard.mintlify.com). To clone the repository
-    locally, follow these
-    [instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
-    in your terminal.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Preview changes">
-    Previewing helps you make sure your changes look as intended. We built a
-    command line interface to render these changes locally. 1. Install the
-    [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the
-    documentation changes locally with this command: ``` npm i -g mintlify ```
-    2. Run the following command at the root of your documentation (where
-    `mint.json` is): ``` mintlify dev ```
-  </Accordion>
-</AccordionGroup>
+<video
+  controls
+  autoplay
+  muted
+  loop
+  playsinline
+  className="w-full aspect-video"
+  src="https://res.cloudinary.com/ddwu8qth1/video/upload/f_auto:video,q_auto/mt8neqq6b5tlnqecyjux"
+></video>
+### 2. Finding the right GPU
 
-### Deploy your changes
+Once you have created an account and filled out the first time login form, you can go to the Marketplace to look at all GPUs available to launch. The drop downs in the top right corner allows you to filter by GPU type, number of GPUs in an instance, and the interconnect type. 
 
-<AccordionGroup>
+![GPU Filters](/images/platform-filter.png)
+### 3. Launch your machine
 
-<Accordion icon="message-bot" title="Install our Github app">
-  Our Github app automatically deploys your changes to your docs site, so you
-  don't need to manage deployments yourself. You can find the link to install on
-  your [dashboard](https://dashboard.mintlify.com). Once the bot has been
-  successfully installed, there should be a check mark next to the commit hash
-  of the repo.
-</Accordion>
-<Accordion icon="rocket" title="Push your changes">
-  [Commit and push your changes to
-  Git](https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository#about-git-push)
-  for your changes to update in your docs site. If you push and don't see that
-  the Github app successfully deployed your changes, you can also manually
-  update your docs through our [dashboard](https://dashboard.mintlify.com).
-</Accordion>
+After finding the GPU instance that you need, click on “Launch” to open the launch sidebar. On the sidebar, you can see additional information about the instance, select the operating system, name the instance, and confirm the launch.
 
-</AccordionGroup>
+<video
+  controls
+  autoplay
+  muted
+  loop
+  playsinline
+  className="w-full aspect-video"
+  src="https://res.cloudinary.com/ddwu8qth1/video/upload/f_auto:video,q_auto/gnho6bkhenxb31wxbuzz"
+></video>
 
-## Update your docs
+### 4. Add funds to your Shadeform Wallet
 
-Add content directly in your files with MDX syntax and React components. You can use any of our components, or even build your own.
+If this is the first time launching an instance, you’ll be prompted to load up your Shadeform Wallet displayed in the top right corner. By following the flow, you can add balance to your wallet via our Stripe integration. Additionally, you can configure Auto Top Up to automatically charge your payment method when your balance falls below the configured threshold.
 
-<CardGroup>
+<img
+  className="block w-32 rounded-lg"
+  style={{ width: '600px' }}
+  src="/images/console.png"
+  alt="Upload Wallet"
+/>
 
-<Card title="Style Your Docs" icon="paintbrush" href="/settings/global">
-  Add flair to your docs with personalized branding.
-</Card>
+### 5. Access your machine
 
-<Card
-  title="Add API Endpoints"
-  icon="square-code"
-  href="/api-playground/configuration"
->
-  Implement your OpenAPI spec and enable API user interaction.
-</Card>
+Once your Shadeform Wallet is funded, and the machine is launched, the machine will take some time to spin up. You can see the status of your machine on the “Running Instances” tab on the Shadeform sidebar. The machine may remain in the pending state for up to 10 minutes depending on the provider. Once the machine moves to the “Active” state, you can click on the machine to open up the info sidebar to get your SSH string to access the machine.
 
-<Card
-  title="Integrate Analytics"
-  icon="chart-mixed"
-  href="/analytics/supported-integrations"
->
-  Draw insights from user interactions with your documentation.
-</Card>
+In order to use the SSH string, you must first download your Shadeform private key. You can do so by clicking the “Download Private Key” button on the “Running Instances” page. After downloading the key, you must change the permissions of the private key by running “chmod 600 private_key.pem”. After changing the private key permissions, you can now use the Shadeform SSH string to access the machine.
 
-<Card
-  title="Host on a Custom Domain"
-  icon="browser"
-  href="/settings/custom-domain/subdomain"
->
-  Keep your docs on your own website's subdomain.
-</Card>
+![Access machine](/images/running.png)
 
-</CardGroup>
+```bash
+chmod 600 private_key.pem
+ssh -i private_key.pem shadeform@<ssh_string>
+```
+
+### 6. Delete your machine
+
+<video
+  controls
+  autoplay
+  muted
+  loop
+  playsinline
+  className="w-full aspect-video"
+  src="https://res.cloudinary.com/ddwu8qth1/video/upload/f_auto:video,q_auto/i4qcts15jyt4crdvf8hd"
+></video>
+
+## Using the Shadeform API
+
+Shadeform provides an API that allows you to query for available GPUs, launch instances, get instance information, and programmatically access instances.
+
+In this guide, we’ll discuss a common usage pattern for programmatically finding available GPUs and launching them.
+
+### 1. Generating an API Key
+
+Once you have created a Shadeform account, you can generate an API Key by going to the [API Keys page](#). Click on “Generate” to create a new API key.
+
+### 2. Add funds to your Shadeform Wallet
+
+To ensure that instances can be launched, you must first add funds to your Shadeform Wallet on the [billing page](#).
+
+### 3. Get all cloud providers and region availability and price
+You can get a list of all available machines by calling the Types endpoint. This will return a list of all available machines, their price, and availability in each region.
+
+```bash
+curl --request GET \
+--url https://api.shadeform.ai/v1/instances/types \
+--header 'X-API-KEY: <x-api-key>'
+```
+
+### 4. Select your machine
+Parse through the output and find your desired, available GPU instance.
+
+
+### 5. Call the Create endpoint with the information returned from the availability API
+
+```bash
+curl --request POST \
+--url https://api.shadeform.ai/v1/instances/create \
+--header 'Content-Type: application/json' \
+--header 'X-API-KEY: <x-api-key>' \
+--data '{
+    "cloud": "aws",
+    "name": "cool-gpu-server",
+    "region": "us-east-1",
+    "shade_cloud": true,
+    "shade_instance_type": "A100x8"
+}'
+```
+
+
+### 6. Get your instance status
+You can call this API in a loop until the status turns from pending to active. Once the instance turns to active, you can then use the ssh_user and IP to access the machine programmatically. Your private key for the instance can be downloaded from the Shadeform UI on the Running Instances page.
+
+```bash
+ curl --request GET \
+--url https://api.shadeform.ai/v1/instances \
+--header 'X-API-KEY: <x-api-key>'
+```
+
+#### 7. Delete your instance
+Once you are done with the instance, you can delete the instance by calling the Delete endpoint. The instance_id in the delete endpoint URL is the value returned as “id” by the Instances endpoint.
+
+```bash
+curl --request GET \
+--url https://api.shadeform.ai/v1/instances/<instance_id>/delete \
+--header 'X-API-KEY: <x-api-key>'
+```

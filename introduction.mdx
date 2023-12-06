@@ -1,73 +1,57 @@
----
-title: Introduction
-description: 'Welcome to Shadeform, a unified API for every GPU provider'
----
+# Welcome to Shadeform
+
+Shadeform is a Cloud GPU Marketplace that allows you to see real-time availability and pricing for on-demand GPU instances from 12+ cloud providers. With availability and pricing data on hand, you can launch and manage GPU instances across all providers with Shadeform’s unified API and cloud console.
 
 <img
-  className="block w-32 rounded-lg dark:hidden"
+  className="block w-32 rounded-lg"
   style={{ width: '600px' }}
-  src="/images/hero-light.png"
+  src="/images/platform.png"
   alt="Hero Light"
 />
-<img
-  className="hidden dark:block"
-  style={{ width: '600px' }}
-  src="/images/hero-light.png"
-  alt="Hero Dark"
-/>
 
-## Setting up
+## The GPU Market
 
-The first step to world-class documentation is setting up your editing environnments.
+The rise of ChatGPT and growth of open-source models have caused GPU demand to skyrocket while supply falls short due to manufacturing and distribution constraints. These unique factors have yielded the following market conditions:
 
-<CardGroup cols={2}>
-  <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Get your docs set up locally for easy development
-  </Card>
-  <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
-  >
-    Preview your changes before you push to make sure they're perfect
-  </Card>
-</CardGroup>
+- Prices for the same GPU can be magnitudes (up to 5x) different between cloud providers.
+- Low A100 and H100 availability across all cloud providers.
+- Growing number of GPU Cloud Providers with disparate APIs and UI.
 
-## Make it yours
+## Why Use Shadeform?
 
-Update your docs to your brand and add valuable content for the best user conversion.
+Shadeform is a single pane of glass for the entire cloud GPU market’s pricing and availability. When ML engineers need GPUs for their workloads, Shadeform makes it easy to find the best priced and available GPUs for their needs. By providing a single API and UI for all clouds, Shadeform unifies the user experience of all cloud providers into a single easy-to-use platform that saves time on integration and effort on switching cloud providers.
 
-<CardGroup cols={2}>
-  <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
-  >
-    Customize your docs to your company's colors and brands
-  </Card>
-  <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
-  >
-    Automatically generate endpoints from an OpenAPI spec
-  </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/components/accordion"
-  >
-    Build interactive features and designs to guide your users
-  </Card>
-  <Card
-    title="Get Inspiration"
-    icon="stars"
-    href="https://mintlify.com/showcase"
-  >
-    Check out our showcase of our favorite documentation
-  </Card>
-</CardGroup>
+```bash
+curl --request POST \
+--url https://api.shadeform.ai/v1/instances/create \
+--header 'Content-Type: application/json' \
+--header 'X-API-KEY: <x-api-key>' \
+--data '{
+    "cloud": "aws",
+    "name": "cool-gpu-server",
+    "region": "us-east-1",
+    "shade_cloud": true,
+    "shade_instance_type": "A100x8"
+}'
+```
+
+## Launch GPU Instances with Shadeform
+
+You can use Shadeform to deploy GPU instances into your own, existing cloud accounts or to deploy into Shade Cloud - Shadeform-owned accounts with each cloud provider. Using Shade Cloud eliminates the need for creating cloud accounts with each of the providers, setting up billing over and over, and wrangling with quotas. Once an instance is launched, you’ll see the instance and its access information on the Shadeform console.
+
+## Cloud Providers Available Through Shadeform
+
+- AWS
+- Azure
+- Lambda Labs
+- Paperspace
+- Vultr
+- Datacrunch
+- Oblivus
+- Tensordock
+- RunPod
+- Latitude
+- Jarvis Labs
+- Massed Compute
+- GCP (coming soon!)
+- Hyperstack (coming soon!)
