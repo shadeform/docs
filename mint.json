@@ -41,11 +41,7 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": ["introduction", "quickstart"]
-    },
-    {
-      "group": "API Documentation",
-      "pages": ["api-reference/introduction"]
+      "pages": ["quickstart", "introduction"]
     },
     {
       "group": "Endpoints",
@@ -56,6 +52,10 @@
         "api-reference/endpoint/instances-info",
         "api-reference/endpoint/instances-delete"
       ]
+    },
+    {
+      "group": "API Documentation",
+      "pages": ["api-reference/authentication"]
     }
   ],
   "footerSocials": {
