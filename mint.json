@@ -67,7 +67,7 @@
   "openapi": ["/openapi.yaml"],
   "analytics": {
     "posthog": {
-        "apiKey": "phx_xi3HjoVS54ZSTR6rIWaaIdRLzjeIpRATNS2WNWdo5oq",
+        "apiKey": "phc_aK2oaWL57uQrcoFZEHrRYV19Aw3ohA5uVo7hwzssamp",
         "apiHost": "https://app.posthog.com"
     }
 }
