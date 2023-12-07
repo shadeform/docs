@@ -64,6 +64,12 @@
     "linkedin": "https://www.linkedin.com/company/shadeformai",
     "discord": "https://discord.gg/dCEd77nQYc"
   },
-  "openapi": ["/openapi.yaml"]
+  "openapi": ["/openapi.yaml"],
+  "analytics": {
+    "posthog": {
+        "apiKey": "phx_xi3HjoVS54ZSTR6rIWaaIdRLzjeIpRATNS2WNWdo5oq",
+        "apiHost": "https://app.posthog.com"
+    }
+}
 }
  
