@@ -331,9 +331,13 @@ components:
           enum:
             - docker
           description: Specifies the type of launch configuration. Currently only 'docker' is supported.
+        args:
+          type: string
+          example: --model-id mistralai/Mistral-7B-v0.1
+          description: 'When the docker launch configuration type is specified, this field describes the docker args to be attached to the docker run command.'
         image:
           type: string
-          example: pytorch/pytorch
+          example: 
           description: 'When the docker launch configuration type is specified, this field describes the docker image to be pulled and run on the instance at startup.'
       x-stoplight:
         id: z27tx9ztzv8ej
