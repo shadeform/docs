@@ -162,6 +162,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Availability'
+          example:
+            - region: na-us-bos-1
+              available: true
+            - region: na-us-bos-2
+              available: false
       x-stoplight:
         id: 2f6xv2h2n0q2t
     InstancesResponse:
