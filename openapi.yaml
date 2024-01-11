@@ -316,6 +316,10 @@ components:
           $ref: '#/components/schemas/Name'
         launch_configuration:
           $ref: '#/components/schemas/LaunchConfiguration'
+        os:
+          type: string
+          example: "ubuntu22.04_cuda12.2_shade_os" 
+          description: The operating system of the instance.
       x-stoplight:
         id: pue1x4td0w83n
     LaunchConfiguration:
