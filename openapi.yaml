@@ -153,8 +153,8 @@ components:
                 os_options:
                   type: array
                   items:
-                    type: array 
-                    example: ["ubuntu22.04_cuda12.2_shade_os", "ubuntu20.04_cuda12.0_shade_os"]
+                    type: string
+                  example: ["ubuntu22.04_cuda12.2_shade_os", "ubuntu20.04_cuda12.0_shade_os"]
                   description: The list of available operating systems for the instance.
         hourly_price:
           $ref: '#/components/schemas/HourlyPrice'
