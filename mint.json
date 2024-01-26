@@ -41,7 +41,7 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": ["quickstart", "introduction"]
+      "pages": ["quickstart", "introduction", "findingcheapestgpus"]
     },
     {
       "group": "Endpoints",
