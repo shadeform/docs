@@ -1,0 +1,101 @@
+---
+title: 'Finding the Cheapest GPUs'
+---
+Shadeform makes it easy to find and deploy VM and containers to the cheapest GPU instances across many different clouds. Let's show how we can do this with the UI and the API, specifically for an instance with a single 80 GB A100 GPU.
+
+
+## Using the Shadeform UI
+
+### 1. Searching for GPU's
+Once you've created an account and added funds to your [Wallet](https://platform.shadeform.ai/settings/billing) then you can see available instances on the homepage. 
+
+![GPU Filter](images/1x80GBA100.png)
+
+### 2. Launching a GPU
+We can select for a single 80 GB A100 as shown. Listed are the instances that are currently available. We can select to launch one.
+![Launching](images/launchgpu.png)
+### 3. Waiting for startup
+When we go into the Running instances [tab](https://platform.shadeform.ai/running), we can see that this VM is pending while it spins up.
+![Pending](images/pending.png)
+### 4. Scheduling an instance
+If we want an even cheaper instance but are willing to wait, we can also Schedule and instance instead. 
+![Schedule](images/schedule.png)
+Shadeform will handle acquiring the instances as soon as they come available.
+
+### 5. Waiting for scheduling
+Once Scheduled, you can see your scheduled requests under [Scheduled Instances](https://platform.shadeform.ai/reserve)
+![ManageScheduled](images/managescheduled.png)
+ 
+## Using the Shadeform API
+Once you've created an account and added funds to your [Wallet](https://platform.shadeform.ai/settings/billing), then you can get an API Key by going to the [API Keys page](https://platform.shadeform.ai/settings/api). Click on “Generate” to create a new API key.
+
+We've created a [python notebook](Scriptlinkhere.com) that uses the Shadeform API to do this for you. It's light in dependencies so it can run almost anywhere. Let's go through it:
+
+### 1. Setup
+First, we define some handy URL's, and the instance type that we care about. 
+
+```python
+base_url = "https://api.shadeform.ai/v1/instances"
+instance_type_url = base_url + "/types"
+create_url = base_url + "/create"
+headers = {"X-API-KEY": "<x-api-key>"}
+a100_shade_instance_type = "A100_80G"
+```
+
+We'll then make the request to Shadeform:
+```python
+response = requests.request("GET", instance_type_url, headers=headers)
+```
+
+### 2. Instance Filtering
+With the response of available instances, we filter for only the instances that we care about. Once filtered, we scan for the cheapest option that is actively available.
+If a suitable option is found, it's printed to the console and retained for later.
+If not, then a message is printed instead.
+
+```python
+instance_types = json.loads(response.text)["instance_types"]
+lowest_price = None
+cheapest_instance = None
+region = None
+
+for instance in instance_types:
+    if instance["shade_instance_type"] == a100_shade_instance_type:
+        if lowest_price is None or lowest_price > instance["hourly_price"]:
+            available = False
+            for availabilities in instance["availability"]:
+                if availabilities["available"]:
+                    region = availabilities["region"]
+                    available = True
+                    break
+            if available:
+                lowest_price = instance["hourly_price"]
+                cheapest_instance = instance
+
+if cheapest_instance is not None:
+    print(f"The cheapest {a100_shade_instance_type} instance is:", cheapest_instance)
+else:
+    print(f"No instances of type {a100_shade_instance_type} found.")
+```
+
+### 3. Instance Creation
+For requesting an instance we're following the format of the [Create API](https://docs.shadeform.ai/api-reference/endpoint/instancescreate).
+
+```python
+payload = {
+    "cloud" : cheapest_instance["cloud"],
+    "name" : "cool_gpu_server",
+    "region" : region,
+    "shade_cloud" : True,
+    "shade_instance_type" : a100_shade_instance_type
+}
+
+response = requests.request("POST", create_url, json=payload, headers=headers)
+```
+
+We can see that the request is successful, and after a few minutes, that the VM is up and running in our Shadeform account! 
+
+```python
+print(response.text)
+{"id":"11e8783c-3aec-4024-b3dd-5c4976ffe5d9","cloud_assigned_id":"1jm4ekhcgyvscg"}
+```
+![PendingAPI](images/pendingapi.png)
