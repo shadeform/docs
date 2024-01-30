@@ -19,7 +19,7 @@ paths:
     get:
       summary: /instances
       operationId: instances
-      description: 'Get all active and pending instances for the account associated with the api key passed in through the x-api-key header. When an instance is created, it should immediately be displayed as an item in the response of this API.'
+      description: 'Get all active and pending instances for the account associated with the api key passed in through the x-api-key header.'
       responses:
         '200':
           description: Returns an InstancesResponse object
@@ -33,7 +33,7 @@ paths:
     get:
       summary: /instances/types
       operationId: GetInstanceTypes
-      description: 'This API returns all of the GPU instance types supported by Shadeform. GPUs type and GPU count are standardized to a Shade Instance Type. Therefore, the Shade Instance Type and cloud together denote a particular GPU instance type within Shadeform. Shadeform tracks the real-time availability of all GPU instances in the underlying cloud provider.'
+      description: 'Return all the GPU instance types, their configurations, and their real time availability. The combination of the shade_instance_type property and cloud properties denote a particular GPU instance type within Shadeform. Shadeform tracks the real-time availability of all GPU instances in the underlying cloud provider.'
       responses:
         '200':
           description: Returns an InstanceTypesResponse object
@@ -47,7 +47,7 @@ paths:
     post:
       summary: /instances/create
       operationId: Create
-      description: 'Create and launch an instance with the selected cloud provider, GPU, region, and launch configurations.'
+      description: 'Create an instance with the selected cloud provider, GPU, region, and launch_configuration.'
       requestBody:
         content:
           application/json:
@@ -75,10 +75,10 @@ paths:
           description: The instance id
       summary: /instances/{id}/info
       operationId: instances/info
-      description: Get details for an instance. The instance may be in any status.
+      description: "Get details for the specified instance in the url. The instance may be in any status including deleted."
       responses:
         '200':
-          description: Returns an instance object
+          description: "Return an instance object"
           content:
             application/json:
               schema:
@@ -98,7 +98,7 @@ paths:
     post:
       summary: /instances/{id}/delete
       operationId: Delete
-      description: Delete an instance. Some cloud providers may only allow the deletion of instances after leaving the pending state.
+      description: "Delete an instance. Some cloud providers may only allow the deletion of instances after leaving the pending state."
       responses:
         '200':
           description: Confirms the deletion of an instance
@@ -124,7 +124,7 @@ components:
       x-stoplight:
         id: jyyuedk1mjwhm
     InstanceType:
-      description: Information about a specific instance type offered by Shadeform. Each instance type represents a GPU instance in a particular cloud.
+      description: "Information about a specific instance type offered by Shadeform. Each instance type represents a GPU instance in a particular cloud."
       type: object
       required:
         - cloud
@@ -227,7 +227,7 @@ components:
                 os:
                   type: string
                   example: ubuntu_22_shade_os
-                  description: The operating system of the instance.
+                  description: "The operating system of the instance."
         ip:
           $ref: '#/components/schemas/Ip'
         ssh_user:
@@ -263,7 +263,7 @@ components:
         memory_in_gb:
           type: integer
           example: 12
-          description: The amount of memory for the instance in gigabytes. Note that this is not VRAM. VRAM is determined by the GPU type and the number of GPUs.
+          description: "The amount of memory for the instance in gigabytes. Note that this is not VRAM. VRAM is determined by the GPU type and the number of GPUs."
         storage_in_gb:
           type: integer
           example: 256
@@ -271,19 +271,19 @@ components:
         vcpus:
           type: integer
           example: 6
-          description: The number of vCPUs for the instance.
+          description: "The number of vCPUs for the instance."
         num_gpus:
           type: integer
           example: 1
-          description: The number of GPUs for the instance.
+          description: "The number of GPUs for the instance."
         gpu_type:
           type: string
           example: A100
-          description: The type of GPU for the instance.
+          description: "The type of GPU for the instance."
         interconnect:
           type: string
           example: pcie
-          description: The type of interconnect for the GPU.
+          description: "The type of interconnect for the GPU."
       x-stoplight:
         id: 0glb2h673rdhq
     Availability:
@@ -297,7 +297,7 @@ components:
         available:
           type: boolean
           example: true
-          description: Indicate whether the instance is available in the region
+          description: "Indicate whether the instance is available in the region"
       x-stoplight:
         id: 54yjsz6ztekt3
     CreateRequest:
@@ -331,7 +331,6 @@ components:
       type: object
       required:
         - type
-        - image
       description: Defines steps that can be automatically run on the instance after launching
       properties:
         type:
@@ -339,17 +338,112 @@ components:
           example: docker
           enum:
             - docker
-          description: Specifies the type of launch configuration. Currently only 'docker' is supported.
+            - script
+          description: Specifies the type of launch configuration. Use 'docker' to specify a container to spin up at launch. Use 'script' to provide a startup script that gets run at launch.
+        docker_configuration:
+          $ref: '#/components/schemas/DockerConfiguration'
+        script_configuration:
+          $ref: '#/components/schemas/ScriptConfiguration'
         args:
           type: string
           example: --model-id mistralai/Mistral-7B-v0.1
-          description: 'When the docker launch configuration type is specified, this field describes the docker args to be attached to the docker run command.'
+          deprecated: true
+          description: '[DEPRECATED - Use container_configuration.args instead] When the docker launch configuration type is specified, this field describes the docker args to be attached to the docker run command.'
         image:
           type: string
           example: vllm/vllm-openai:latest
-          description: 'When the docker launch configuration type is specified, this field describes the docker image to be pulled and run on the instance at startup.'
+          deprecated: true
+          description: '[DEPRECATED - Use container_configuration.image instead] When the docker launch configuration type is specified, this field describes the docker image to be pulled and run on the instance at startup.'
       x-stoplight:
         id: z27tx9ztzv8ej
+    DockerConfiguration:
+      type: object
+      required:
+        - image
+      description: "May only be used if launch_configuration.type is 'docker'. Use docker_configuration to automatically pull and run a docker image when the instance is ready."
+      properties:
+        image:
+          type: string
+          example: vllm/vllm-openai:latest
+          description: 'Specifies the docker image to be pulled and run on the instance at startup.'
+        args:
+          type: string
+          example: --model mistralai/Mistral-7B-v0.1
+          description: 'Specifies the container arguments passed into the image at run time.'
+        shared_memory_in_gb:
+          type: integer
+          example: 8
+          description: "Describes the amount of shared memory to allocate for the instance. Equivalent to using the --shm-size flag in the docker cli. If shared_memory_in_gb is not specified, then the container will use the host namespace which is the equivalent of --ipc=host."
+        envs:
+          type: array
+          description: "List of environment variable name-value pairs that will be passed to the docker container."
+          items:
+            $ref: '#/components/schemas/Env'
+        port_mappings:
+          type: array
+          description: "List of port mappings between the host instance and the docker container. Equivalent of -p flag for docker run command."
+          items:
+            $ref: '#/components/schemas/PortMappings'
+        volume_mounts:
+          type: array
+          description: "List of volume mounts between the host instance and the docker container. Equivalent of -v flag for docker run command."
+          items:
+            $ref: '#/components/schemas/VolumeMounts'
+    ScriptConfiguration:
+      type: object
+      required:
+        - base64_script
+      description: "May only be used if launch_configuration.type is 'script'. Configures a startup script to be run automatically after the instance is active."
+      properties:
+        base64_script:
+          type: string
+          description: "A startup script that is base64 encoded. We recommend using https://www.base64encode.org/"
+          example: IyEvYmluL2Jhc2gKCiMgRW5kbGVzcyBsb29wCndoaWxlIHRydWUKZG8KICAgICMgRmV0Y2ggYSBjYXQgZmFjdCB3aXRoIGEgbWF4aW11bSBsZW5ndGggb2YgMTQwIGNoYXJhY3RlcnMKICAgIGN1cmwgLS1uby1wcm9ncmVzcy1tZXRlciBodHRwczovL2NhdGZhY3QubmluamEvZmFjdD9tYXhfbGVuZ3RoPTE0MAoKICAgICMgUHJpbnQgYSBuZXdsaW5lIGZvciByZWFkYWJpbGl0eQogICAgZWNobwoKICAgICMgU2xlZXAgZm9yIDMgc2Vjb25kcyBiZWZvcmUgdGhlIG5leHQgaXRlcmF0aW9uCiAgICBzbGVlcCAzCmRvbmUKCgo=
+    Env:
+      type: object
+      required:
+        - name
+        - value
+      description: "Environment variables for the container image."
+      properties:
+        name:
+          type: string
+          example: HUGGING_FACE_HUB_TOKEN
+          description: "Name of the environment variable"
+        value:
+          type: string
+          example: hugging_face_api_token
+          description: "Value of the environment variable"
+    PortMappings:
+      type: object
+      required:
+        - host_port
+        - container_port
+      description: "Maps the public instance port to a port on the container."
+      properties:
+        host_port:
+          type: integer
+          example: 80
+          description: "Port of the host."
+        container_port:
+          type: integer
+          example: 8000
+          description: "Port of the container."
+    VolumeMounts:
+      type: object
+      required:
+        - host_path
+        - container_path
+      description: "Mounts the host volume to a container file path."
+      properties:
+        host_path:
+          type: string
+          example: "~/.cache/huggingface"
+          description: "Filepath of the host."
+        container_path:
+          type: string
+          example: "/root/.cache/huggingface"
+          description: "Filepath of the container."
     CreateResponse:
       type: object
       required:
