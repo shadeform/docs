@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "Shadeform Documentation",
   "logo": {
     "dark": "/logo/dark-shadeform.svg",
     "light": "/logo/light-shadeform.svg"
