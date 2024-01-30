@@ -344,16 +344,6 @@ components:
           $ref: '#/components/schemas/DockerConfiguration'
         script_configuration:
           $ref: '#/components/schemas/ScriptConfiguration'
-        args:
-          type: string
-          example: --model-id mistralai/Mistral-7B-v0.1
-          deprecated: true
-          description: '[DEPRECATED - Use container_configuration.args instead] When the docker launch configuration type is specified, this field describes the docker args to be attached to the docker run command.'
-        image:
-          type: string
-          example: vllm/vllm-openai:latest
-          deprecated: true
-          description: '[DEPRECATED - Use container_configuration.image instead] When the docker launch configuration type is specified, this field describes the docker image to be pulled and run on the instance at startup.'
       x-stoplight:
         id: z27tx9ztzv8ej
     DockerConfiguration:
