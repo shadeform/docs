@@ -31,6 +31,43 @@ paths:
         id: 5dx55d6yeks76
   /instances/types:
     get:
+      parameters:
+        - in: query
+          name: cloud
+          schema:
+            type: string
+          example: aws
+          description: "Filter the instance type results by cloud."
+        - in: query
+          name: region
+          schema:
+            type: string
+          example: us-east-1a
+          description: "Filter the instance type results by region."
+        - in: query
+          name: num_gpus
+          schema:
+            type: string
+          example: 1
+          description: "Filter the instance type results by the number of gpus."
+        - in: query
+          name: gpu_type
+          schema:
+            type: string
+          example: A100_80G
+          description: "Filter the instance type results by gpu type."
+        - in: query
+          name: shade_instance_type
+          schema:
+            type: integer
+          example: A100_80G
+          description: "Filter the instance type results by the shade instance type."
+        - in: query
+          name: available
+          schema:
+            type: boolean
+          example: true
+          description: "Filter the instance type results by availability."
       summary: /instances/types
       operationId: GetInstanceTypes
       description: 'Return all the GPU instance types, their configurations, and their real time availability. The combination of the shade_instance_type property and cloud properties denote a particular GPU instance type within Shadeform. Shadeform tracks the real-time availability of all GPU instances in the underlying cloud provider.'
