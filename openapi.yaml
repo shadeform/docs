@@ -68,6 +68,14 @@ paths:
             type: boolean
           example: true
           description: "Filter the instance type results by availability."
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum:
+              - price
+          example: price
+          description: "Sort the order of the instance type results"
       summary: /instances/types
       operationId: GetInstanceTypes
       description: 'Return all the GPU instance types, their configurations, and their real time availability. The combination of the shade_instance_type property and cloud properties denote a particular GPU instance type within Shadeform. Shadeform tracks the real-time availability of all GPU instances in the underlying cloud provider.'
