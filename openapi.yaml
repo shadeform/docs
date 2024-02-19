@@ -304,6 +304,7 @@ components:
         - interconnect
         - os
         - os_options
+        - vram_per_gpu_in_gb
       properties:
         memory_in_gb:
           type: integer
@@ -329,6 +330,10 @@ components:
           type: string
           example: pcie
           description: "The type of interconnect for the GPU."
+        vram_per_gpu_in_gb:
+          type: integer
+          example: 48
+          description: "The video memory per GPU for the instance in gigabytes."
       x-stoplight:
         id: 0glb2h673rdhq
     Availability:
