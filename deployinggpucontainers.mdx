@@ -21,11 +21,11 @@ The requirements are simple, so in your preferred python environment:
 git clone https://github.com/shadeform/examples.git
 cd examples/
 ```
-Then in `deploy_container.ipynb` input your Shadeform API Key from [here](https://platform.shadeform.ai/settings/api), and a  `huggingface_token` if the model you need is gated (like Llama2 or Gemma).
+Then in `deploy_container.ipynb` you will need to input two things: 1. Your Shadeform API Key from [here](https://platform.shadeform.ai/settings/api), and 2. A `huggingface_token` if the model you need is gated (like Llama2 or Gemma).
 
 The notebook kicks off a VM request and runs the container specifically on a 1xA6000 Machine which are quite afforable on our platform. The container will download the model and run the benchmark for us. 
 
-The notebook leverages a lot of the principles found in [this post](https://docs.shadeform.ai/findingmostaffordablegpus) for using the platform to _find_ affordable GPU's.
+The notebook leverages a lot of the principles found in [this guide](https://docs.shadeform.ai/findingmostaffordablegpus) for using the platform to _find_ affordable GPU's.
 
 ### Deploying a container
 
@@ -41,17 +41,22 @@ payload = {
   "name": "cool_gpu_server",
   "launch_configuration": {
     "type": "docker",
+     #This selects the image to launch, and sets environment variables "tasks" and "num_fewshot"
     "docker_configuration": {
       "image": "shadeform/lm-eval-harness",
       "envs": [
       	{
 	      	"name": "model",
-	      	"value": "google/gemma-7b-it"
+	      	"value": "mistralai/Mistral-7B-Instruct-v0.2"
       	},
       	{
 	      	"name": "tasks",
 	      	"value": "hellaswag"
       	},
+        {
+          "name": "num_fewshot",
+          "value": "10"
+        }
       ]
     }
   }
@@ -63,6 +68,8 @@ payload = {
 The first way to check the results is by watching the logs under "Running Instances", clicking our instance, and then the Logs(beta) tab. 
 Here we see a stream of the logs from the docker container. When it is done, it will look something like this
 ![FinishedBenchmark](images/finishedbenchmark.png)
+
+From the results of the evaluation, we can see that the Mistral model achieved a normalized accuracy score of 84.6% with 10 few-shot examples on the Hellaswag benchmark.
 
 ### Checking Results inside your IDE
 At the bottom of the notebook, there is a cell that prints out the IP address of your instance.
