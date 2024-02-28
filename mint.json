@@ -69,6 +69,9 @@
     "posthog": {
         "apiKey": "phc_aK2oaWL57uQrcoFZEHrRYV19Aw3ohA5uVo7hwzssamp",
         "apiHost": "https://app.posthog.com"
+    },
+    "koala": {
+      "publicApiKey": "pk_f1ff89b1e5e8274bcf51c880669e44c0b250"
     }
 }
 }
