@@ -5,7 +5,7 @@ title: 'Model Serving on GPUs'
 
 Model Deployment is a very common GPU use case. With Shadeform, it's easy to deploy models right to the most affordable gpu's in the market with just a few commands. 
 
-In this guide, we will deploy [Mistral-7b-v0.1](https://huggingface.co/mistralai/Mistral-7B-v0.1) with VLLM onto an A6000.
+In this guide, we will deploy [Mistral-7b-v0.1](https://huggingface.co/mistralai/Mistral-7B-v0.1) with vLLM onto an A6000.
 
 ### Setup
 
@@ -56,12 +56,14 @@ print(response.text)
 ```
 
 Once we request it, Shadeform will provision the machine, and deploy a docker container based on the image, arguments, and environment variables that we selected. 
+This might take 5-10 minutes depending on the machine chosen and the size of the model weights you choose.
+For more information on the API fields, check out the [Create Instance API Reference](https://docs.shadeform.ai/api-reference/endpoint/instancescreate).
 
-We can see that this will deploy an openai compatible server with VLLM serving Mistral-7b-v0.1.
+We can see that this will deploy an openai compatible server with vLLM serving Mistral-7b-v0.1.
 
 ### Checking on our Model server
 
-There are three main steps that we need to wait for: VM Provisioning, image building, and spinning up VLLM.
+There are three main steps that we need to wait for: VM Provisioning, image building, and spinning up vLLM.
 
 ```python
 instance_response = requests.request("GET", base_url, headers=headers)
@@ -76,13 +78,13 @@ else:
     print(f"Instance isn't yet active: {instance}" )
 ```
 
-This cell will print the IP address once it has provisioned. However, the image needs to download, and VLLM needs to download the model and spin up, which should take a few minutes.
+This cell will print the IP address once it has provisioned. However, the image needs to download, and vLLM needs to download the model and spin up, which should take a few minutes.
 #### Watch via the notebook
 Once the model is ready, this code will output the model list and a response to our query. We can use either requests or OpenAI's completions library.
 
 <CodeGroup>
 ```python requests
-#Wait until the previous cell has an IP address associated with it, and then add a few minutes for the VLLM server to stand up. 
+#Wait until the previous cell has an IP address associated with it, and then add a few minutes for the vLLM server to stand up. 
 #It is usually best to look at the logs on the dashboard to tell when the model is loaded.
 
 model_list_response = requests.get(f'http://{ip_addr}:8000/v1/models')
