@@ -41,7 +41,7 @@
   "navigation": [
     {
       "group": "Get Started",
-      "pages": ["quickstart", "introduction", "findingmostaffordablegpus", "deployinggpucontainers", "modelserving"]
+      "pages": ["quickstart", "introduction", "findingmostaffordablegpus", "deployinggpucontainers", "modelserving","deletinginstances"]
     },
     {
       "group": "Endpoints",
