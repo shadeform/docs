@@ -40,8 +40,12 @@
   ],
   "navigation": [
     {
-      "group": "Get Started",
-      "pages": ["quickstart", "introduction", "findingmostaffordablegpus", "deployinggpucontainers", "modelserving"]
+      "group": "Getting Started",
+      "pages": ["getting-started/introduction", "getting-started/quickstart", "getting-started/concepts", "getting-started/faq"]
+    },
+    {
+      "group": "Guides",
+      "pages": ["guides/generalguides", "guides/deployinggpucontainers", "guides/findingmostaffordablegpus", "guides/modelserving"]
     },
     {
       "group": "Endpoints",
@@ -73,6 +77,6 @@
     "koala": {
       "publicApiKey": "pk_f1ff89b1e5e8274bcf51c880669e44c0b250"
     }
-}
+  }
 }
  

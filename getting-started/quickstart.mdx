@@ -1,0 +1,245 @@
+---
+title: 'Quickstart'
+icon: 'bolt'
+iconType: 'solid'
+---
+In this guide, we will cover the basic operations for GPU instances on Shadeform via the API. Alternatively, you can perform all of thet same operations via the [UI](https://platform.shadeform.ai).
+
+### Prequisites
+
+There are two pre-requisites for this guide:
+1. After you have created your account, you must top up your wallet [here](https://platform.shadeform.ai/settings/billing).
+2. After you have topped up your wallet, generate and retrieve your Shadeform API key [here](https://platform.shadeform.ai/settings/api).
+
+### Finding a GPU instance
+Use the [/instances/types](/api-reference/endpoint/instancestypes) API to query for your desired instance. For this guide, we will query for the cheapest available A6000 instance. Make sure to replace `<api-key>` with your own API Key retrieved from [here](https://platform.shadeform.ai/settings/api).
+
+<CodeGroup>
+  ```bash CLI
+  curl --request GET \
+  --url 'https://api.shadeform.ai/v1/instances/types?gpu_type=A6000&num_gpus=1&available=true&sort=price' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
+  ```python Python
+  Coming soon!
+  ```
+
+  ```golang Go
+  Coming soon!
+  ```
+</CodeGroup>
+
+You should get a response like the JSON snippet below. The response will have an array of the instances that match the search criteria sorted by price. We only need to look at the first entry in the array. Don't worry! We don't need all of that data to launch an instance. We only care about the `cloud`, `region`, and `shade_instance_type` fields.
+
+``` json Response
+{
+"instance_types": [
+  {
+    "cloud": "massedcompute",
+    "shade_instance_type": "A6000_plus",
+    "cloud_instance_type": "gpu_1x_A6000_high_perf",
+    "configuration": {
+      "memory_in_gb": 64,
+      "storage_in_gb": 256,
+      "vcpus": 12,
+      "num_gpus": 1,
+      "gpu_type": "A6000",
+      "interconnect": "pcie",
+      "os_options": [
+        "ubuntu22.04_cuda12.2_shade_os"
+      ],
+      "vram_per_gpu_in_gb": 48
+    },
+    "memory_in_gb": 64,
+    "storage_in_gb": 256,
+    "vcpus": 12,
+    "num_gpus": 1,
+    "gpu_type": "A6000",
+    "interconnect": "pcie",
+    "hourly_price": 57,
+    "availability": [
+      {
+        "region": "us-central-1",
+        "available": true
+      }
+    ]
+  },
+  ...
+}
+```
+
+### Launching the instance
+After we have found the cheapest A6000 that's available, we will launch the GPU instance using the [/instances/create](/api-reference/endpoint/instancescreate) API. Using the values from the previous JSON snippet, we can fill in request payload fields for `cloud`, `region`, and `shade_instance_type`.
+
+<CodeGroup>
+  ```bash CLI
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/instances/create' \
+  --header 'X-API-KEY: <api-key>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "cloud": "massedcompute",
+    "region": "us-central-1",
+    "shade_instance_type": "A6000_plus",
+    "shade_cloud": true,
+    "name": "quickstart"
+  }'
+  ```
+
+  ```python Python
+  Coming soon!
+  ```
+
+  ```golang Go
+  Coming soon!
+  ```
+</CodeGroup>
+
+<Warning>
+  If you encounter an error that implies that the selected instance is out of capacity, please try the next instance returned in the response. Sometimes GPU availability can change rapidly!
+</Warning>
+
+The response from the API will look like the JSON snippet below. We will need the `id` property for further requests.
+
+``` json Response
+{
+  "id": "1dc915dd-8899-4b4f-862a-f63fb2b3dc3d",
+  "cloud_assigned_id": "b8266296-9dc8-4399-9a66-cc3422de0331"
+}
+
+```
+### Checking the status of the instance
+Now that we have created the GPU instance, we must wait for the instance to spin up. We can check on the status of the instance by calling the [instances/info](/api-reference/endpoint/instancesinfo) API. We will need to use the `id` from the response of the previous step as a URL parameter.
+<CodeGroup>
+  ```bash CLI
+  curl --request GET \
+  --url 'https://api.shadeform.ai/v1/instances/1dc915dd-8899-4b4f-862a-f63fb2b3dc3d/info' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
+  ```python Python
+  Coming soon!
+  ```
+
+  ```golang Go
+  Coming soon!
+  ```
+</CodeGroup>
+
+The response from the API look like the JSON snippet below. Just like before, we don't care about most of these fields right now and can focus on just the important ones. We can look at the `status` field to see fi the instance is ready. Right now the instance is `pending`.
+``` json Pending Response
+{
+  "id": "1dc915dd-8899-4b4f-862a-f63fb2b3dc3d",
+  "cloud": "massedcompute",
+  "region": "us-central-1",
+  "shade_instance_type": "A6000_plus",
+  "cloud_instance_type": "gpu_1x_A6000_high_perf",
+  "cloud_assigned_id": "eca4defe-32f3-4f96-ab23-dc67220c8510",
+  "shade_cloud": true,
+  "name": "quickstart",
+  "configuration": {
+  "memory_in_gb": 64,
+    "storage_in_gb": 256,
+    "vcpus": 12,
+    "num_gpus": 1,
+    "gpu_type": "A6000",
+    "interconnect": "pcie",
+    "os": "ubuntu22.04_cuda12.2_shade_os",
+    "vram_per_gpu_in_gb": 48
+  },
+  "ip": null,
+  "ssh_user": "shadeform",
+  "ssh_port": null,
+  "status": "pending",
+  "status_details": "",
+  "cost_estimate": "0.0006106021",
+  "hourly_price": 57,
+  "created_at": "2024-04-02T01:58:24.118626Z",
+  "deleted_at": null
+}
+```
+
+You can query this API on a loop until `status` changes from `pending` to `active`. This will typically take 4-5 minutes for A6000 instances. When the status turns to `active`, the `ip` field will also become populated. The response below is when the instance becomes ready.
+``` json Active Response
+{
+"id": "1dc915dd-8899-4b4f-862a-f63fb2b3dc3d",
+  "cloud": "massedcompute",
+  "region": "us-central-1",
+  "shade_instance_type": "A6000_plus",
+  "cloud_instance_type": "gpu_1x_A6000_high_perf",
+  "cloud_assigned_id": "eca4defe-32f3-4f96-ab23-dc67220c8510",
+  "shade_cloud": true,
+  "name": "quickstart",
+  "configuration": {
+  "memory_in_gb": 64,
+    "storage_in_gb": 256,
+    "vcpus": 12,
+    "num_gpus": 1,
+    "gpu_type": "A6000",
+    "interconnect": "pcie",
+    "os": "ubuntu22.04_cuda12.2_shade_os",
+    "vram_per_gpu_in_gb": 48
+},
+  "ip": "123.12.24.32",
+  "ssh_user": "shadeform",
+  "ssh_port": 22,
+  "status": "active",
+  "status_details": "",
+  "cost_estimate": "0.0008306021",
+  "hourly_price": 57,
+  "created_at": "2024-04-02T01:58:24.118626Z",
+  "deleted_at": null
+}
+```
+
+### SSHing into the instance
+Once the instance's status is  `active`, we can now SSH into the GPU instance. In order to access the GPU instance, you will need to download your Shadeform [generated private key](https://platform.shadeform.ai). Once you have the private key downloaded, you will need to update the permissions on the key.
+``` bash Update Private Key Permissions
+chmod 600 ~/Downloads/private_key.pem
+```
+
+You can now SSH into the instance using the following command. Make sure to substitute `<ip>` with the `ip` found in the response of the API response above.
+``` bash SSH into the instance
+ssh -i ~/Downloads/private_key.pem shadeform@<ip>
+```
+
+<Warning>
+  If you encounter an error that starts with `WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!`, you can run `ssh-keygen -R <ip>` to reset your saved host info.
+</Warning>
+
+### Deleting the instance
+Once you've done with the instance, you can delete the instance by calling the [/instances/delete](/api-reference/endpoint/instancesdelete) API using the instance `id` retrieved earlier.
+
+<CodeGroup>
+  ```bash CLI
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/instances/1dc915dd-8899-4b4f-862a-f63fb2b3dc3d/delete' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
+  ```python Python
+  Coming soon!
+  ```
+
+  ```golang Go
+  Coming soon!
+  ```
+</CodeGroup>
+
+To learn more about Shadeform, check out these additional guides.
+
+<CardGroup cols={2}>
+  <Card title="General Guides" icon="book" href="/guides/generalguides">
+    Use startup scripts, launch containers, concepts, and more
+  </Card>
+  <Card title="Core Concepts" icon="apple-core" href="/guides/coreconcepts">
+    Learn about the core concepts that powers Shadeform
+  </Card>
+  <Card title="FAQ" icon="question" href="/getting-started/faq">
+    Frequently asked questions and answers
+  </Card>
+  <Card title="API Documentation" icon="code" href="/api-reference/endpoint/instancestypes">
+    Full reference on our public APIs
+  </Card>
+</CardGroup>
