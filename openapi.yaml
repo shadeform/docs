@@ -1,11 +1,9 @@
 openapi: 3.0.0
-x-stoplight:
-  id: 1tyya1kdtk4lw
 servers:
   - description: Shadeform Production
     url: https://api.shadeform.ai/v1
 info:
-  description: 'Shadeform is a single API and platform for deploying and managing cloud GPUs. Shadeform supports integrations with 12+ cloud providers. You can use Shadeform to integrate with your existing cloud provider account or launch GPU instances directly into Shade Cloud, a collection of Shadeform owned accounts. Use Shade Cloud to centralize account management, billing, and quota access. For more information, checkout www.shadeform.ai.'
+  description: 'Shadeform is a single API and platform for deploying and managing cloud GPUs.'
   version: 1.0.0
   title: Shadeform API
   contact:
@@ -19,7 +17,7 @@ paths:
     get:
       summary: /instances
       operationId: instances
-      description: 'Get all active and pending instances for the account associated with the api key passed in through the x-api-key header.'
+      description: 'Get active and pending instances.'
       responses:
         '200':
           description: Returns an InstancesResponse object
@@ -27,8 +25,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InstancesResponse'
-      x-stoplight:
-        id: 5dx55d6yeks76
   /instances/types:
     get:
       parameters:
@@ -78,7 +74,7 @@ paths:
           description: "Sort the order of the instance type results"
       summary: /instances/types
       operationId: GetInstanceTypes
-      description: 'Return all the GPU instance types, their configurations, and their real time availability. The combination of the shade_instance_type property and cloud properties denote a particular GPU instance type within Shadeform. Shadeform tracks the real-time availability of all GPU instances in the underlying cloud provider.'
+      description: 'Return all the GPU instance types, their configurations, and their real time availability.'
       responses:
         '200':
           description: Returns an InstanceTypesResponse object
@@ -86,13 +82,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InstanceTypesResponse'
-      x-stoplight:
-        id: r42s3agkhgnin
   /instances/create:
     post:
       summary: /instances/create
       operationId: Create
-      description: 'Create an instance with the selected cloud provider, GPU, region, and launch_configuration.'
+      description: 'Create a new GPU instance.'
       requestBody:
         content:
           application/json:
@@ -120,7 +114,7 @@ paths:
           description: The instance id
       summary: /instances/{id}/info
       operationId: instances/info
-      description: "Get details for the specified instance in the url. The instance may be in any status including deleted."
+      description: "Get details for the specified instance in the url."
       responses:
         '200':
           description: "Return an instance object"
@@ -143,7 +137,7 @@ paths:
     post:
       summary: /instances/{id}/delete
       operationId: Delete
-      description: "Delete an instance. Some cloud providers may only allow the deletion of instances after leaving the pending state."
+      description: "Delete an instance. Some cloud providers may only allow deletion of an instance after it has moved to the 'active' status."
       responses:
         '200':
           description: Confirms the deletion of an instance
@@ -374,14 +368,14 @@ components:
         os:
           type: string
           example: "ubuntu22.04_cuda12.2_shade_os" 
-          description: The operating system of the instance.
+          description: 'The operating system of the instance.'
       x-stoplight:
         id: pue1x4td0w83n
     LaunchConfiguration:
       type: object
       required:
         - type
-      description: Defines steps that can be automatically run on the instance after launching
+      description: 'Defines automatic actions after the instance becomes active.'
       properties:
         type:
           type: string
@@ -389,7 +383,7 @@ components:
           enum:
             - docker
             - script
-          description: Specifies the type of launch configuration. Use 'docker' to specify a container to spin up at launch. Use 'script' to provide a startup script that gets run at launch.
+          description: "Specifies the type of launch configuration. Use 'docker' to specify a container to spin up at launch. Use 'script' to provide a startup script that gets run at launch."
         docker_configuration:
           $ref: '#/components/schemas/DockerConfiguration'
         script_configuration:
