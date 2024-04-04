@@ -3,3 +3,71 @@ title: 'FAQ'
 icon: 'question'
 iconType: 'solid'
 ---
+
+### Technical
+<AccordionGroup>
+  <Accordion title="Help! I have an urgent issue! What do I do?">
+    Please email founders@shadeform.ai. We monitor this email very closely and will accommodate requests as much as possible.
+  </Accordion>
+
+  <Accordion title="I have existing cloud credits. Can I use my cloud credits through Shadeform?">
+    Absolutely! If you have cloud credits with a specific cloud, you can link your cloud account to Shadeform [here](https://platform.shadeform.ai/settings/cloudaccess). When you launch an instance to that cloud, make sure to toggle Shade Cloud to be off via the UI or set `"shade_cloud":false` in the API.
+  </Accordion>
+
+  <Accordion title="How do I access my GPU instance?">
+    Please see the [Quickstart guide](/getting-started/quickstart#sshing-into-the-instance) on SSHing into your machine.
+  </Accordion>
+
+  <Accordion title="What is Shadeform's docker feature?">
+    While Shadeform primarily focuses on providing virtual machines, we offer a launch configuration that automatically starts up your configured docker container when the VM is ready.
+  </Accordion>
+
+  <Accordion title="How much GPU availability is on the platform?">
+    We tap into each cloud provider's on-demand pool. Therefore, what you see on Shadeform is also what you will see via the cloud provider natively. We can provide estimates for certain providers.
+  </Accordion>
+
+  <Accordion title="What's next for Shadeform?">
+    We're focusing on building more platform features such as team management, SSH key management, volumes, and more. We're also focused on adding more providers to increase optionality.
+  </Accordion>
+
+  <Accordion title="What machine SLAs do you have?">
+    As Shadeform is an abstraction for different clouds and data centers, we inherit the SLAs provided by cloud providers. We can share the cloud specific SLAs upon request. We guarantee all GPUs are in Tier 3 or Tier 4 datacenters.
+  </Accordion>
+
+  <Accordion title="What is Shade Cloud?">
+    Shade Cloud is the name of the feature where we deploy your instances into our network of cloud accounts with each of the cloud providers. By using Shade Cloud, you can use the underlying cloud provider without having an account with them. See this [description](/getting-started/concepts#shade-cloud) for more details.
+  </Accordion>
+</AccordionGroup>
+
+### Business
+<AccordionGroup>
+  <Accordion title="How much does Shadeform cost?">
+    Shadeform charges the same rate as going direct to the cloud provider. There is no additional fee for using Shadeform to launch instances or manage cloud accounts.
+  </Accordion>
+
+  <Accordion title="How does Shadeform make money?">
+    Shadeform drives volume to cloud providers. Cloud providers pay Shadeform based on the volume driven to them.
+  </Accordion>
+
+  <Accordion title="How does Shadeform billing work?">
+    When you launch an instance through Shadeform, you pay Shadeform for the GPU time and Shadeform passes the payment to the underlying cloud provider.
+  </Accordion>
+
+  <Accordion title="Can I do invoice payments instead of pay as you go?">
+    Please contact founders@shadeform.ai for setting up invoice payments.
+  </Accordion>
+
+  <Accordion title="Can I reserve my instances for a longer period of time?">
+    We can offer reservation discounts and/or work with you to find the best options for your GPU needs. Please contact founders@shadeform.ai for more information.
+  </Accordion>
+
+  <Accordion title="I'm a GPU provider and want to offer my machines through Shadeform. What are the next steps?">
+    We currently only work with machines that located in Tier 3 and Tier 4 datacenters. If your machines meet this criteria, we'd love to support you as a provider. Please contact founders@shadeform.ai.
+  </Accordion>
+
+  <Accordion title="Is Shadeform hiring?">
+    We are! We're looking for talented software engineers. Please see the job description [here](https://bow-fennel-4f2.notion.site/Shadeform-is-hiring-a-founding-engineer-c5fc0576214d4e6e9d288b5b5340aece).
+  </Accordion>
+</AccordionGroup>
+
+### Have a question not answered on this page? Reach out to us at founders@shadeform.ai!
