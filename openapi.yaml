@@ -71,10 +71,10 @@ paths:
             enum:
               - price
           example: price
-          description: "Sort the order of the instance type results"
+          description: "Sort the order of the instance type results."
       summary: /instances/types
       operationId: GetInstanceTypes
-      description: 'Return all the GPU instance types, their configurations, and their real time availability.'
+      description: 'Return all the GPU instance types with their corresponding availability and specs.'
       responses:
         '200':
           description: Returns an InstanceTypesResponse object
@@ -84,6 +84,7 @@ paths:
                 $ref: '#/components/schemas/InstanceTypesResponse'
   /instances/create:
     post:
+
       summary: /instances/create
       operationId: Create
       description: 'Create a new GPU instance.'
@@ -99,8 +100,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateResponse'
-      x-stoplight:
-        id: 5wq6flu8oht9c
   '/instances/{id}/info':
     get:
       parameters:
@@ -117,7 +116,7 @@ paths:
       description: "Get details for the specified instance in the url."
       responses:
         '200':
-          description: "Return an instance object"
+          description: "Return an instance object."
           content:
             application/json:
               schema:
@@ -163,7 +162,7 @@ components:
       x-stoplight:
         id: jyyuedk1mjwhm
     InstanceType:
-      description: "Information about a specific instance type offered by Shadeform. Each instance type represents a GPU instance in a particular cloud."
+      description: "Information about a specific instance type offered by Shadeform."
       type: object
       required:
         - cloud
@@ -194,7 +193,7 @@ components:
                   items:
                     type: string
                   example: ["ubuntu22.04_cuda12.2_shade_os", "ubuntu20.04_cuda12.0_shade_os"]
-                  description: The list of available operating systems for the instance.
+                  description: 'The list of available operating systems for the instance.'
         hourly_price:
           $ref: '#/components/schemas/HourlyPrice'
         availability:
@@ -341,7 +340,7 @@ components:
         available:
           type: boolean
           example: true
-          description: "Indicate whether the instance is available in the region"
+          description: "Indicate whether the instance is available in the region."
       x-stoplight:
         id: 54yjsz6ztekt3
     CreateRequest:
