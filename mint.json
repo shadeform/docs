@@ -45,7 +45,7 @@
     },
     {
       "group": "Guides",
-      "pages": ["guides/generalguides", "guides/deployinggpucontainers", "guides/findingmostaffordablegpus", "guides/modelserving"]
+      "pages": ["guides/tutoriallibrary", "guides/deployinggpucontainers", "guides/findingmostaffordablegpus", "guides/modelserving"]
     },
     {
       "group": "Endpoints",
