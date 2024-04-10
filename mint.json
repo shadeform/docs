@@ -45,11 +45,20 @@
     },
     {
       "group": "Guides",
-      "pages": ["guides/tutoriallibrary", "guides/deployinggpucontainers", "guides/findingmostaffordablegpus", "guides/modelserving"]
+      "pages": [
+        "guides/tutoriallibrary",
+        "guides/dockercontainers",
+        "guides/startupscript",
+        "guides/mostaffordablegpus",
+        "guides/vllm",
+        "guides/tgi",
+        "guides/firewall"
+      ]
     },
     {
       "group": "Endpoints",
       "pages": [
+        "api-reference/endpoint/instances-create-ronald",
         "api-reference/endpoint/instancestypes",
         "api-reference/endpoint/instances",
         "api-reference/endpoint/instancescreate",
@@ -76,6 +85,16 @@
     },
     "koala": {
       "publicApiKey": "pk_f1ff89b1e5e8274bcf51c880669e44c0b250"
+    }
+  },
+  "api": {
+    "baseUrl": "https://api.shadeform.ai/v1/instances/create",
+    "auth": {
+      "method": "key",
+      "name": "X-API-KEY"
+    },
+    "playground": {
+      "mode": "show"
     }
   }
 }
