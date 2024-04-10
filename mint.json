@@ -48,6 +48,7 @@
       "pages": [
         "guides/tutoriallibrary",
         "guides/dockercontainers",
+        "guides/jupyter",
         "guides/startupscript",
         "guides/mostaffordablegpus",
         "guides/vllm",
