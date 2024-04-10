@@ -50,9 +50,7 @@
         "guides/dockercontainers",
         "guides/startupscript",
         "guides/mostaffordablegpus",
-        "guides/jupyter",
         "guides/vllm",
-        "guides/tgi",
         "guides/firewall",
         "guides/benchmark"
       ]
