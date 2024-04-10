@@ -18,7 +18,7 @@
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:founders@shadeform.ai"
+      "url": "https://www.shadeform.ai/?slack=true"
     }
   ],
   "topbarCtaButton": {
