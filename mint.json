@@ -50,20 +50,21 @@
         "guides/dockercontainers",
         "guides/startupscript",
         "guides/mostaffordablegpus",
+        "guides/jupyter",
         "guides/vllm",
         "guides/tgi",
-        "guides/firewall"
+        "guides/firewall",
+        "guides/benchmark"
       ]
     },
     {
       "group": "Endpoints",
       "pages": [
-        "api-reference/endpoint/instances-create-ronald",
-        "api-reference/endpoint/instancestypes",
-        "api-reference/endpoint/instances",
-        "api-reference/endpoint/instancescreate",
+        "api-reference/endpoint/instances-create",
         "api-reference/endpoint/instances-info",
-        "api-reference/endpoint/instances-delete"
+        "api-reference/endpoint/instances-delete",
+        "api-reference/endpoint/instances-types",
+        "api-reference/endpoint/instances"
       ]
     },
     {

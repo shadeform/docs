@@ -7,7 +7,7 @@ iconType: 'solid'
 We can configure a bash startup script that automatically runs on a instance immediately after the instance becomes active.
 
 ### Example
-We can configure a bash startup script using Shadeform's [Create Instance API](/api-reference/endpoint/instancescreate).
+We can configure a bash startup script using Shadeform's [Create Instance API](/api-reference/endpoint/instances-create).
 In this example, we will run the script below once the instance becomes ready.
 
 ```bash Script
@@ -31,7 +31,7 @@ We recommend using [this tool](https://www.base64encode.org/) to base64 encode o
 IyEvYmluL2Jhc2gKY291bnRlcj0xCgojIEluZmluaXRlIGxvb3AKd2hpbGUgdHJ1ZTsgZG8KICBlY2hvICRjb3VudGVyCiAgIyBJbmNyZW1lbnQgdGhlIGNvdW50ZXIKICAoKGNvdW50ZXIrKykpCiAgIyBXYWl0IGZvciAzIHNlY29uZHMKICBzbGVlcCAzCmRvbmUK
 ```
 
-After we have base64 encoded our script, we can create a new GPU instance with the startup script included.
+After we have base64 encoded our script, we can create a new GPU instance with the startup script included in the `base64_script` property.
 
 <CodeGroup>
   ```bash CLI

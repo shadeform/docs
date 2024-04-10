@@ -1,11 +1,8 @@
 ---
-title: 'Deploying GPU Containers'
-icon: 'docker'
+title: 'Evaluate Language Models'
+icon: 'chart-simple'
 iconType: 'solid'
 ---
-### Background
-Accessing affordable GPU compute often gets you out of flow. Big clouds have complicated UI's and high prices, but 3rd party clouds have no supply guarantees.
-Now with the Shadeform API, you can spin up GPU containers on the most affordable compute without leaving your IDE.
 
 ### Benchmarking Models
 
@@ -27,7 +24,7 @@ Then in `deploy_container.ipynb` you will need to input two things: 1. Your Shad
 
 The notebook kicks off a VM request and runs the container specifically on a 1xA6000 Machine which are quite afforable on our platform. The container will download the model and run the benchmark for us. 
 
-The notebook leverages a lot of the principles found in [this guide](https://docs.shadeform.ai/findingmostaffordablegpus) for using the platform to _find_ affordable GPU's.
+The notebook leverages a lot of the principles found in [this guide](/guides/mostaffordablegpus) for using the platform to _find_ affordable GPU's.
 
 ### Deploying a container
 

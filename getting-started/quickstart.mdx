@@ -12,7 +12,7 @@ There are two pre-requisites for this guide:
 2. After you have topped up your wallet, generate and retrieve your Shadeform API key [here](https://platform.shadeform.ai/settings/api).
 
 ### Finding a GPU instance
-Use the [/instances/types](/api-reference/endpoint/instancestypes) API to query for your desired instance. For this guide, we will query for the cheapest available A6000 instance. Make sure to replace `<api-key>` with your own API Key retrieved from [here](https://platform.shadeform.ai/settings/api).
+Use the [/instances/types](/api-reference/endpoint/instances-types) API to query for your desired instance. For this guide, we will query for the cheapest available A6000 instance. Make sure to replace `<api-key>` with your own API Key retrieved from [here](https://platform.shadeform.ai/settings/api).
 
 <CodeGroup>
   ```bash CLI
@@ -70,7 +70,7 @@ You should get a response like the JSON snippet below. The response will have an
 ```
 
 ### Launching the instance
-After we have found the cheapest A6000 that's available, we will launch the GPU instance using the [/instances/create](/api-reference/endpoint/instancescreate) API. Using the values from the previous JSON snippet, we can fill in request payload fields for `cloud`, `region`, and `shade_instance_type`.
+After we have found the cheapest A6000 that's available, we will launch the GPU instance using the [/instances/create](/api-reference/endpoint/instances-create) API. Using the values from the previous JSON snippet, we can fill in request payload fields for `cloud`, `region`, and `shade_instance_type`.
 
 <CodeGroup>
   ```bash CLI
@@ -96,9 +96,9 @@ After we have found the cheapest A6000 that's available, we will launch the GPU 
   ```
 </CodeGroup>
 
-<Warning>
+<Note>
   If you encounter an error that implies that the selected instance is out of capacity, please try the next instance returned in the response. Sometimes GPU availability can change rapidly!
-</Warning>
+</Note>
 
 The response from the API will look like the JSON snippet below. We will need the `id` property for further requests.
 
@@ -204,9 +204,9 @@ You can now SSH into the instance using the following command. Make sure to subs
 ssh -i ~/Downloads/private_key.pem shadeform@<ip>
 ```
 
-<Warning>
+<Note>
   If you encounter an error that starts with `WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!`, you can run `ssh-keygen -R <ip>` to reset your saved host info.
-</Warning>
+</Note>
 
 ### Deleting the instance
 Once you've done with the instance, you can delete the instance by calling the [/instances/delete](/api-reference/endpoint/instancesdelete) API using the instance `id` retrieved earlier.
@@ -239,7 +239,7 @@ To learn more about Shadeform, check out these additional guides.
   <Card title="FAQ" icon="question" href="/getting-started/faq">
     Frequently asked questions and answers
   </Card>
-  <Card title="API Documentation" icon="code" href="/api-reference/endpoint/instancestypes">
+  <Card title="API Documentation" icon="code" href="/api-reference/endpoint/instances-types">
     Full reference on our public APIs
   </Card>
 </CardGroup>
