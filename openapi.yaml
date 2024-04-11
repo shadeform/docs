@@ -20,7 +20,7 @@ paths:
       description: 'Get active and pending instances.'
       responses:
         '200':
-          description: Returns an InstancesResponse object
+          description: 'Returns an InstancesResponse object'
           content:
             application/json:
               schema:
@@ -155,7 +155,7 @@ components:
           items:
             $ref: '#/components/schemas/InstanceType'
     InstanceType:
-      description: "Information about a specific instance type offered by Shadeform."
+      description: "Information about a specific instance type"
       type: object
       required:
         - cloud
@@ -289,7 +289,7 @@ components:
         memory_in_gb:
           type: integer
           example: 12
-          description: "The amount of memory for the instance in gigabytes. Note that this is not VRAM. VRAM is determined by the GPU type and the number of GPUs."
+          description: "The amount of memory for the instance in gigabytes. Note that this is not VRAM which is determined by GPU type and the number of GPUs."
         storage_in_gb:
           type: integer
           example: 256
@@ -309,7 +309,7 @@ components:
         interconnect:
           type: string
           example: pcie
-          description: "The type of interconnect for the GPU."
+          description: "The type of GPU interconnect."
         vram_per_gpu_in_gb:
           type: integer
           example: 48
@@ -363,7 +363,7 @@ components:
           enum:
             - docker
             - script
-          description: "Specifies the type of launch configuration. Use 'docker' to specify a container to spin up at launch. Use 'script' to provide a startup script that gets run at launch."
+          description: "Specifies the type of launch configuration. See [Launch Configuration](/getting-started/concepts#launch-configuration) for more details."
         docker_configuration:
           $ref: '#/components/schemas/DockerConfiguration'
         script_configuration:
@@ -372,7 +372,7 @@ components:
       type: object
       required:
         - image
-      description: "May only be used if launch_configuration.type is 'docker'. Use docker_configuration to automatically pull and run a docker image when the instance is ready."
+      description: "May only be used if launch_configuration.type is 'docker'. Use docker_configuration to automatically pull and run a docker image. See this [tutorial](http://localhost:3000/guides/dockercontainers) for examples."
       properties:
         image:
           type: string
@@ -381,11 +381,11 @@ components:
         args:
           type: string
           example: --model mistralai/Mistral-7B-v0.1
-          description: 'Specifies the container arguments passed into the image at run time.'
+          description: 'Specifies the container arguments passed into the image at runtime.'
         shared_memory_in_gb:
           type: integer
           example: 8
-          description: "Describes the amount of shared memory to allocate for the instance. Equivalent to using the --shm-size flag in the docker cli. If shared_memory_in_gb is not specified, then the container will use the host namespace which is the equivalent of --ipc=host."
+          description: "Describes the amount of shared memory allocated for the container. Equivalent to using the --shm-size flag in the docker cli. If shared_memory_in_gb is not specified, then the container will use the host namespace which is the equivalent of --ipc=host."
         envs:
           type: array
           description: "List of environment variable name-value pairs that will be passed to the docker container."
@@ -405,11 +405,11 @@ components:
       type: object
       required:
         - base64_script
-      description: "May only be used if launch_configuration.type is 'script'. Configures a startup script to be run automatically after the instance is active."
+      description: "May only be used if launch_configuration.type is 'script'. Configures a startup script to be run automatically after the instance is active. See this [tutorial](http://localhost:3000/guides/startupscript) for examples."
       properties:
         base64_script:
           type: string
-          description: "A startup script that is base64 encoded. We recommend using https://www.base64encode.org/"
+          description: "A startup script that is base64 encoded."
           example: IyEvYmluL2Jhc2gKCiMgRW5kbGVzcyBsb29wCndoaWxlIHRydWUKZG8KICAgICMgRmV0Y2ggYSBjYXQgZmFjdCB3aXRoIGEgbWF4aW11bSBsZW5ndGggb2YgMTQwIGNoYXJhY3RlcnMKICAgIGN1cmwgLS1uby1wcm9ncmVzcy1tZXRlciBodHRwczovL2NhdGZhY3QubmluamEvZmFjdD9tYXhfbGVuZ3RoPTE0MAoKICAgICMgUHJpbnQgYSBuZXdsaW5lIGZvciByZWFkYWJpbGl0eQogICAgZWNobwoKICAgICMgU2xlZXAgZm9yIDMgc2Vjb25kcyBiZWZvcmUgdGhlIG5leHQgaXRlcmF0aW9uCiAgICBzbGVlcCAzCmRvbmUKCgo=
     Env:
       type: object
@@ -483,20 +483,20 @@ components:
         - datacrunch
         - massedcompute
         - vultr
-      description: 'Specifies the underlying cloud provider that the instance is launched in. For the latest list of supported clouds, call the /instances/types API for all clouds.'
+      description: 'Specifies the underlying cloud provider. See this [explaination](/getting-started/concepts#cloud-cloud-provider) for more details.'
     Region:
       type: string
       example: us-central-2
-      description: 'Specifies the region in the underlying cloud provider that the instance is launched in. For the latest list of supported regions per cloud, call the instances/types API for all regions.'
+      description: 'Specifies the region for the instance.'
     Id:
       type: string
       format: uuid
       example: d290f1ee-6c54-4b01-90e6-d701748f0851
-      description: 'The unique identifier for an instance managed by Shadeform. Used in the endpoint for the /instances/{id}/info and /instances/{id}/delete APIs.'
+      description: 'The unique identifier for the instance. Used in the endpoint for the /instances/{id}/info and /instances/{id}/delete APIs.'
     CloudAssignedId:
       type: string
       example: 13b057d7-e266-4869-985f-760fe75a78b3
-      description: The unique identifier of the instance issued by the underlying cloud provider. This value is not useful at this time.
+      description: 'The unique identifier of the instance issued by the underlying cloud provider.'
     Name:
       type: string
       example: cool-gpu-server
@@ -504,19 +504,19 @@ components:
     ShadeInstanceType:
       type: string
       example: A6000
-      description: 'The Shadeform standardized instance identifier for instances with a specific GPU configuration. We map the standardized Shade Instance Type to each cloud provider''s instance type. For example, launching an ''A100'' Shade Instance Type in TensorDock and in Paperspace will ensure that both instances will have an A100 GPU.'
+      description: 'The Shadeform standardized instance type. See this [explanation](http://localhost:3000/getting-started/concepts#shade-instance-type-and-cloud-instance-type) for more details.'
     ShadeCloud:
       type: boolean
       example: true
-      description: 'If Shade Cloud is true, the instance will be launched in Shadeform''s managed account. If Shade Cloud is false, Shadeform will check if you have provided an API Access Key for the specified cloud and launch the instance into your own cloud provider account. To launch in your own cloud provider account, you need to add your API Access Key for the cloud via the Shadeform Cloud Access Settings page at https://platform.shadeform.ai/settings/cloudaccess.'
+      description: 'Specifies if the instance is launched in [Shade Cloud](http://localhost:3000/getting-started/concepts#shade-cloud) or in a linked cloud account.'
     CloudInstanceType:
       type: string
       example: gpu_1x_a6000
-      description: 'The instance type for the underlying cloud provider. The CloudInstanceType is determined by the combination of the shade_instance_type, cloud, and num_gpus fields'
+      description: 'The instance type for the underlying cloud provider. See this [explanation](http://localhost:3000/getting-started/concepts#shade-instance-type-and-cloud-instance-type) for more details.'
     HourlyPrice:
       type: integer
       example: 210
-      description: The base hourly price of the instance in cents. This cost does not include the Shadeform platform fee.
+      description: 'The hourly price of the instance in cents.'
     Ip:
       type: string
       example: 1.0.0.1
@@ -524,7 +524,7 @@ components:
     SshUser:
       type: string
       example: shadeform
-      description: The SSH user used to SSH into the instance.
+      description: 'The SSH user used to SSH into the instance.'
     SshPort:
       type: integer
       example: 22
@@ -536,18 +536,18 @@ components:
         - pending
         - active
         - deleted
-      description: The status of the instance.
+      description: 'The status of the instance.'
     CostEstimate:
       type: string
       example: '103.4'
-      description: The cost incurred by the instance. This cost is only the cost billed by Shadeform. This does not include the underlying cloud provider cost if you are managing instances in your own cloud provider account.
+      description: 'The cost incurred by the instance. This only the cost via Shadeform. If the instance is deployed in your own cloud account, then all billing is through your cloud provider.'
     CreatedAt:
       type: string
       format: date-time
       example: '2016-08-29T09:12:33.001Z'
-      description: The timestamp of when the instance was created in UTC.
+      description: 'The timestamp of when the instance was created in UTC.'
     DeletedAt:
       type: string
       format: date-time
       example: '2016-08-29T09:12:33.001Z'
-      description: The timestamp of when the instance was deleted in UTC
+      description: 'The timestamp of when the instance was deleted in UTC'
