@@ -33,6 +33,11 @@
   ],
   "anchors": [
     {
+      "name": "Support",
+      "icon": "slack",
+      "url": "https://www.shadeform.ai/?slack=true"
+    },
+    {
       "name": "Community",
       "icon": "discord",
       "url": "https://discord.gg/dCEd77nQYc"
