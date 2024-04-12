@@ -5,4 +5,4 @@ Use Shadeform to find, launch, and manage on-demand cloud GPUs at the best price
 
 ![alt text](logo/light-shadeform.svg)
 
-Visit [doc.shadeform.ai](doc.shadeform.ai) for the latest documentation for Shadeform.
+Visit [https://docs.shadeform.ai](https://docs.shadeform.ai) for the latest documentation for Shadeform.
