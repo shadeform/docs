@@ -224,7 +224,6 @@ components:
         - ssh_port
         - status
         - cost_estimate
-        - hourly_price
         - created_at
         - deleted_at
       properties:
