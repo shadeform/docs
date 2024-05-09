@@ -62,13 +62,23 @@
       ]
     },
     {
-      "group": "Endpoints",
+      "group": "Instances",
       "pages": [
-        "api-reference/endpoint/instances-create",
-        "api-reference/endpoint/instances-info",
-        "api-reference/endpoint/instances-delete",
-        "api-reference/endpoint/instances-types",
-        "api-reference/endpoint/instances"
+        "api-reference/instances/instances-create",
+        "api-reference/instances/instances-info",
+        "api-reference/instances/instances-delete",
+        "api-reference/instances/instances-types",
+        "api-reference/instances/instances"
+      ]
+    },
+    {
+      "group": "SSH Keys",
+      "pages": [
+        "api-reference/sshkeys/sshkeys",
+        "api-reference/sshkeys/sshkeys-add",
+        "api-reference/sshkeys/sshkeys-delete",
+        "api-reference/sshkeys/sshkeys-info",
+        "api-reference/sshkeys/sshkeys-setdefault"
       ]
     },
     {

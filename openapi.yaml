@@ -100,16 +100,16 @@ paths:
               schema:
                 $ref: '#/components/schemas/CreateResponse'
   '/instances/{id}/info':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        schema:
+          type: string
+          minimum: 1
+        description: 'The instance id'
     get:
-      parameters:
-        - in: path
-          name: id
-          required: true
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
-          schema:
-            type: string
-            minimum: 1
-          description: The instance id
       summary: /instances/{id}/info
       operationId: instances/info
       description: "Get details for the specified instance in the url."
@@ -125,7 +125,7 @@ paths:
       - in: path
         name: id
         required: true
-        example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
         schema:
           type: string
           minimum: 1
@@ -136,7 +136,91 @@ paths:
       description: "Delete an instance. Some cloud providers may only allow deletion of an instance after it has moved to the 'active' status."
       responses:
         '200':
-          description: Confirms the deletion of an instance
+          description: 'Confirms the deletion of an instance'
+  '/sshkeys':
+    get:
+      summary: /sshkeys
+      operationId: sshkeys
+      description: 'Get all SSH Keys for the account.'
+      responses:
+        '200':
+          description: 'Returns an SSHKeysResponse object'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SshKeysResponse'
+  '/sshkeys/add':
+    post:
+      summary: /sshkey/add
+      operationId: Add
+      description: 'Add a new SSH Key'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddSshKeyRequest'
+      responses:
+        '200':
+          description: 'Returns a AddSshKeyResponse object'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddSshKeyResponse'
+  '/sshkeys/{id}/delete':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        schema:
+          type: string
+          minimum: 1
+        description: 'The ssh key id'
+    post:
+      summary: /sshkeys/{id}/delete
+      operationId: Delete
+      description: 'Delete an ssh key. The Shadeform managed SSH Key, current default ssh key, and in use SSH Keys cannot be deleted.'
+      responses:
+        '200':
+          description: 'Confirms the deletion of an ssh key.'
+  '/sshkeys/{id}/info':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        schema:
+          type: string
+          minimum: 1
+        description: 'The ssh key id'
+    get:
+      summary: /sshkeys/{id}/info
+      operationId: sshkeys/info
+      description: "Get details for the specified SSH Key in the url."
+      responses:
+        '200':
+          description: "Return an SshKey object."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SshKey'
+  '/sshkeys/{id}/setdefault':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        schema:
+          type: string
+          minimum: 1
+        description: 'The ssh key id'
+    post:
+      summary: /sshkeys/{id}/setdefault
+      operationId: sshkeys/setdefault
+      description: 'Set the specified SSH Key as the default SSH Key used by Shadeform.'
+      responses:
+        '200':
+          description: 'Confirms that the specified SSH Key was as set as the default key.'
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -145,7 +229,7 @@ components:
       name: X-API-KEY
   schemas:
     InstanceTypesResponse:
-      description: Response of /instances/types
+      description: 'Response of /instances/types'
       type: object
       required:
         - instance_types
@@ -491,7 +575,7 @@ components:
       type: string
       format: uuid
       example: d290f1ee-6c54-4b01-90e6-d701748f0851
-      description: 'The unique identifier for the instance. Used in the endpoint for the /instances/{id}/info and /instances/{id}/delete APIs.'
+      description: 'The unique identifier for the instance. Used in the instances for the /instances/{id}/info and /instances/{id}/delete APIs.'
     CloudAssignedId:
       type: string
       example: 13b057d7-e266-4869-985f-760fe75a78b3
@@ -549,4 +633,70 @@ components:
       type: string
       format: date-time
       example: '2016-08-29T09:12:33.001Z'
-      description: 'The timestamp of when the instance was deleted in UTC'
+      description: 'The timestamp of when the instance was deleted in UTC.'
+    SshKeysResponse:
+      type: object
+      required:
+        - ssh_keys
+      properties:
+        ssh_keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/SshKey'
+    SshKey:
+      type: object
+      required:
+        - id
+        - name
+        - public_key
+        - is_default
+      properties:
+        id:
+          $ref: '#/components/schemas/SshKeyID'
+        name:
+          $ref: '#/components/schemas/SshKeyName'
+        public_key:
+          $ref: '#/components/schemas/PublicKey'
+        private_key:
+          $ref: '#/components/schemas/PrivateKey'
+        is_default:
+          $ref: '#/components/schemas/IsDefault'
+    AddSshKeyRequest:
+      type: object
+      required:
+        - name
+        - public_key
+      properties:
+        name:
+          $ref: '#/components/schemas/SshKeyName'
+        public_key:
+          $ref: '#/components/schemas/PublicKey'
+        private_key:
+          $ref: '#/components/schemas/PrivateKey'
+    AddSshKeyResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/SshKeyID'
+    SshKeyID:
+      type: string
+      example: '78a0dd5a-dbb1-4568-b55c-5e7e0a8b0c40'
+      description: "The ID of the SSH Key."
+    SshKeyName:
+      type: string
+      example: 'My ssh key'
+      description: "The name of the SSH Key."
+    PublicKey:
+      type: string
+      example: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU GPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3 Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XA t3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/En mZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbx NrRFi9wrf+M7Q== schacon@mylaptop.local'
+      description: "The public key."
+    PrivateKey:
+      type: string
+      example: '-----BEGIN RSA PRIVATE KEY----- MIIBOgIBAAJBAKj34GkxFhD90vcNLYLInFEX6Ppy1tPf9Cnzj4p4WGeKLs1Pt8Qu KUpRKfFLfRYC9AIKjbJTWit+CqvjWYzvQwECAwEAAQJAIJLixBy2qpFoS4DSmoEm o3qGy0t6z09AIJtH+5OeRV1be+N4cDYJKffGzDa88vQENZiRm0GRq6a+HPGQMd2k TQIhAKMSvzIBnni7ot/OSie2TmJLY4SwTQAevXysE2RbFDYdAiEBCUEaRQnMnbp7 9mxDXDf6AU0cN/RPBjb9qSHDcWZHGzUCIG2Es59z8ugGrDY+pxLQnwfotadxd+Uy v/Ow5T0q5gIJAiEAyS4RaI9YG8EWx/2w0T67ZUVAw8eOMB6BIUg0Xcu+3okCIBOs /5OiPgoTdSy7bcF9IGpSE8ZgGKzgYQVZeN97YE00 -----END RSA PRIVATE KEY-----'
+      description: "The private key."
+    IsDefault:
+      type: boolean
+      example: false
+      description: "Indicates the default key."
