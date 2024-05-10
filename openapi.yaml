@@ -119,7 +119,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Instance'
+                $ref: '#/components/schemas/InstanceInfoResponse'
   '/instances/{id}/delete':
     parameters:
       - in: path
@@ -435,6 +435,78 @@ components:
           $ref: '#/components/schemas/CreatedAt'
         deleted_at:
           $ref: '#/components/schemas/DeletedAt'
+    InstanceInfoResponse:
+      type: object
+      required:
+        - id
+        - cloud
+        - region
+        - shade_instance_type
+        - cloud_instance_type
+        - cloud_assigned_id
+        - shade_cloud
+        - name
+        - configuration
+        - ip
+        - ssh_user
+        - ssh_port
+        - status
+        - cost_estimate
+        - created_at
+        - deleted_at
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        cloud:
+          $ref: '#/components/schemas/Cloud'
+        region:
+          $ref: '#/components/schemas/Region'
+        shade_instance_type:
+          $ref: '#/components/schemas/ShadeInstanceType'
+        cloud_instance_type:
+          $ref: '#/components/schemas/CloudInstanceType'
+        cloud_assigned_id:
+          $ref: '#/components/schemas/CloudAssignedId'
+        shade_cloud:
+          $ref: '#/components/schemas/ShadeCloud'
+        name:
+          $ref: '#/components/schemas/Name'
+        configuration:
+          allOf:
+            - $ref: '#/components/schemas/Configuration'
+            - type: object
+              required:
+                - os
+              properties:
+                os:
+                  type: string
+                  example: ubuntu_22_shade_os
+                  description: "The operating system of the instance."
+        ip:
+          $ref: '#/components/schemas/Ip'
+        ssh_user:
+          $ref: '#/components/schemas/SshUser'
+        ssh_port:
+          $ref: '#/components/schemas/SshPort'
+        status:
+          $ref: '#/components/schemas/Status'
+        cost_estimate:
+          $ref: '#/components/schemas/CostEstimate'
+        hourly_price:
+          $ref: '#/components/schemas/HourlyPrice'
+        volume_ids:
+          type: array
+          description: "List of volume IDs to be mounted. Currently only supports 1 volume at a time."
+          items:
+            $ref: '#/components/schemas/VolumeID'
+        ssh_key_id:
+          $ref: '#/components/schemas/SshKeyID'
+        launch_configuration:
+          $ref: '#/components/schemas/LaunchConfiguration'
+        created_at:
+          $ref: '#/components/schemas/CreatedAt'
+        deleted_at:
+          $ref: '#/components/schemas/DeletedAt'
     Configuration:
       type: object
       required:
@@ -513,6 +585,13 @@ components:
           type: string
           example: "ubuntu22.04_cuda12.2_shade_os" 
           description: 'The operating system of the instance.'
+        volume_ids:
+          type: array
+          description: "List of volume IDs to be mounted. Currently only supports 1 volume at a time."
+          items:
+            $ref: '#/components/schemas/VolumeID'
+        ssh_key_id:
+          $ref: '#/components/schemas/SshKeyID'
     LaunchConfiguration:
       type: object
       required:
