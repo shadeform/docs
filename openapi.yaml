@@ -221,6 +221,85 @@ paths:
       responses:
         '200':
           description: 'Confirms that the specified SSH Key was as set as the default key.'
+  '/volumes':
+    get:
+      summary: /volumes
+      operationId: volumes
+      description: 'Get all storage volumes for the account.'
+      responses:
+        '200':
+          description: 'Returns an VolumesResponse object'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolumesResponse'
+  '/volumes/create':
+    post:
+      summary: /volumes/create
+      operationId: Create
+      description: 'Create a new storage volume'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVolumeRequest'
+      responses:
+        '200':
+          description: 'Returns a CreateVolumeResponse object'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateVolumeResponse'
+  '/volumes/{id}/delete':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        schema:
+          type: string
+          minimum: 1
+        description: 'The volume id.'
+    post:
+      summary: /volumes/{id}/delete
+      operationId: Delete
+      description: 'Delete a storage volume.'
+      responses:
+        '200':
+          description: 'Confirms the deletion of the specified storage volume.'
+  '/volumes/{id}/info':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        schema:
+          type: string
+          minimum: 1
+        description: 'The volume id.'
+    get:
+      summary: /volumes/{id}/info
+      operationId: volumes/info
+      description: "Get details for the specified storage volume."
+      responses:
+        '200':
+          description: "Return a volume object."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volume'
+  '/volumes/types':
+    get:
+      summary: /volumes/types
+      operationId: volumes/types
+      description: 'Get list of supported storage volumes.'
+      responses:
+        '200':
+          description: 'Returns an VolumesTypesResponse object'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolumesTypesResponse'
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -552,7 +631,7 @@ components:
           $ref: '#/components/schemas/CloudAssignedId'
     Cloud:
       type: string
-      example: massedcompute
+      example: hyperstack
       enum:
         - aws
         - azure
@@ -566,11 +645,11 @@ components:
         - datacrunch
         - massedcompute
         - vultr
-      description: 'Specifies the underlying cloud provider. See this [explaination](/getting-started/concepts#cloud-cloud-provider) for more details.'
+      description: 'Specifies the underlying cloud provider. See this [explanation](/getting-started/concepts#cloud-cloud-provider) for more details.'
     Region:
       type: string
-      example: us-central-2
-      description: 'Specifies the region for the instance.'
+      example: 'canada-1'
+      description: 'Specifies the region.'
     Id:
       type: string
       format: uuid
@@ -700,3 +779,132 @@ components:
       type: boolean
       example: false
       description: "Indicates the default key."
+
+    VolumesResponse:
+      type: object
+      required:
+        - volumes
+      properties:
+        volumes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Volume'
+    CreateVolumeRequest:
+      type: object
+      required:
+        - cloud
+        - region
+        - size_in_gb
+        - name
+      properties:
+        cloud:
+          $ref: '#/components/schemas/Cloud'
+        region:
+          $ref: '#/components/schemas/Region'
+        size_in_gb:
+          $ref: '#/components/schemas/VolumeSizeInGB'
+        name:
+          $ref: '#/components/schemas/VolumeName'
+    CreateVolumeResponse:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          $ref: '#/components/schemas/VolumeID'
+    VolumesTypesResponse:
+      type: object
+      required:
+        - volume_types
+      properties:
+        volume_types:
+          $ref: '#/components/schemas/VolumeTypes'
+    Volume:
+      type: object
+      required:
+        - id
+        - cloud
+        - cloud_assigned_id
+        - region
+        - name
+        - fixed_size
+        - size_in_gb
+        - cost_estimate
+        - supports_multi_mount
+        - mounted_by
+      properties:
+        id:
+          $ref: '#/components/schemas/VolumeID'
+        cloud:
+          $ref: '#/components/schemas/Cloud'
+        cloud_assigned_id:
+          $ref: '#/components/schemas/VolumeCloudAssignedId'
+        region:
+          $ref: '#/components/schemas/Region'
+        name:
+          $ref: '#/components/schemas/VolumeName'
+        fixed_size:
+          $ref: '#/components/schemas/VolumeFixedSize'
+        size_in_gb:
+          $ref: '#/components/schemas/VolumeSizeInGB'
+        cost_estimate:
+          $ref: '#/components/schemas/CostEstimate'
+        supports_multi_mount:
+          $ref: '#/components/schemas/VolumeSupportsMultiMount'
+        mounted_by:
+          $ref: '#/components/schemas/VolumeMountedBy'
+    VolumeID:
+      type: string
+      example: '78a0dd5a-dbb1-4568-b55c-5e7e0a8b0c40'
+      description: 'The ID of the storage volume.'
+    VolumeName:
+      type: string
+      example: 'My storage volume'
+      description: 'The name of the storage volume.'
+    VolumeCloudAssignedId:
+      type: string
+      example: '13b057d7-e266-4869-985f-760fe75a78b3'
+      description: 'The unique identifier of the storage volume issued by the underlying cloud provider.'
+    VolumeFixedSize:
+      type: boolean
+      example: true
+      description: 'Denotes whether the volume is fixed in size or elastically scaling.'
+    VolumeSizeInGB:
+      type: integer
+      example: 100
+      description: 'Storage volume size in GB'
+    VolumeCostEstimate:
+      type: string
+      example: '12.01'
+      description: 'Cost incurred by the storage volume'
+    VolumeSupportsMultiMount:
+      type: boolean
+      example: true
+      description: 'Denotes whether the volume supports multiple instances mounting to it at the same time.'
+    VolumeMountedBy:
+      type: string
+      example: '13b057d7-e266-4869-985f-760fe75a78b3'
+      description: 'The ID of the instance that is currently mounting the volume.'
+    VolumePricePerGBPerHour:
+      type: string
+      example: '0.0001'
+      description: 'Price of the specified volume type per GB per hour'
+    VolumeTypes:
+      type: object
+      required:
+        - cloud
+        - region
+        - supports_multi_mount
+        - fixed_size
+        - price_per_gb_per_hour
+      properties:
+        cloud:
+          $ref: '#/components/schemas/Cloud'
+        region:
+          $ref: '#/components/schemas/Region'
+        supports_multi_mount:
+          $ref: '#/components/schemas/VolumeSupportsMultiMount'
+        fixed_size:
+          $ref: '#/components/schemas/VolumeFixedSize'
+        price_per_gb_per_hour:
+          $ref: '#/components/schemas/VolumePricePerGBPerHour'

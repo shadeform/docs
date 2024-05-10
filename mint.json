@@ -74,11 +74,21 @@
     {
       "group": "SSH Keys",
       "pages": [
-        "api-reference/sshkeys/sshkeys",
         "api-reference/sshkeys/sshkeys-add",
-        "api-reference/sshkeys/sshkeys-delete",
         "api-reference/sshkeys/sshkeys-info",
+        "api-reference/sshkeys/sshkeys-delete",
+        "api-reference/sshkeys/sshkeys",
         "api-reference/sshkeys/sshkeys-setdefault"
+      ]
+    },
+    {
+      "group": "Volumes",
+      "pages": [
+        "api-reference/volumes/volumes-create",
+        "api-reference/volumes/volumes-info",
+        "api-reference/volumes/volumes-delete",
+        "api-reference/volumes/volumes-types",
+        "api-reference/volumes/volumes"
       ]
     },
     {
