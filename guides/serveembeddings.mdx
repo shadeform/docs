@@ -1,0 +1,126 @@
+---
+title: 'Serve Embeddings'
+icon: 'webhook'
+iconType: 'solid'
+---
+
+### Intro
+Embedding and Re-Ranker models are important backbones for RAG and other AI applications with chained calls to LLMs.
+They help efficiently organize a body of knowledge and prepare it for an LLM to generate tokens. 
+Finetuning embeddings can also provide performance improvements over generic embedding models for your apps and workflows.
+In this guide, we will show you how you can serve an embedding model using 'Text-Embeddings-Inference` from Hugging Face for online inference.
+This framework runs inference very quicky and can handle large batch sizes.
+
+### Setup
+This guide builds off of our others for [finding the best gpu](https://docs.shadeform.ai/findingmostaffordablegpus).
+
+We have a python notebook already to go for you to deploy this model that you can [find here](https://github.com/shadeform/examples/blob/main/basic_serving_embeddigns_tei.ipynb).
+The requirements are simple, so in a python environment with `requests` installed:
+
+```bash
+git clone https://github.com/shadeform/examples.git
+cd examples/
+```
+Then in `basic_serving_embeddings_tei.ipynb` you will need to input your [Shadeform API Key](https://platform.shadeform.ai/settings/api).
+
+### Configuring our Server
+
+Once we have an instance, we deploy a `Text-Embedding-Inference` container with this request payload.
+
+``` python
+model_id = "BAAI/bge-base-en-v1.5"
+
+payload = {
+  "cloud": best_instance["cloud"],
+  "region": region,
+  "shade_instance_type": shade_instance_type,
+  "shade_cloud": True,
+  "name": "text_embeddings_inference_server",
+  "launch_configuration": {
+    "type": "docker", 
+    "docker_configuration": {
+      "image": "ghcr.io/huggingface/text-embeddings-inference",
+      "args": "--model-id " + model_id,
+      "port_mappings": [
+        {
+          "container_port": 80,
+          "host_port": 8000
+        }
+      ]
+    }
+  }
+}
+```
+
+Note that we are mapping the container's port 80 to the host's port 8000. `Text-Embeddings-Inference` by default serves on port 80, but many higher level frameworks expect the server to host on port 8000.
+
+#### Tailoring your image to hardware version
+Shadeform supports multiple different versions and generations of GPUs, as does `Text-Embeddings-Inference`. But not all features are available on every hardware version, and there may be reliability issues that arize.
+Luckily, Hugging Face put out a list of [docker images](https://github.com/huggingface/text-embeddings-inference?tab=readme-ov-file#docker-images) for each hardware platform for the best performance and support. 
+We use the general base image as it works for the A6000 GPUs that we're using in this guide, and is somewhat flexible.
+
+You can substitute the image that you need above in the `image` key in the payload.
+
+### Serving Embeddings
+We can deploy our server to this instance by POST'ing the request like so: 
+``` python
+response = requests.request("POST", create_url, json=payload, headers=headers)
+#easy way to visually see if this request worked
+print(response.text)
+```
+
+Once we request it, Shadeform will provision the machine, and deploy a docker container based on the image, arguments, and environment variables that we selected.
+This might take 5-10 minutes depending on the machine chosen and the size of the model weights you choose.
+For more information on the API fields, check out the [Create Instance API Reference](https://docs.shadeform.ai/api-reference/endpoint/instances-create).
+
+### Checking on our server
+
+There are four main steps that we need to wait for: VM Provisioning, image downloading and startup, spinning up `Text-Embeddings-Inference`, and downloading the model.
+Luckily, `Text-Embeddings-Inference` is optimized for serverless use cases with a small image size, and embedding models are usually small compared to LLM's.
+
+```python
+instance_response = requests.request("GET", base_url, headers=headers)
+ip_addr = ""
+print(instance_response.text)
+instance = json.loads(instance_response.text)["instances"][0]
+instance_status = instance['status']
+if instance_status == 'active':
+    print(f"Instance is active with IP: {instance['ip']}")
+    ip_addr = instance['ip']
+else:
+    print(f"Instance isn't yet active: {instance}" )
+```
+This cell will print the IP address once it has provisioned. Generally the server should be ready a few minutes after the IP shows up from downloading the image and model.
+
+Or once we've made the request, we can watch the logs under [Running Instances](https://platform.shadeform.ai/instances). Once it is ready to serve it should look something like this:
+![StartedServing](/images/startedserving_tei.png)
+
+### Querying our Server
+
+<CodeGroup>
+``` python cURL
+# Copy the ip address printed above 
+curl XX.XX.XXX.XX/embed \
+    -X POST \
+    -d '{"inputs":"What is the meaning of life?"}' \
+    -H 'Content-Type: application/json'
+```
+
+```python requests
+server_headers = {
+    'Content-Type': 'application/json',
+}
+
+json_data = {
+    'inputs': 'What is the meaning of life?',
+}
+
+embedding_response = requests.post(f'http://{ip_addr}:8000/embed', headers=server_headers, json=json_data)
+
+print(embedding_response.text)
+```
+
+</CodeGroup>
+
+### What's Next
+You now can serve your own embedding models for your RAG, Search and other AI applications on Shadeform, giving you more control over your applications at more affordable prices. We'll show in future guides more details on how to do this.

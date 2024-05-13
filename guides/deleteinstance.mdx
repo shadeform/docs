@@ -1,0 +1,60 @@
+---
+title: 'Stopping GPU Instances'
+icon: 'octagon'
+iconType: 'solid'
+---
+
+### Intro
+Stopping Instances helps save money on GPU deployments when you're not using them. The Shadeform API enables programmatically stopping instances, which saves money and enables new use cases.
+
+### Setup
+Let's assume that you have a Shadeform API key from [here](https://platform.shadeform.ai/settings/api), 
+and an active instance. If you need an active instance, then 
+[this guide](https://docs.shadeform.ai/findingmostaffordablegpus) will help you get set up.
+
+### Deleting an instance:
+
+Using the API, let's list our active instances:
+<CodeGroup>
+```python Python
+base_url = "https://api.shadeform.ai/v1/instances"
+headers = {
+    "X-API-KEY": "<api-key>", 
+    "Content-Type" : "application/json"
+}
+instance_response = requests.request("GET", base_url, headers=headers)
+print(instance_response)
+```
+```bash cURL
+curl --request GET \
+  --url https://api.shadeform.ai/v1/instances \
+  --header 'X-API-KEY: <api-key>'
+```
+</CodeGroup>
+
+
+To delete this instance, we'll use the ID of the instance that we want to delete to make a delete request. 
+<CodeGroup>
+```python Python
+instances = json.loads(instance_response.text)['instances']
+# We will specifically be looking to stop the first instance in the list.
+# Note that this requires at least one active instance
+instance_id = instances[0]['id']
+delete_url = base_url + '/' + instance_id + '/delete'
+delete_response = requests.request("POST", delete_url, headers=headers)
+print(delete_response)
+```
+
+```bash cURL
+# Copy the instance id from above that you'd like to stop/delete
+curl --request POST \
+  --url https://api.shadeform.ai/v1/instances/{id}/delete \
+  --header 'X-API-KEY: <api-key>'
+
+```
+</CodeGroup>
+
+Just like that, we've stopped a running instance. While we had a human in the loop, this can all be done without human involvement once compute jobs are finished.
+
+### Next Steps:
+We alluded to the fact that stopping instances enables new use cases. Be on the lookout as we showcase some of these here 👀.

@@ -1,5 +1,138 @@
 ---
-title: 'Serve LLM Using TGI'
-icon: 'comment'
-iconType: 'solid'
+title: "Serve LLM Using TGI"
+icon: "comment"
+iconType: "solid"
 ---
+
+### Intro
+
+Model Deployment is a very common GPU use case. [Text-Generation-Inference](https://github.com/huggingface/text-generation-inference) (`TGI`) is a popular framework to run inference on LLM's from Hugging Face.
+
+With Shadeform, it's easy to deploy models right to the most affordable gpu's in the market with just a few commands.
+
+In this guide, we will deploy [Mistral-7b-v0.1](https://huggingface.co/mistralai/Mistral-7B-v0.1) with `TGI` onto an A6000. This guide is very similar to our [vLLM guide]() with a few changes to change the inference framework.
+
+```bash
+git clone https://github.com/shadeform/examples.git
+cd examples/
+```
+
+Then in `serve_tgi.ipynb` you will need to input your [Shadeform API Key](https://platform.shadeform.ai/settings/api).
+
+### Serving a Model
+
+Once we have an instance, we deploy a model serving container with this request payload.
+
+```python
+model_id = "mistralai/Mistral-7B-v0.1"
+port = 8000
+
+#If the model you need requires authenticated access, paste your Hugging Face api key here
+huggingface_token = ""
+
+payload = {
+  "cloud": best_instance["cloud"],
+  "region": region,
+  "shade_instance_type": shade_instance_type,
+  "shade_cloud": True,
+  "name": "text_generation_inference_server",
+  "launch_configuration": {
+    "type": "docker",
+    "docker_configuration": {
+      "image": "ghcr.io/huggingface/text-generation-inference:1.4",
+      "args": "--model-id " + model_id + f" --port {port}",
+      "envs": [],
+      "port_mappings": [
+        {
+          "container_port": 8000,
+          "host_port": 8000
+        }
+      ]
+    }
+  }
+}
+
+#Add another environment variable to the payload by adding a json
+if huggingface_token != "":
+  token_env_json = {
+    "name": "HUGGING_FACE_HUB_TOKEN",
+    "value" : huggingface_token
+  }
+  payload["launch_configuration"]["docker_configuration"]["envs"].append(token_env_json)
+
+#request the best instance that is available
+response = requests.request("POST", create_url, json=payload, headers=headers)
+#easy way to visually see if this request worked
+print(response.text)
+```
+
+Once we request it, Shadeform will provision the machine, and deploy a docker container with the image, arguments, and environment variables provided. In this case, it will deploy an openai compatible server with `TGI` serving Mistral-7b-v0.1.
+This might take 5-10 minutes depending on the machine chosen and the size of the model weights you choose.
+
+For more information on the API fields, check out the [Create Instance API Reference](https://docs.shadeform.ai/api-reference/endpoint/instances-create).
+
+### Checking on our Model server
+
+There are four main steps that we need to wait for: VM Provisioning, image downloading and startup, spinning up `TGI`, and downloading the model.
+
+```python
+instance_response = requests.request("GET", base_url, headers=headers)
+ip_addr = ""
+print(instance_response.text)
+instance = json.loads(instance_response.text)["instances"][0]
+instance_status = instance['status']
+if instance_status == 'active':
+    print(f"Instance is active with IP: {instance['ip']}")
+    ip_addr = instance['ip']
+else:
+    print(f"Instance isn't yet active: {instance}" )
+```
+
+This cell will print the IP address once it has provisioned. However, the image needs to download, and `TGI` needs to download the model and spin up, which should take a few minutes.
+
+#### Watch via the notebook
+
+Once the model is ready, this code will output the model list and a response to our query. We can use either requests or OpenAI's completions library.
+
+<CodeGroup>
+``` python requests
+tgi_headers = {
+    'Content-Type': 'application/json',
+}
+
+json_data = {
+'model': model_id,
+'prompt': 'New York City is the',
+'max_tokens': 7,
+}
+
+completion_response = requests.post(f'http://{ip_addr}:{port}/v1/completions', headers=tgi_headers, json=json_data)
+
+print(completion_response.text)
+
+````
+
+``` python openai
+#Alternatively, you can call this with the Open AI library, but requires that installed
+from openai import OpenAI
+
+# Modify OpenAI's API key and API base to use vLLM's API server.
+openai_api_key = "EMPTY"
+openai_api_base = f"http://{ip_addr}:{port}/v1"
+client = OpenAI(
+    api_key=openai_api_key,
+    base_url=openai_api_base,
+)
+completion = client.completions.create(model=model_id,
+                                      prompt='New York City is the',
+                                      max_tokens=7)
+print("Completion result:", completion)
+
+````
+
+</CodeGroup>
+#### Watching with the Shadeform UI
+Or once we've made the request, we can watch the logs under [Running Instances](https://platform.shadeform.ai/instances). Once it is ready to serve it should look something like this:
+![StartedServing](/images/startedserving_tgi.png)
+
+Happy Serving!

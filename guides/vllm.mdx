@@ -4,6 +4,7 @@ icon: 'microchip'
 iconType: 'solid'
 ---
 
+### Intro
 Model Deployment is a very common GPU use case. With Shadeform, it's easy to deploy models right to the most affordable gpu's in the market with just a few commands.
 
 In this guide, we will deploy [Mistral-7b-v0.1](https://huggingface.co/mistralai/Mistral-7B-v0.1) with vLLM onto an A6000.
@@ -25,6 +26,9 @@ Then in `basic_serving_vllm.ipynb` you will need to input your [Shadeform API Ke
 Once we have an instance, we deploy a model serving container with this request payload.
 
 ```python
+#If the model you need requires authenticated access, paste your key here. Needed for Mistral.
+huggingface_token = ""
+
 model_id = "mistralai/Mistral-7B-v0.1"
 
 payload = {
@@ -35,7 +39,6 @@ payload = {
   "name": "cool_gpu_server",
   "launch_configuration": {
     "type": "docker",
-     #This selects the image to launch, and sets environment variables "tasks" and "num_fewshot"
     "docker_configuration": {
       "image": "vllm/vllm-openai:latest",
       "args": "--model " + model_id,
@@ -50,21 +53,28 @@ payload = {
   }
 }
 
+#Add another environment variable to the payload by adding a json
+if huggingface_token != "":
+  token_env_json = {
+    "name": "HUGGING_FACE_HUB_TOKEN",
+    "value" : huggingface_token
+  }
+  payload["launch_configuration"]["docker_configuration"]["envs"].append(token_env_json)
+
 #request the best instance that is available
 response = requests.request("POST", create_url, json=payload, headers=headers)
 #easy way to visually see if this request worked
 print(response.text)
 ```
 
-Once we request it, Shadeform will provision the machine, and deploy a docker container based on the image, arguments, and environment variables that we selected.
+Once we request it, Shadeform will provision the machine, and deploy a docker container with the image, arguments, and environment variables provided. In this case, it will deploy an openai compatible server with `vLLM` serving Mistral-7b-v0.1.
 This might take 5-10 minutes depending on the machine chosen and the size of the model weights you choose.
-For more information on the API fields, check out the [Create Instance API Reference](https://docs.shadeform.ai/api-reference/endpoint/instances-create).
 
-We can see that this will deploy an openai compatible server with vLLM serving Mistral-7b-v0.1.
+For more information on the API fields, check out the [Create Instance API Reference](https://docs.shadeform.ai/api-reference/endpoint/instances-create).
 
 ### Checking on our Model server
 
-There are three main steps that we need to wait for: VM Provisioning, image building, and spinning up vLLM.
+There are four main steps that we need to wait for: VM Provisioning, image downloading and startup, spinning up vLLM, and downloading the model.
 
 ```python
 instance_response = requests.request("GET", base_url, headers=headers)
