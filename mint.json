@@ -55,6 +55,7 @@
         "guides/dockercontainers",
         "guides/startupscript",
         "guides/jupyter",
+        "guides/sshkeys",
         "guides/mostaffordablegpus",
         "guides/vllm",
         "guides/firewall",
