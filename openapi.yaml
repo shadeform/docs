@@ -55,7 +55,7 @@ paths:
         - in: query
           name: shade_instance_type
           schema:
-            type: integer
+            type: string
           example: A100_80G
           description: "Filter the instance type results by the shade instance type."
         - in: query
