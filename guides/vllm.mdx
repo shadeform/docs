@@ -11,7 +11,7 @@ In this guide, we will deploy [Mistral-7b-v0.1](https://huggingface.co/mistralai
 
 ### Setup
 
-This guide builds off of our others for [finding the best gpu](https://docs.shadeform.ai/findingmostaffordablegpus) and for [deploying gpu containers](https://docs.shadeform.ai/deployinggpucontainers).
+This guide builds off of our others for [finding the best gpu](/guides/mostaffordablegpus) and for [deploying gpu containers](/guides/dockercontainers).
 We have a python notebook already to go for you to deploy this model that you can [find here](https://github.com/shadeform/examples/blob/main/basic_serving_vllm.ipynb).
 The requirements are simple, so in a python environment with (`requests` + optionally `openai`) installed:
 
@@ -70,7 +70,7 @@ print(response.text)
 Once we request it, Shadeform will provision the machine, and deploy a docker container with the image, arguments, and environment variables provided. In this case, it will deploy an openai compatible server with `vLLM` serving Mistral-7b-v0.1.
 This might take 5-10 minutes depending on the machine chosen and the size of the model weights you choose.
 
-For more information on the API fields, check out the [Create Instance API Reference](https://docs.shadeform.ai/api-reference/endpoint/instances-create).
+For more information on the API fields, check out the [Create Instance API Reference](/api-reference/instances/instances-create).
 
 ### Checking on our Model server
 

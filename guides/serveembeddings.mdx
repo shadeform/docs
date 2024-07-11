@@ -12,9 +12,9 @@ In this guide, we will show you how you can serve an embedding model using 'Text
 This framework runs inference very quicky and can handle large batch sizes.
 
 ### Setup
-This guide builds off of our others for [finding the best gpu](https://docs.shadeform.ai/findingmostaffordablegpus).
+This guide builds off of our others for [finding the best gpu](/guides/mostaffordablegpus).
 
-We have a python notebook already to go for you to deploy this model that you can [find here](https://github.com/shadeform/examples/blob/main/basic_serving_embeddigns_tei.ipynb).
+We have a python notebook already to go for you to deploy this model that you can [find here](https://github.com/shadeform/examples/blob/main/serving_embeddings_tei.ipynb).
 The requirements are simple, so in a python environment with `requests` installed:
 
 ```bash
@@ -71,7 +71,7 @@ print(response.text)
 
 Once we request it, Shadeform will provision the machine, and deploy a docker container based on the image, arguments, and environment variables that we selected.
 This might take 5-10 minutes depending on the machine chosen and the size of the model weights you choose.
-For more information on the API fields, check out the [Create Instance API Reference](https://docs.shadeform.ai/api-reference/endpoint/instances-create).
+For more information on the API fields, check out the [Create Instance API Reference](/api-reference/instances/instances-create).
 
 ### Checking on our server
 

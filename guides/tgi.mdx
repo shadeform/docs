@@ -10,7 +10,7 @@ Model Deployment is a very common GPU use case. [Text-Generation-Inference](http
 
 With Shadeform, it's easy to deploy models right to the most affordable gpu's in the market with just a few commands.
 
-In this guide, we will deploy [Mistral-7b-v0.1](https://huggingface.co/mistralai/Mistral-7B-v0.1) with `TGI` onto an A6000. This guide is very similar to our [vLLM guide]() with a few changes to change the inference framework.
+In this guide, we will deploy [Mistral-7b-v0.1](https://huggingface.co/mistralai/Mistral-7B-v0.1) with `TGI` onto an A6000. This guide is very similar to our [vLLM guide](/guides/vllm) with a few changes to change the inference framework.
 
 ```bash
 git clone https://github.com/shadeform/examples.git
@@ -69,7 +69,7 @@ print(response.text)
 Once we request it, Shadeform will provision the machine, and deploy a docker container with the image, arguments, and environment variables provided. In this case, it will deploy an openai compatible server with `TGI` serving Mistral-7b-v0.1.
 This might take 5-10 minutes depending on the machine chosen and the size of the model weights you choose.
 
-For more information on the API fields, check out the [Create Instance API Reference](https://docs.shadeform.ai/api-reference/endpoint/instances-create).
+For more information on the API fields, check out the [Create Instance API Reference](/api-reference/instances/instances-create).
 
 ### Checking on our Model server
 
