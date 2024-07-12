@@ -110,7 +110,7 @@ completion_response = requests.post(f'http://{ip_addr}:{port}/v1/completions', h
 
 print(completion_response.text)
 
-````
+```
 
 ``` python openai
 #Alternatively, you can call this with the Open AI library, but requires that installed
@@ -128,7 +128,7 @@ completion = client.completions.create(model=model_id,
                                       max_tokens=7)
 print("Completion result:", completion)
 
-````
+```
 
 </CodeGroup>
 #### Watching with the Shadeform UI
