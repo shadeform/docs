@@ -613,7 +613,7 @@ components:
       type: object
       required:
         - image
-      description: "May only be used if launch_configuration.type is 'docker'. Use docker_configuration to automatically pull and run a docker image. See this [tutorial](http://localhost:3000/guides/dockercontainers) for examples."
+      description: "May only be used if launch_configuration.type is 'docker'. Use docker_configuration to automatically pull and run a docker image. See this [tutorial](/guides/dockercontainers) for examples."
       properties:
         image:
           type: string
@@ -646,7 +646,7 @@ components:
       type: object
       required:
         - base64_script
-      description: "May only be used if launch_configuration.type is 'script'. Configures a startup script to be run automatically after the instance is active. See this [tutorial](http://localhost:3000/guides/startupscript) for examples."
+      description: "May only be used if launch_configuration.type is 'script'. Configures a startup script to be run automatically after the instance is active. See this [tutorial]/guides/startupscript) for examples."
       properties:
         base64_script:
           type: string
@@ -745,15 +745,15 @@ components:
     ShadeInstanceType:
       type: string
       example: A6000
-      description: 'The Shadeform standardized instance type. See this [explanation](http://localhost:3000/getting-started/concepts#shade-instance-type-and-cloud-instance-type) for more details.'
+      description: 'The Shadeform standardized instance type. See this [explanation](/getting-started/concepts#shade-instance-type-and-cloud-instance-type) for more details.'
     ShadeCloud:
       type: boolean
       example: true
-      description: 'Specifies if the instance is launched in [Shade Cloud](http://localhost:3000/getting-started/concepts#shade-cloud) or in a linked cloud account.'
+      description: 'Specifies if the instance is launched in [Shade Cloud](/getting-started/concepts#shade-cloud) or in a linked cloud account.'
     CloudInstanceType:
       type: string
       example: gpu_1x_a6000
-      description: 'The instance type for the underlying cloud provider. See this [explanation](http://localhost:3000/getting-started/concepts#shade-instance-type-and-cloud-instance-type) for more details.'
+      description: 'The instance type for the underlying cloud provider. See this [explanation](/getting-started/concepts#shade-instance-type-and-cloud-instance-type) for more details.'
     HourlyPrice:
       type: integer
       example: 210
