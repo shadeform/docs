@@ -57,9 +57,12 @@
         "guides/jupyter",
         "guides/sshkeys",
         "guides/mostaffordablegpus",
+        "guides/deleteinstance",
         "guides/vllm",
+        "guides/serveembeddings",
         "guides/firewall",
-        "guides/benchmark"
+        "guides/benchmark",
+        "guides/tgi"
       ]
     },
     {
