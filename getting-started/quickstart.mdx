@@ -194,7 +194,7 @@ You can query this API on a loop until `status` changes from `pending` to `activ
 ```
 
 ### SSHing into the instance
-Once the instance's status is  `active`, we can now SSH into the GPU instance. In order to access the GPU instance, you will need to download your Shadeform [generated private key](https://platform.shadeform.ai). Once you have the private key downloaded, you will need to update the permissions on the key.
+Once the instance's status is  `active`, we can now SSH into the GPU instance. In order to access the GPU instance, you will need to download your Shadeform [generated private key](https://platform.shadeform.ai/settings/ssh-keys). Once you have the private key downloaded, you will need to update the permissions on the key.
 ``` bash Update Private Key Permissions
 chmod 600 ~/Downloads/private_key.pem
 ```
