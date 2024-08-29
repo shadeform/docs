@@ -151,7 +151,7 @@ paths:
                 $ref: '#/components/schemas/SshKeysResponse'
   '/sshkeys/add':
     post:
-      summary: /sshkey/add
+      summary: /sshkeys/add
       operationId: Add
       description: 'Add a new SSH Key'
       requestBody:
