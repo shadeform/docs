@@ -359,8 +359,15 @@ components:
           example:
             - region: us-central-1
               available: true
+              display_name: US, Wichita, KS
             - region: us-central-2
               available: false
+              display_name: US, Wichita, KS
+        boot_time:
+          type: object
+          example: 
+            min_boot_in_sec: 180
+            max_boot_in_sec: 300
     InstancesResponse:
       type: object
       required:
