@@ -78,7 +78,11 @@ From array of results returned, we can see that the A100_80G instance from RunPo
           "region": "any",
           "available": true
         }
-      ]
+      ],
+      "boot_time": {
+        "min_boot_in_sec": 180,
+        "max_boot_in_sec": 300
+      }
     },
     ...
   ]
@@ -134,9 +138,14 @@ From array of results returned, we can see that the 8xH100 instance from Oblivus
       "availability": [
         {
           "region": "MON1",
-          "available": true
+          "available": true,
+          "display_name": "CA, Montreal"
         }
-      ]
+      ],
+      "boot_time": {
+        "min_boot_in_sec": 180,
+        "max_boot_in_sec": 300
+      }
     },
   ]
   ...
@@ -192,10 +201,15 @@ After we remove the `available=true` parameter, we now see the top result as Mas
       "availability": [
         {
           "region": "us-central-2",
-          "available": false
+          "available": false,
+          "display_name": "US, Kansas City, KS"
         }
-      ]
-    },
+      ],
+      "boot_time": {
+        "min_boot_in_sec": 180,
+        "max_boot_in_sec": 300
+      }
+    }
   ]
   ...
 }
@@ -249,9 +263,14 @@ From array of results returned, we can see that the A6000 instance from RunPod i
       "availability": [
         {
           "region": "us-central-2",
-          "available": true
+          "available": true,
+          "display_name": "US, Kansas City, KS"
         }
-      ]
+      ],
+      "boot_time": {
+        "min_boot_in_sec": 180,
+        "max_boot_in_sec": 300
+      }
     },
   ...
   ]
