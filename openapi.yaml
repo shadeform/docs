@@ -20,7 +20,7 @@ paths:
       description: 'Get active and pending instances.'
       responses:
         '200':
-          description: 'Returns an InstancesResponse object'
+          description: 'Returns an InstancesResponse object.'
           content:
             application/json:
               schema:
