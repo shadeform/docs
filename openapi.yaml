@@ -136,7 +136,7 @@ paths:
       description: "Delete an instance. Some cloud providers may only allow deletion of an instance after it has moved to the 'active' status."
       responses:
         '200':
-          description: 'Confirms the deletion of an instance'
+          description: 'Confirms the deletion of an instance.'
   '/sshkeys':
     get:
       summary: /sshkeys
