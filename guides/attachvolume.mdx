@@ -1,0 +1,197 @@
+---
+title: 'Setup a Volume'
+icon: 'database'
+iconType: 'solid'
+---
+
+Volumes provide persistent block storage that can be attached to instances for storing data independently of the instance lifecycle. This makes them ideal for scenarios where you need to maintain critical data even after instances are deleted or replaced. Volumes can be reused and mounted across multiple instances, providing flexibility and durability for your storage needs.
+
+In this guide, we will cover how to create a volume, attach it to an instance, and verify that it is mounted via the Shadeform API. This process involves creating a volume first, launching an instance with the volume attached, and confirming the volume on the instance.
+
+### Prerequisites
+
+There are two pre-requisites for this guide:
+1. After you have created your account, you must top up your wallet [here](https://platform.shadeform.ai/settings/billing).
+2. After you have topped up your wallet, generate and retrieve your Shadeform API key [here](https://platform.shadeform.ai/settings/api).
+
+### Step 1: Check Available Volume Types
+
+To create a volume, you first need to know what volume types are available. Use the [`/volumes/types`](https://docs.shadeform.ai/api-reference/volumes/volumes-types) endpoint to fetch this information.
+
+<CodeGroup>
+  ```bash CLI
+  # Retrieve available volume types
+  curl --location 'https://api.shadeform.ai/v1/volumes/types' \
+  --header 'x-api-key: <api-key>'
+  ```
+</CodeGroup>
+
+**Example Response**
+
+The response will list the supported volume types. Here is an example (this is example data and may not have correct values):
+
+```json Response
+{
+  "volume_types": [
+    {
+      "cloud": "datacrunch",
+      "region": "FIN-01",
+      "supports_multiple_mounts": false,
+      "fixed_size": true,
+      "price_per_gb_per_hour": "0.00028"
+    },
+    {
+      "cloud": "nebius",
+      "region": "eu-north1",
+      "supports_multiple_mounts": false,
+      "fixed_size": true,
+      "price_per_gb_per_hour": ".000097"
+    },
+    {
+      "cloud": "digitalocean",
+      "region": "tor1",
+      "supports_multiple_mounts": false,
+      "fixed_size": true,
+      "price_per_gb_per_hour": ".000084"
+    },
+  ]
+}
+```
+
+Take note of the `cloud` and `region` fields for the next step.
+
+---
+
+### Step 2: Create a Volume
+
+Now that you know the volume type and region, create the volume using the [`/volumes/create`](https://docs.shadeform.ai/api-reference/volumes/volumes-create) API.
+
+<Note> Your volume and instance will need to have the same cloud provider, and be in the same region to work </Note>
+
+Replace `<api-key>` with your API key, and customize the `cloud`, `region`, and `size_in_gb` fields to match your requirements.
+
+<CodeGroup>
+  ```bash CLI
+  # Create a new volume
+  curl --location 'https://api.shadeform.ai/v1/volumes/create' \
+  --header 'x-api-key: <api-key>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+      "cloud": "digitalocean",
+      "region": "tor1",
+      "size_in_gb": 100,
+      "name": "mystoragevolume"
+  }'
+  ```
+</CodeGroup>
+
+**Example Response**
+
+The response will include the `id` of the newly created volume, which will be used to attach it to an instance.
+
+```json Response
+{
+  "id": "df5c952c-0567-4140-94d6-59cee96f8caa"
+}
+```
+
+Save the `id` field as you will need it in the next step.
+
+---
+
+### Step 3: Create an Instance with the Volume Attached
+
+To attach the volume, pass its `id` in the `volume_ids` field while creating the instance using the [`/instances/create`](https://docs.shadeform.ai/api-reference/instances/instances-create) endpoint. 
+
+<Note> "volume_ids" must be an array of size one. This is because we only allow attaching one volume to one instance right now. Attaching multiple volumes to a single instance is a feature we may add in the future. </Note>
+
+<CodeGroup>
+  ```bash CLI
+  # Create an instance with the volume attached
+  curl --location 'https://api.shadeform.ai/v1/instances/create' \
+  --header 'x-api-key: <api-key>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "cloud": "digitalocean",
+    "region": "tor1",
+    "shade_instance_type": "H100_sxm5",
+    "shade_cloud": true,
+    "name": "the-super-cool-digitalocean-server-volume",
+    "volume_ids": ["b1f2c5d3-29ab-4e7b-9f7e-2c35a1e34d4e"] # be sure to include this line
+  }'
+  ```
+</CodeGroup>
+
+**Example Response**
+
+The response will include the `id` for the instance and a `cloud_assigned_id`. Save this for further operations.
+
+```json Response
+{
+  "id": "cc9f6b74-9825-4854-9e9c-dd50c7e97c3a",
+  "cloud_assigned_id": "720f2a6a-e4ee-488a-ade1-e7892f5d730a"
+}
+```
+
+---
+
+### Step 4: Verify the Volume on the Instance
+
+Once the instance is active, SSH into it to verify that the volume has been mounted. Learn how to SSH into a Shadeform instance using [this guide](https://docs.shadeform.ai/getting-started/quickstart#sshing-into-the-instance).
+
+After connecting, run the following command:
+
+```bash
+# List all block devices attached to the instance
+lsblk
+```
+
+This command will display all block devices attached to the instance. You should see your volume listed as a new device, such as `/dev/sdb` or similar.
+
+---
+
+### Step 5: Deleting the Instance and Volume
+
+Before you can delete a volume, you must delete the instance it is attached to.
+
+**Delete the Instance**
+
+Use the [`/instances/delete`](https://docs.shadeform.ai/api-reference/instances/instances-delete) endpoint to remove the instance.
+
+<CodeGroup>
+  ```bash CLI
+  # Delete the instance
+  curl --location 'https://api.shadeform.ai/v1/instances/<instance-id>/delete' \
+  --header 'x-api-key: <api-key>'
+  ```
+</CodeGroup>
+
+Replace `<instance-id>` with the `id` of your instance.
+
+**Delete the Volume**
+
+Once the instance has been deleted, you can safely delete the volume using the [`/volumes/delete`](https://docs.shadeform.ai/api-reference/volumes/volumes-delete) endpoint.
+
+<CodeGroup>
+  ```bash CLI
+  # Delete the volume
+  curl --location 'https://api.shadeform.ai/v1/volumes/<volume-id>/delete' \
+  --header 'x-api-key: <api-key>'
+  ```
+</CodeGroup>
+
+Replace `<volume-id>` with the `id` of the volume.
+
+---
+
+### Summary
+You have successfully created a volume, attached it to an instance, verified the attachment, and learned how to clean up resources. For more details, check out the [Shadeform API reference](https://docs.shadeform.ai/api-reference/volumes/volumes-create).
+
+<CardGroup cols={2}>
+  <Card title="Managing Instances" icon="server" href="/guides/instances">
+    Learn more about managing GPU instances.
+  </Card>
+  <Card title="API Documentation" icon="code" href="/api-reference/volumes/volumes-create">
+    Full API reference for volumes and instances.
+  </Card>
+</CardGroup>

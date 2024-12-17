@@ -968,21 +968,23 @@ components:
       example: '0.0001'
       description: 'Price of the specified volume type per GB per hour'
     VolumeTypes:
-      type: object
-      required:
-        - cloud
-        - region
-        - supports_multi_mount
-        - fixed_size
-        - price_per_gb_per_hour
-      properties:
-        cloud:
-          $ref: '#/components/schemas/Cloud'
-        region:
-          $ref: '#/components/schemas/Region'
-        supports_multi_mount:
-          $ref: '#/components/schemas/VolumeSupportsMultiMount'
-        fixed_size:
-          $ref: '#/components/schemas/VolumeFixedSize'
-        price_per_gb_per_hour:
-          $ref: '#/components/schemas/VolumePricePerGBPerHour'
+      type: array
+      items:
+        type: object
+        required:
+          - cloud
+          - region
+          - supports_multi_mount
+          - fixed_size
+          - price_per_gb_per_hour
+        properties:
+          cloud:
+            $ref: '#/components/schemas/Cloud'
+          region:
+            $ref: '#/components/schemas/Region'
+          supports_multi_mount:
+            $ref: '#/components/schemas/VolumeSupportsMultiMount'
+          fixed_size:
+            $ref: '#/components/schemas/VolumeFixedSize'
+          price_per_gb_per_hour:
+            $ref: '#/components/schemas/VolumePricePerGBPerHour'

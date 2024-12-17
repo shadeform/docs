@@ -59,7 +59,8 @@
         "guides/mostaffordablegpus",
         "guides/vllm",
         "guides/firewall",
-        "guides/benchmark"
+        "guides/benchmark",
+        "guides/attachvolume"
       ]
     },
     {
