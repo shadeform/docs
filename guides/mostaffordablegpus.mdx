@@ -15,7 +15,7 @@ In such cases, we provide an API that can help search for the most affordable GP
 
 ### Using the Instance Types API
 
-We can find the most affordable GPU instances by applying filtering and sorting query params to the [Instance Types API](/api-reference/endpoint/instances-types).
+We can find the most affordable GPU instances by applying filtering and sorting query params to the [Instance Types API](/api-reference/instances/instances-types).
 Without any query parameters, the API returns all of the instance types supported by Shadeform in a random order.
 By using the following query parameters, we can filter down the results and sort them as needed.
 
@@ -278,7 +278,7 @@ From array of results returned, we can see that the A6000 instance from RunPod i
 ```
 
 ### Launching the Instance
-After you have found the most affordable instance, you can launch the instance by using the [Create Instance API](/api-reference/endpoint/instances-create).
+After you have found the most affordable instance, you can launch the instance by using the [Create Instance API](/api-reference/instances/instances-create).
 In the example below, we will launch the most affordable A6000 GPU based on the data retrieved from the API call in the previous section.
 We will take the following properties from the previous response:
 
