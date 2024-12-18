@@ -12,7 +12,7 @@ There are two pre-requisites for this guide:
 2. After you have topped up your wallet, generate and retrieve your Shadeform API key [here](https://platform.shadeform.ai/settings/api).
 
 ### Finding a GPU instance
-Use the [/instances/types](/api-reference/endpoint/instances-types) API to query for your desired instance. For this guide, we will query for the cheapest available A6000 instance. Make sure to replace `<api-key>` with your own API Key retrieved from [here](https://platform.shadeform.ai/settings/api).
+Use the [/instances/types](/api-reference/instances/instances-types) API to query for your desired instance. For this guide, we will query for the cheapest available A6000 instance. Make sure to replace `<api-key>` with your own API Key retrieved from [here](https://platform.shadeform.ai/settings/api).
 
 <CodeGroup>
   ```bash CLI
@@ -75,7 +75,7 @@ You should get a response like the JSON snippet below. The response will have an
 ```
 
 ### Launching the instance
-After we have found the cheapest A6000 that's available, we will launch the GPU instance using the [/instances/create](/api-reference/endpoint/instances-create) API. Using the values from the previous JSON snippet, we can fill in request payload fields for `cloud`, `region`, and `shade_instance_type`.
+After we have found the cheapest A6000 that's available, we will launch the GPU instance using the [/instances/create](/api-reference/instances/instances-create) API. Using the values from the previous JSON snippet, we can fill in request payload fields for `cloud`, `region`, and `shade_instance_type`.
 
 <CodeGroup>
   ```bash CLI
@@ -115,7 +115,7 @@ The response from the API will look like the JSON snippet below. We will need th
 
 ```
 ### Checking the status of the instance
-Now that we have created the GPU instance, we must wait for the instance to spin up. We can check on the status of the instance by calling the [instances/info](/api-reference/endpoint/instancesinfo) API. We will need to use the `id` from the response of the previous step as a URL parameter.
+Now that we have created the GPU instance, we must wait for the instance to spin up. We can check on the status of the instance by calling the [/instances/info](/api-reference/instances/instances-info) API. We will need to use the `id` from the response of the previous step as a URL parameter.
 <CodeGroup>
   ```bash CLI
   curl --request GET \
@@ -213,8 +213,27 @@ ssh -i ~/Downloads/private_key.pem shadeform@<ip>
   If you encounter an error that starts with `WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!`, you can run `ssh-keygen -R <ip>` to reset your saved host info.
 </Note>
 
+### Restarting the instance
+If you ever need to restart an instance, use our [/instances/restart](/api-reference/instances/instances-restart) API using the instance `id` retrieved earlier. Note that a 200 response does not confirm that the instance restarted successfully. It only confirms that the restart request was initiated. You may need to wait a few minutes for the instance to be ready to use again.
+
+<CodeGroup>
+  ```bash CLI
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/instances/1dc915dd-8899-4b4f-862a-f63fb2b3dc3d/restart' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
+  ```python Python
+  Coming soon!
+  ```
+
+  ```golang Go
+  Coming soon!
+  ```
+</CodeGroup>
+
 ### Deleting the instance
-Once you've done with the instance, you can delete the instance by calling the [/instances/delete](/api-reference/endpoint/instancesdelete) API using the instance `id` retrieved earlier.
+Once you've done with the instance, you can delete the instance by calling the [/instances/delete](/api-reference/instances/instances-delete) API using the instance `id` retrieved earlier.
 
 <CodeGroup>
   ```bash CLI

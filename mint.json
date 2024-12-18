@@ -68,6 +68,7 @@
         "api-reference/instances/instances-create",
         "api-reference/instances/instances-info",
         "api-reference/instances/instances-delete",
+        "api-reference/instances/instances-restart",
         "api-reference/instances/instances-types",
         "api-reference/instances/instances"
       ]
