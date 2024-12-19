@@ -137,6 +137,23 @@ paths:
       responses:
         '200':
           description: 'Confirms the deletion of an instance.'
+  '/instances/{id}/restart':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        schema:
+          type: string
+          minimum: 1
+        description: The instance id
+    post:
+      summary: /instances/{id}/restart
+      operationId: Restart
+      description: "Restart an instance. The status of the instance will stay as 'active' throughout, but you may have to wait a few minutes for the instance to be ready to use again."
+      responses:
+        '200':
+          description: 'Confirms the restart of an instance has been initiated. This does not confirm that the instance restarted successfully.'
   '/sshkeys':
     get:
       summary: /sshkeys

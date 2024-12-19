@@ -7,7 +7,7 @@ iconType: 'solid'
 Shadeform primarily provides GPUs as virtual machines (VM).
 Once you launch a Shadeform instance, you're given the IP address and SSH key of the VM.
 However, for many use cases, it's easier to use a pre-built docker container inside of that VM.
-Shadeform supports a [launch configuration](/getting-started/concepts#launch-configuration) in the [Create Instance API](/api-reference/endpoint/instances-create) that allows you to provide a docker container image and properties.
+Shadeform supports a [launch configuration](/getting-started/concepts#launch-configuration) in the [Create Instance API](/api-reference/instances/instances-create) that allows you to provide a docker container image and properties.
 The docker container will be automatically launched on the VM.
 
 <Note>
@@ -17,7 +17,7 @@ The docker container will be automatically launched on the VM.
 ### Basic Example
 For this guide, we will be using the [vLLM container](https://hub.docker.com/r/vllm/vllm-openai/tags) for LLM model serving on an A6000 GPU.
 For a more in-depth guide on using vLLM, see this [guide](/guides/vllm) on running vLLM on Shadeform.
-To launch a VM instance with the vLLM container automatically started, we need to call the [Create Instance API](/api-reference/endpoint/instances-create) with the `launch_configuration` property.
+To launch a VM instance with the vLLM container automatically started, we need to call the [Create Instance API](/api-reference/instances/instances-create) with the `launch_configuration` property.
 
 <CodeGroup>
   ```bash CLI
@@ -54,7 +54,7 @@ In addition to the base [Create Instance API](/getting-started/quickstart#launch
 The `launch_configuration.type` property must be set to `docker` and an additional `docker_configuration` object must be specified.
 In the `docker_configuration` object, we specify `image` as the image that we want to run and `args` as any arguments that should be passed to the container image.
 
-This API call will spin up the base A6000 VM and, once the VM is `active`, pull and launch the docker container. We can get the status and IP address of the instance by calling the [Instances API](/api-reference/endpoint/instances).
+This API call will spin up the base A6000 VM and, once the VM is `active`, pull and launch the docker container. We can get the status and IP address of the instance by calling the [Instances API](/api-reference/instances/instances).
 <Note>
   The `status` returned by the Instances API call is the status of the **VM instance** and not the status of the container. The status of the container is not surfaced through Shadeform's API.
 </Note>
