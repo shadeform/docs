@@ -312,7 +312,7 @@ paths:
       description: 'Get list of supported storage volumes.'
       responses:
         '200':
-          description: 'Returns an VolumesTypesResponse object'
+          description: 'Returns an VolumesTypesResponse object.'
           content:
             application/json:
               schema:
