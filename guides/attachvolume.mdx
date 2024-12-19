@@ -174,7 +174,6 @@ This command will display all block devices attached to the instance. You should
 After verifying the volume is attached, you can mount it to a file system. Find your volume from the `lsblk` command (my volume is called `vdb` in this example) and mount it to a directory using the following commands:
 
 ```bash
-sudo mkdir /dev/vdb
 sudo mkdir /mnt/vdb
 sudo mkfs.ext4 /dev/vdb
 sudo mount -t ext4 /dev/vdb /mnt/vdb/
