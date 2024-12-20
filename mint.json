@@ -52,6 +52,8 @@
       "group": "Guides",
       "pages": [
         "guides/tutoriallibrary",
+        "guides/attachvolume",
+        "guides/sshissues",
         "guides/dockercontainers",
         "guides/startupscript",
         "guides/jupyter",
@@ -59,8 +61,7 @@
         "guides/mostaffordablegpus",
         "guides/vllm",
         "guides/firewall",
-        "guides/benchmark",
-        "guides/attachvolume"
+        "guides/benchmark"
       ]
     },
     {
