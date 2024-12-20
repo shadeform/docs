@@ -120,6 +120,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InstanceInfoResponse'
+  '/instances/{id}/update':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        schema:
+          type: string
+          minimum: 1
+        description: 'The instance id'
+    post:
+      summary: /instances/{id}/update
+      operationId: instances/update
+      description: "Update mutable details about the instance. Set a value to null to delete it. Omit a value or leave undefined to keep unchanged."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateRequest'
+      responses:
+        '200':
+          description: 'Confirms the update of an instance.'
   '/instances/{id}/delete':
     parameters:
       - in: path
@@ -527,6 +549,22 @@ components:
           $ref: '#/components/schemas/SshKeyID'
         launch_configuration:
           $ref: '#/components/schemas/LaunchConfiguration'
+        auto_delete:
+          $ref: '#/components/schemas/AutoDelete'
+        alert:
+          $ref: '#/components/schemas/Alert'
+        volume_mount:
+          $ref: '#/components/schemas/VolumeMount'
+        tags:
+          type: array
+          description: 'Add custom, searchable tags to instances.'
+          items:
+            $ref: '#/components/schemas/Tag'
+        envs:
+          type: array
+          description: 'List of environment variable name and values to automatically add to the instance'
+          items:
+            $ref: '#/components/schemas/Env'
         created_at:
           $ref: '#/components/schemas/CreatedAt'
         deleted_at:
@@ -616,6 +654,38 @@ components:
             $ref: '#/components/schemas/VolumeID'
         ssh_key_id:
           $ref: '#/components/schemas/SshKeyID'
+        auto_delete:
+          $ref: '#/components/schemas/AutoDelete'
+        alert:
+          $ref: '#/components/schemas/Alert'
+        volume_mount:
+          $ref: '#/components/schemas/VolumeMount'
+        tags:
+          type: array
+          description: 'Add custom, searchable tags to instances.'
+          items:
+            $ref: '#/components/schemas/Tag'
+        envs:
+          type: array
+          description: 'List of environment variable name and values to automatically add to the instance'
+          items:
+            $ref: '#/components/schemas/Env'
+
+    UpdateRequest:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/Name'
+        auto_delete:
+          $ref: '#/components/schemas/AutoDelete'
+        alert:
+          $ref: '#/components/schemas/Alert'
+        tags:
+          type: array
+          description: 'Add custom, searchable tags to instances.'
+          items:
+            $ref: '#/components/schemas/Tag'
+
     LaunchConfiguration:
       type: object
       required:
@@ -861,7 +931,40 @@ components:
     SshKeyID:
       type: string
       example: '78a0dd5a-dbb1-4568-b55c-5e7e0a8b0c40'
-      description: "The ID of the SSH Key."
+      description: 'The ID of the SSH Key.'
+    AutoDelete:
+      type: object
+      description: 'Set a date or spend threshold to automatically delete the instance'
+      properties:
+        date_threshold:
+          $ref: '#/components/schemas/DateThreshold'
+        spend_threshold:
+          $ref: '#/components/schemas/SpendThreshold'
+    Alert:
+      type: object
+      description: 'Set a date or spend threshold to receive an email alert'
+      properties:
+        date_threshold:
+          $ref: '#/components/schemas/DateThreshold'
+        spend_threshold:
+          $ref: '#/components/schemas/SpendThreshold'
+    DateThreshold:
+      type: string
+      example: '2006-01-02T15:04:05-07:00'
+      description: 'RFC3339 date string'
+    SpendThreshold:
+      type: string
+      example: '3.14'
+      description: 'Valid decimal representation of a dollar amount'
+    VolumeMount:
+      type: object
+      description: 'Settings for mounting volumes onto file systems'
+      properties:
+        auto:
+          type: boolean
+          description: 'Set to true to automatically mount unmounted disks to a default filesystem.'
+
+
     SshKeyName:
       type: string
       example: 'My ssh key'
@@ -874,6 +977,10 @@ components:
       type: boolean
       example: false
       description: "Indicates the default key."
+    Tag:
+      type: string
+      example: "tag1"
+      description: "Tag for searching and grouping"
 
     VolumesResponse:
       type: object
