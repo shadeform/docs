@@ -366,6 +366,7 @@ components:
         - cloud_instance_type
         - configuration
         - hourly_price
+        - deployment_type
         - availability
       properties:
         cloud:
@@ -391,6 +392,8 @@ components:
                   description: 'The list of available operating systems for the instance.'
         hourly_price:
           $ref: '#/components/schemas/HourlyPrice'
+        deployment_type:
+          $ref: '#/components/schemas/DeploymentType'
         availability:
           type: array
           items:
@@ -852,6 +855,10 @@ components:
       type: integer
       example: 210
       description: 'The hourly price of the instance in cents.'
+    DeploymentType:
+      type: string
+      example: vm
+      description: 'Whether the instance is a "vm" (virtual machine), a "container" (docker container), or "baremetal" (bare metal server).'
     Ip:
       type: string
       example: 1.0.0.1
