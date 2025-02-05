@@ -61,7 +61,8 @@
         "guides/mostaffordablegpus",
         "guides/vllm",
         "guides/firewall",
-        "guides/benchmark"
+        "guides/benchmark",
+        "guides/templates"
       ]
     },
     {
@@ -94,6 +95,17 @@
         "api-reference/volumes/volumes-delete",
         "api-reference/volumes/volumes-types",
         "api-reference/volumes/volumes"
+      ]
+    },
+    {
+      "group": "Templates",
+      "pages": [
+        "api-reference/templates/templates",
+        "api-reference/templates/templates-info",
+        "api-reference/templates/templates-featured",
+        "api-reference/templates/templates-save",
+        "api-reference/templates/templates-update",
+        "api-reference/templates/templates-delete"
       ]
     },
     {
