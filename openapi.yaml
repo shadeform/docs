@@ -689,7 +689,7 @@ components:
         storage_in_gb:
           type: integer
           example: 256
-          description: 'The amount of storage for the instance. If this storage is too low for the instance type, please email founders@shadeform.ai as the storage may be adjustable.'
+          description: 'The amount of storage for the instance. If this storage is too low for the instance type, please email support@shadeform.ai as the storage may be adjustable.'
         vcpus:
           type: integer
           example: 6
