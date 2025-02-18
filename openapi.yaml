@@ -577,6 +577,11 @@ components:
           $ref: '#/components/schemas/HourlyPrice'
         launch_configuration:
           $ref: '#/components/schemas/LaunchConfiguration'
+        port_mappings:
+          type: array
+          description: 'List of port mappings on an instance that a Cloud Provider might have automatically set up.'
+          items:
+            $ref: '#/components/schemas/InstancePortMappings'
         created_at:
           $ref: '#/components/schemas/CreatedAt'
         deleted_at:
@@ -665,6 +670,11 @@ components:
           description: 'List of environment variable name and values to automatically add to the instance'
           items:
             $ref: '#/components/schemas/Env'
+        port_mappings:
+          type: array
+          description: 'List of port mappings on an instance that a Cloud Provider might have automatically set up.'
+          items:
+            $ref: '#/components/schemas/InstancePortMappings'
         created_at:
           $ref: '#/components/schemas/CreatedAt'
         deleted_at:
@@ -1048,6 +1058,16 @@ components:
           $ref: '#/components/schemas/DateThreshold'
         spend_threshold:
           $ref: '#/components/schemas/SpendThreshold'
+    InstancePortMappings:
+      type: object
+      description: 'List of port mappings on an instance that a Cloud Provider might have automatically set up.'
+      properties:
+        internal_port:
+          type: integer
+          example: 8000
+        external_port:
+          type: integer
+          example: 80   
     Alert:
       type: object
       description: 'Set a date or spend threshold to receive an email alert'
