@@ -909,13 +909,10 @@ components:
       type: object
       required:
         - id
-        - cloud_assigned_id
       description: Response of the /instances/create API call
       properties:
         id:
           $ref: '#/components/schemas/Id'
-        cloud_assigned_id:
-          $ref: '#/components/schemas/CloudAssignedId'
     Cloud:
       type: string
       example: hyperstack
