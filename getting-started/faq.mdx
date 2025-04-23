@@ -41,6 +41,16 @@ iconType: 'solid'
   <Accordion title="What is Shade Cloud?">
     Shade Cloud is the name of the feature where we deploy your instances into our network of cloud accounts with each of the cloud providers. By using Shade Cloud, you can use the underlying cloud provider without having an account with them. See this [description](/getting-started/concepts#shade-cloud) for more details.
   </Accordion>
+
+  <Accordion title="How do I run as the root user on my instance?">
+    First, save your public SSH key to the `/root/.ssh/authorized_keys` directory. Next, run the following commands:
+    ```bash
+    sudo chown -R root:root /root/.ssh
+    sudo chmod 700 /root/.ssh
+    sudo chmod 600 /root/.ssh/authorized_keys
+    ```
+    You should now be able to SSH into your instance as the root user.
+  </Accordion>
 </AccordionGroup>
 
 ### Business
