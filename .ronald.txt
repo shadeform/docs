@@ -1,1 +1,1 @@
-start deployment
+restart deployment
