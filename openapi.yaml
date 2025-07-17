@@ -86,7 +86,7 @@ paths:
     post:
       summary: /instances/create
       operationId: Create
-      description: 'Create a new GPU instance.'
+      description: 'Create a new GPU instance. Our create API is designed to be asynchronous, so the response will be a CreateResponse object with a status of "creating". We then have a process that will pick it up and create it. You can poll the /instances/{id}/info endpoint to check the status of the instance.'
       requestBody:
         content:
           application/json:
@@ -850,6 +850,19 @@ components:
           description: "List of volume mounts between the host instance and the docker container. Equivalent of -v flag for docker run command."
           items:
             $ref: '#/components/schemas/VolumeMounts'
+        registry_credentials:
+          $ref: '#/components/schemas/RegistryCredentials'
+    RegistryCredentials:
+      type: object
+      properties:
+        username:
+          type: string
+          example: "username"
+          description: "The username for the docker registry."
+        password:
+          type: string
+          example: "password"
+          description: "The password for the docker registry."
     ScriptConfiguration:
       type: object
       required:
@@ -983,6 +996,8 @@ components:
       type: string
       example: active
       enum:
+        - creating
+        - pending_provider
         - pending
         - active
         - deleted
