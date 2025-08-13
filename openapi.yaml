@@ -7,9 +7,9 @@ info:
   version: 1.0.0
   title: Shadeform API
   contact:
-    name: Ronald Ding
-    email: ronald@shadeform.ai
-    url: www.shadeform.ai
+    name: Shadeform
+    email: support@shadeform.ai
+    url: https://www.shadeform.ai
 security:
   - ApiKeyAuth: []
 paths:
