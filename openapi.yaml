@@ -73,7 +73,7 @@ paths:
           example: price
           description: "Sort the order of the instance type results."
       summary: /instances/types
-      operationId: GetInstanceTypes
+      operationId: instances/types
       description: 'Return all the GPU instance types with their corresponding availability and specs.'
       responses:
         '200':
@@ -85,7 +85,7 @@ paths:
   /instances/create:
     post:
       summary: /instances/create
-      operationId: Create
+      operationId: instances/create
       description: 'Create a new GPU instance. Our create API is designed to be asynchronous, so the response will be a CreateResponse object with a status of "creating". We then have a process that will pick it up and create it. You can poll the /instances/{id}/info endpoint to check the status of the instance.'
       requestBody:
         content:
@@ -154,7 +154,7 @@ paths:
         description: The instance id
     post:
       summary: /instances/{id}/delete
-      operationId: Delete
+      operationId: instances/delete
       description: "Delete an instance. Some cloud providers may only allow deletion of an instance after it has moved to the 'active' status."
       responses:
         '200':
@@ -171,7 +171,7 @@ paths:
         description: The instance id
     post:
       summary: /instances/{id}/restart
-      operationId: Restart
+      operationId: instances/restart
       description: "Restart an instance. The status of the instance will stay as 'active' throughout, but you may have to wait a few minutes for the instance to be ready to use again."
       responses:
         '200':
@@ -191,7 +191,7 @@ paths:
   '/sshkeys/add':
     post:
       summary: /sshkeys/add
-      operationId: Add
+      operationId: sshkeys/add
       description: 'Add a new SSH Key'
       requestBody:
         content:
@@ -217,7 +217,7 @@ paths:
         description: 'The ssh key id'
     post:
       summary: /sshkeys/{id}/delete
-      operationId: Delete
+      operationId: sshkeys/delete
       description: 'Delete an ssh key. The Shadeform managed SSH Key, current default ssh key, and in use SSH Keys cannot be deleted.'
       responses:
         '200':
@@ -275,7 +275,7 @@ paths:
   '/volumes/create':
     post:
       summary: /volumes/create
-      operationId: Create
+      operationId: volumes/create
       description: 'Create a new storage volume'
       requestBody:
         content:
@@ -301,7 +301,7 @@ paths:
         description: 'The volume id.'
     post:
       summary: /volumes/{id}/delete
-      operationId: Delete
+      operationId: volumes/delete
       description: 'Delete a storage volume.'
       responses:
         '200':
@@ -342,7 +342,7 @@ paths:
   '/templates':
     get:
       summary: /templates
-      operationId: ListTemplates
+      operationId: templates
       description: 'List all templates created by the user'
       responses:
         '200':
@@ -354,7 +354,7 @@ paths:
   '/templates/featured':
     get:
       summary: /templates/featured
-      operationId: ListFeaturedTemplates
+      operationId: templates/featured
       description: 'List featured templates'
       responses:
         '200':
@@ -373,7 +373,7 @@ paths:
         description: 'The template ID'
     get:
       summary: /templates/{template_id}/info
-      operationId: GetTemplateInfo
+      operationId: templates/info
       description: 'Get information about a specific template'
       responses:
         '200':
@@ -385,7 +385,7 @@ paths:
   '/templates/save':
     post:
       summary: /templates/save
-      operationId: CreateTemplate
+      operationId: templates/save
       description: 'Create a new template'
       requestBody:
         required: true
@@ -410,7 +410,7 @@ paths:
         description: 'The template ID'
     post:
       summary: /templates/{template_id}/update
-      operationId: UpdateTemplate
+      operationId: templates/update
       description: 'Update an existing template'
       requestBody:
         required: true
@@ -431,7 +431,7 @@ paths:
         description: 'The template ID'
     post:
       summary: /templates/{template_id}/delete
-      operationId: DeleteTemplate
+      operationId: templates/delete
       description: 'Delete a template'
       responses:
         '200':
