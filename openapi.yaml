@@ -935,18 +935,31 @@ components:
       type: string
       example: hyperstack
       enum:
-        - aws
-        - azure
         - lambdalabs
-        - tensordock
-        - runpod
-        - latitude
-        - jarvislabs
-        - oblivus
         - paperspace
-        - datacrunch
-        - massedcompute
         - vultr
+        - datacrunch
+        - latitude
+        - massedcompute
+        - imwt
+        - hyperstack
+        - crusoe
+        - denvr
+        - digitalocean
+        - tcm
+        - hotaisle
+        - cudo
+        - scaleway
+        - evergreen
+        - excesssupply
+        - voltagepark
+        - boostrun
+        - ionstream
+        - whitefiber
+        - horizon
+        - fpt
+        - hydra
+        - amaya
       description: 'Specifies the underlying cloud provider. See this [explanation](/getting-started/concepts#cloud-cloud-provider) for more details.'
     Region:
       type: string
