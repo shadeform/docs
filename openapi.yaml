@@ -725,6 +725,7 @@ components:
       required:
         - region
         - available
+        - display_name
       properties:
         region:
           $ref: '#/components/schemas/Region'
@@ -732,6 +733,10 @@ components:
           type: boolean
           example: true
           description: "Indicate whether the instance is available in the region."
+        display_name:
+          type: string
+          example: "Toronto, Canana"
+          description: "The display name of the region"
     CreateRequest:
       type: object
       required:
