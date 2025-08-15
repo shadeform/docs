@@ -476,7 +476,7 @@ components:
           $ref: '#/components/schemas/CloudInstanceType'
         configuration:
           allOf:
-            - $ref: '#/components/schemas/Configuration'
+            - $ref: '#/components/schemas/InstanceConfiguration'
             - type: object
               required:
                 - os_options
@@ -554,7 +554,7 @@ components:
           $ref: '#/components/schemas/Name'
         configuration:
           allOf:
-            - $ref: '#/components/schemas/Configuration'
+            - $ref: '#/components/schemas/InstanceConfiguration'
             - type: object
               required:
               - os
@@ -624,7 +624,7 @@ components:
           $ref: '#/components/schemas/Name'
         configuration:
           allOf:
-            - $ref: '#/components/schemas/Configuration'
+            - $ref: '#/components/schemas/InstanceConfiguration'
             - type: object
               required:
                 - os
@@ -679,8 +679,7 @@ components:
           $ref: '#/components/schemas/CreatedAt'
         deleted_at:
           $ref: '#/components/schemas/DeletedAt'
-    Configuration:
-      x-go-name: InstanceConfiguration
+    InstanceConfiguration:
       type: object
       required:
         - memory_in_gb
