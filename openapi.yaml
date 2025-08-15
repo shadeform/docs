@@ -680,6 +680,7 @@ components:
         deleted_at:
           $ref: '#/components/schemas/DeletedAt'
     Configuration:
+      x-go-name: InstanceConfiguration
       type: object
       required:
         - memory_in_gb
