@@ -16,7 +16,7 @@ paths:
   /instances:
     get:
       summary: /instances
-      operationId: instances
+      operationId: Instances
       description: 'Get active and pending instances.'
       responses:
         '200':
@@ -73,7 +73,7 @@ paths:
           example: price
           description: "Sort the order of the instance type results."
       summary: /instances/types
-      operationId: instances/types
+      operationId: InstancesTypes
       description: 'Return all the GPU instance types with their corresponding availability and specs.'
       responses:
         '200':
@@ -85,7 +85,7 @@ paths:
   /instances/create:
     post:
       summary: /instances/create
-      operationId: instances/create
+      operationId: InstancesCreate
       description: 'Create a new GPU instance. Our create API is designed to be asynchronous, so the response will be a CreateResponse object with a status of "creating". We then have a process that will pick it up and create it. You can poll the /instances/{id}/info endpoint to check the status of the instance.'
       requestBody:
         content:
@@ -111,7 +111,7 @@ paths:
         description: 'The instance id'
     get:
       summary: /instances/{id}/info
-      operationId: instances/info
+      operationId: InstancesInfo
       description: "Get details for the specified instance in the url."
       responses:
         '200':
@@ -132,7 +132,7 @@ paths:
         description: 'The instance id'
     post:
       summary: /instances/{id}/update
-      operationId: instances/update
+      operationId: InstancesUpdate
       description: "Update mutable details about the instance. Set a value to null to delete it. Omit a value or leave undefined to keep unchanged."
       requestBody:
         content:
@@ -154,7 +154,7 @@ paths:
         description: The instance id
     post:
       summary: /instances/{id}/delete
-      operationId: instances/delete
+      operationId: InstancesDelete
       description: "Delete an instance. Some cloud providers may only allow deletion of an instance after it has moved to the 'active' status."
       responses:
         '200':
@@ -171,7 +171,7 @@ paths:
         description: The instance id
     post:
       summary: /instances/{id}/restart
-      operationId: instances/restart
+      operationId: InstancesRestart
       description: "Restart an instance. The status of the instance will stay as 'active' throughout, but you may have to wait a few minutes for the instance to be ready to use again."
       responses:
         '200':
@@ -179,7 +179,7 @@ paths:
   '/sshkeys':
     get:
       summary: /sshkeys
-      operationId: sshkeys
+      operationId: SshKeys
       description: 'Get all SSH Keys for the account.'
       responses:
         '200':
@@ -191,7 +191,7 @@ paths:
   '/sshkeys/add':
     post:
       summary: /sshkeys/add
-      operationId: sshkeys/add
+      operationId: SshKeysAdd
       description: 'Add a new SSH Key'
       requestBody:
         content:
@@ -217,7 +217,7 @@ paths:
         description: 'The ssh key id'
     post:
       summary: /sshkeys/{id}/delete
-      operationId: sshkeys/delete
+      operationId: SshKeysDelete
       description: 'Delete an ssh key. The Shadeform managed SSH Key, current default ssh key, and in use SSH Keys cannot be deleted.'
       responses:
         '200':
@@ -234,7 +234,7 @@ paths:
         description: 'The ssh key id'
     get:
       summary: /sshkeys/{id}/info
-      operationId: sshkeys/info
+      operationId: SshKeysInfo
       description: "Get details for the specified SSH Key in the url."
       responses:
         '200':
@@ -255,7 +255,7 @@ paths:
         description: 'The ssh key id'
     post:
       summary: /sshkeys/{id}/setdefault
-      operationId: sshkeys/setdefault
+      operationId: SshKeysSetDefault
       description: 'Set the specified SSH Key as the default SSH Key used by Shadeform.'
       responses:
         '200':
@@ -263,7 +263,7 @@ paths:
   '/volumes':
     get:
       summary: /volumes
-      operationId: volumes
+      operationId: Volumes
       description: 'Get all storage volumes for the account.'
       responses:
         '200':
@@ -275,7 +275,7 @@ paths:
   '/volumes/create':
     post:
       summary: /volumes/create
-      operationId: volumes/create
+      operationId: VolumesCreate
       description: 'Create a new storage volume'
       requestBody:
         content:
@@ -301,7 +301,7 @@ paths:
         description: 'The volume id.'
     post:
       summary: /volumes/{id}/delete
-      operationId: volumes/delete
+      operationId: VolumesDelete
       description: 'Delete a storage volume.'
       responses:
         '200':
@@ -318,7 +318,7 @@ paths:
         description: 'The volume id.'
     get:
       summary: /volumes/{id}/info
-      operationId: volumes/info
+      operationId: VolumesInfo
       description: "Get details for the specified storage volume."
       responses:
         '200':
@@ -330,7 +330,7 @@ paths:
   '/volumes/types':
     get:
       summary: /volumes/types
-      operationId: volumes/types
+      operationId: VolumesTypes
       description: 'Get list of supported storage volumes.'
       responses:
         '200':
@@ -342,7 +342,7 @@ paths:
   '/templates':
     get:
       summary: /templates
-      operationId: templates
+      operationId: Templates
       description: 'List all templates created by the user'
       responses:
         '200':
@@ -354,7 +354,7 @@ paths:
   '/templates/featured':
     get:
       summary: /templates/featured
-      operationId: templates/featured
+      operationId: TemplatesFeatured
       description: 'List featured templates'
       responses:
         '200':
@@ -373,7 +373,7 @@ paths:
         description: 'The template ID'
     get:
       summary: /templates/{template_id}/info
-      operationId: templates/info
+      operationId: TemplatesInfo
       description: 'Get information about a specific template'
       responses:
         '200':
@@ -385,7 +385,7 @@ paths:
   '/templates/save':
     post:
       summary: /templates/save
-      operationId: templates/save
+      operationId: TemplatesSave
       description: 'Create a new template'
       requestBody:
         required: true
@@ -410,7 +410,7 @@ paths:
         description: 'The template ID'
     post:
       summary: /templates/{template_id}/update
-      operationId: templates/update
+      operationId: TemplatesUpdate
       description: 'Update an existing template'
       requestBody:
         required: true
@@ -431,7 +431,7 @@ paths:
         description: 'The template ID'
     post:
       summary: /templates/{template_id}/delete
-      operationId: templates/delete
+      operationId: TemplatesDelete
       description: 'Delete a template'
       responses:
         '200':
@@ -458,7 +458,6 @@ components:
       type: object
       required:
         - cloud
-        - region
         - shade_instance_type
         - cloud_instance_type
         - configuration
@@ -468,25 +467,12 @@ components:
       properties:
         cloud:
           $ref: '#/components/schemas/Cloud'
-        region:
-          $ref: '#/components/schemas/Region'
         shade_instance_type:
           $ref: '#/components/schemas/ShadeInstanceType'
         cloud_instance_type:
           $ref: '#/components/schemas/CloudInstanceType'
         configuration:
-          allOf:
-            - $ref: '#/components/schemas/InstanceConfiguration'
-            - type: object
-              required:
-                - os_options
-              properties:
-                os_options:
-                  type: array
-                  items:
-                    type: string
-                  example: ["ubuntu22.04_cuda12.2_shade_os", "ubuntu20.04_cuda12.0_shade_os"]
-                  description: 'The list of available operating systems for the instance.'
+          $ref: '#/components/schemas/InstanceTypeConfiguration'
         hourly_price:
           $ref: '#/components/schemas/HourlyPrice'
         deployment_type:
@@ -503,10 +489,7 @@ components:
               available: false
               display_name: US, Wichita, KS
         boot_time:
-          type: object
-          example: 
-            min_boot_in_sec: 180
-            max_boot_in_sec: 300
+          $ref: '#/components/schemas/BootTime'
     InstancesResponse:
       type: object
       required:
@@ -571,21 +554,32 @@ components:
           $ref: '#/components/schemas/SshPort'
         status:
           $ref: '#/components/schemas/Status'
+        status_details:
+          $ref: '#/components/schemas/StatusDetails'
         cost_estimate:
           $ref: '#/components/schemas/CostEstimate'
         hourly_price:
           $ref: '#/components/schemas/HourlyPrice'
         launch_configuration:
           $ref: '#/components/schemas/LaunchConfiguration'
+        tags:
+          type: array
+          description: 'Add custom, searchable tags to instances.'
+          items:
+            $ref: '#/components/schemas/Tag'
         port_mappings:
           type: array
           description: 'List of port mappings on an instance that a Cloud Provider might have automatically set up.'
           items:
             $ref: '#/components/schemas/InstancePortMappings'
+        active_at:
+          $ref: '#/components/schemas/ActiveAt'
         created_at:
           $ref: '#/components/schemas/CreatedAt'
         deleted_at:
           $ref: '#/components/schemas/DeletedAt'
+        boot_time:
+          $ref: '#/components/schemas/BootTime'
     InstanceInfoResponse:
       type: object
       required:
@@ -641,6 +635,8 @@ components:
           $ref: '#/components/schemas/SshPort'
         status:
           $ref: '#/components/schemas/Status'
+        status_details:
+          $ref: '#/components/schemas/StatusDetails'
         cost_estimate:
           $ref: '#/components/schemas/CostEstimate'
         hourly_price:
@@ -675,11 +671,15 @@ components:
           description: 'List of port mappings on an instance that a Cloud Provider might have automatically set up.'
           items:
             $ref: '#/components/schemas/InstancePortMappings'
+        active_at:
+          $ref: '#/components/schemas/ActiveAt'
         created_at:
           $ref: '#/components/schemas/CreatedAt'
         deleted_at:
           $ref: '#/components/schemas/DeletedAt'
-    InstanceConfiguration:
+        boot_time:
+          $ref: '#/components/schemas/BootTime'
+    InstanceTypeConfiguration:
       type: object
       required:
         - memory_in_gb
@@ -688,7 +688,6 @@ components:
         - num_gpus
         - gpu_type
         - interconnect
-        - os
         - os_options
         - vram_per_gpu_in_gb
       properties:
@@ -716,6 +715,60 @@ components:
           type: string
           example: pcie
           description: "The type of GPU interconnect."
+        nvlink:
+          type: boolean
+          example: true
+          description: "If the instance has NVLink"
+        vram_per_gpu_in_gb:
+          type: integer
+          example: 48
+          description: "The video memory per GPU for the instance in gigabytes."
+        os_options:
+          type: array
+          items:
+            type: string
+          example: [ "ubuntu22.04_cuda12.2_shade_os", "ubuntu20.04_cuda12.0_shade_os" ]
+          description: 'The list of available operating systems for the instance.'
+    InstanceConfiguration:
+      type: object
+      required:
+        - memory_in_gb
+        - storage_in_gb
+        - vcpus
+        - num_gpus
+        - gpu_type
+        - interconnect
+        - os
+        - vram_per_gpu_in_gb
+      properties:
+        memory_in_gb:
+          type: integer
+          example: 12
+          description: "The amount of memory for the instance in gigabytes. Note that this is not VRAM which is determined by GPU type and the number of GPUs."
+        storage_in_gb:
+          type: integer
+          example: 256
+          description: 'The amount of storage for the instance. If this storage is too low for the instance type, please email support@shadeform.ai as the storage may be adjustable.'
+        vcpus:
+          type: integer
+          example: 6
+          description: "The number of vCPUs for the instance."
+        num_gpus:
+          type: integer
+          example: 1
+          description: "The number of GPUs for the instance."
+        gpu_type:
+          type: string
+          example: A100
+          description: "The type of GPU for the instance."
+        interconnect:
+          type: string
+          example: pcie
+          description: "The type of GPU interconnect."
+        nvlink:
+          type: boolean
+          example: true
+          description: "If the instance has NVLink"
         vram_per_gpu_in_gb:
           type: integer
           example: 48
@@ -737,6 +790,17 @@ components:
           type: string
           example: "Toronto, Canana"
           description: "The display name of the region"
+    BootTime:
+      type: object
+      properties:
+        min_boot_in_sec:
+          type: integer
+          example: 180
+          description: 'boot time minimum estimate'
+        max_boot_in_sec:
+          type: integer
+          example: 300
+          description: 'boot time maximum estimate'
     CreateRequest:
       type: object
       required:
@@ -943,6 +1007,7 @@ components:
         - massedcompute
         - imwt
         - hyperstack
+        - nebius
         - crusoe
         - denvr
         - digitalocean
@@ -1020,10 +1085,19 @@ components:
         - active
         - deleted
       description: 'The status of the instance.'
+    StatusDetails:
+      type: string
+      example: downloading
+      description: 'Additional context for the status'
     CostEstimate:
       type: string
       example: '103.4'
       description: 'The cost incurred by the instance. This only the cost via Shadeform. If the instance is deployed in your own cloud account, then all billing is through your cloud provider.'
+    ActiveAt:
+      type: string
+      format: date-time
+      example: '2016-08-29T09:12:33.001Z'
+      description: 'The timestamp of when the instance was active in UTC.'
     CreatedAt:
       type: string
       format: date-time
