@@ -690,6 +690,7 @@ components:
         - interconnect
         - os_options
         - vram_per_gpu_in_gb
+        - gpu_manufacturer
       properties:
         memory_in_gb:
           type: integer
@@ -729,6 +730,10 @@ components:
             type: string
           example: [ "ubuntu22.04_cuda12.2_shade_os", "ubuntu20.04_cuda12.0_shade_os" ]
           description: 'The list of available operating systems for the instance.'
+        gpu_manufacturer:
+          type: string
+          example: 'nvidia'
+          description: 'The manufacturer of the gpu'
     InstanceConfiguration:
       type: object
       required:
@@ -740,6 +745,7 @@ components:
         - interconnect
         - os
         - vram_per_gpu_in_gb
+        - gpu_manufacturer
       properties:
         memory_in_gb:
           type: integer
@@ -773,6 +779,10 @@ components:
           type: integer
           example: 48
           description: "The video memory per GPU for the instance in gigabytes."
+        gpu_manufacturer:
+          type: string
+          example: nvidia
+          description: "The manufacturer of the gpu"
     Availability:
       type: object
       required:
