@@ -155,7 +155,7 @@ paths:
     post:
       summary: /instances/{id}/delete
       operationId: InstancesDelete
-      description: "Delete an instance. Some cloud providers may only allow deletion of an instance after it has moved to the 'active' status."
+      description: "This will move the instance to the 'deleting' status while the instance is being deleted. Once the instance has entered the 'deleting' status, the account will no longer be billed for the instance."
       responses:
         '200':
           description: 'Confirms the deletion of an instance.'
@@ -1093,6 +1093,8 @@ components:
         - pending_provider
         - pending
         - active
+        - error
+        - deleting
         - deleted
         - error
       description: 'The status of the instance.'
