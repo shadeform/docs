@@ -17,7 +17,7 @@ paths:
     get:
       summary: /instances
       operationId: Instances
-      description: 'Get active and pending instances.'
+      description: 'Get all non deleted instances. Note: instances in the "deleting" status will also show up here.'
       responses:
         '200':
           description: 'Returns an InstancesResponse object.'
@@ -112,7 +112,7 @@ paths:
     get:
       summary: /instances/{id}/info
       operationId: InstancesInfo
-      description: "Get details for the specified instance in the url."
+      description: "Get details for the specified, non deleted, instance in the url."
       responses:
         '200':
           description: "Return an instance object."
