@@ -1096,7 +1096,6 @@ components:
         - error
         - deleting
         - deleted
-        - error
       description: 'The status of the instance.'
     StatusDetails:
       type: string
