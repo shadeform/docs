@@ -54,6 +54,7 @@
         "guides/tutoriallibrary",
         "guides/attachvolume",
         "guides/sshissues",
+        "guides/skypilot",
         "guides/dockercontainers",
         "guides/startupscript",
         "guides/jupyter",
