@@ -92,7 +92,7 @@ resources:
   infra: shadeform
   accelerators: A100:4 # this means A100 with 4 GPUs
 ```
- > **Note:** `infra` is optional if you define `accelerators`. But, when you have other skypilot integrations installed and you leave out `infra`, SkyPilot may pick your other integration to use if it has a cheaper accelerator of the same type available.
+ > **Note:** `infra` is optional if you define `accelerators`. But, when you have other SkyPilot integrations installed and you leave out `infra`, SkyPilot may pick your other integration to use if it has a cheaper accelerator of the same type available.
 
 #### Find the cheapest available for a specific provider and GPU type
 ```yaml
@@ -113,9 +113,6 @@ sky launch -c my-cluster task.yaml
 
 # Check job status
 sky status
-
-# SSH into your cluster
-sky ssh my-cluster
 
 # View logs
 sky logs my-cluster
