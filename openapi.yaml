@@ -1035,6 +1035,7 @@ components:
         - fpt
         - hydra
         - amaya
+        - verda
       description: 'Specifies the underlying cloud provider. See this [explanation](/getting-started/concepts#cloud-cloud-provider) for more details.'
     Region:
       type: string
