@@ -1012,7 +1012,7 @@ components:
         - lambdalabs
         - paperspace
         - vultr
-        - datacrunch
+        - verda
         - latitude
         - massedcompute
         - imwt
