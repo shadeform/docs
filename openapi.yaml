@@ -1008,34 +1008,6 @@ components:
     Cloud:
       type: string
       example: hyperstack
-      enum:
-        - lambdalabs
-        - paperspace
-        - vultr
-        - datacrunch
-        - latitude
-        - massedcompute
-        - imwt
-        - hyperstack
-        - nebius
-        - crusoe
-        - denvr
-        - digitalocean
-        - tcm
-        - hotaisle
-        - cudo
-        - scaleway
-        - evergreen
-        - excesssupply
-        - voltagepark
-        - boostrun
-        - ionstream
-        - whitefiber
-        - horizon
-        - fpt
-        - hydra
-        - amaya
-        - verda
       description: 'Specifies the underlying cloud provider. See this [explanation](/getting-started/concepts#cloud-cloud-provider) for more details.'
     Region:
       type: string
