@@ -21,19 +21,6 @@ Shadeform is an abstraction layer over lots of cloud providers and data centers.
 
 As you can see, the cloud instance type can vary greatly depending on the provider whereas the shade instance type is standardized across providers. The combination of cloud and shade instance type uniquely denotes a GPU instance type.
 
-### Shade Cloud
-**"Shade Cloud"** represents the network of cloud accounts Shadeform manages across the cloud providers. If you launch an instance in "Shade Cloud", you are launching the instance in one of Shadeform's master accounts with the underlying cloud provider. Shadeform provides you the IP address and SSH key to access the instance. Shadeform ensures that your instance is kept secure and isolated from any other instances launched through Shade Cloud.
-
-Using Shade Cloud means that you don't need to set up accounts and billing with each provider supported through Shadeform; you just need a single account with Shadeform. Using Shade Cloud allows you to leverage the increased limits, quotas, and images that we have already set up in each cloud provider. Certain features such as container launch configurations and standardized images are limited to Shade Cloud only.
-
-### Scheduling Instances
-Shadeform monitors the real-time availability of all GPU instances on the platform.
-With this monitoring system, Shadeform provides a service that allows you to schedule a period of time when Shadeform tries to launch an unavailable instance on your behalf.
-For example, if you want to launch an 8xH100 instance on Lambda Labs at `$27.92 / hr` but the instance is unavailable, you can **schedule** the instance and Shadeform will launch that instance into your account if it becomes available during the configured time period.
-If an instance is launched, you will receive an email notifying you that the instance was launched successfully.
-
-You can use the scheduling feature to build up a GPU fleet of availability instances.
-
 ### Cloud Access
 If you prefer not to use Shade Cloud, you can also set up cloud access [here](https://platform.shadeform.ai/settings/cloudaccess) to have Shadeform manage your own cloud account. Setting up cloud access typically means providing Shadeform with your cloud API key but can also mean deploying resource stacks that grant Shadeform permissions in your cloud provider.
 
