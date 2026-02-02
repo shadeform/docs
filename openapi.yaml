@@ -176,6 +176,85 @@ paths:
       responses:
         '200':
           description: 'Confirms the restart of an instance has been initiated. This does not confirm that the instance restarted successfully.'
+  /clusters:
+    get:
+      summary: /clusters
+      operationId: Clusters
+      description: 'Get all non deleted clusters.'
+      responses:
+        '200':
+          description: 'Returns a ClustersResponse object.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClustersResponse'
+  /clusters/types:
+    get:
+      summary: /clusters/types
+      operationId: ClustersTypes
+      description: 'Return all the GPU cluster types with their corresponding availability and specs.'
+      responses:
+        '200':
+          description: Returns a ClusterTypesResponse object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterTypesResponse'
+  /clusters/create:
+    post:
+      summary: /clusters/create
+      operationId: ClustersCreate
+      description: 'Create a new GPU cluster.'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClusterRequest'
+      responses:
+        '200':
+          description: Returns a CreateClusterResponse object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateClusterResponse'
+  '/clusters/{id}/info':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        example: '8eda86fe-0f36-41ed-9837-0ccf8f6e0fcb'
+        schema:
+          type: string
+          minimum: 1
+        description: 'The cluster id'
+    get:
+      summary: /clusters/{id}/info
+      operationId: ClustersInfo
+      description: "Get details for the specified, non deleted, cluster in the url."
+      responses:
+        '200':
+          description: "Return a cluster object."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterInfoResponse'
+  '/clusters/{id}/delete':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        example: 'b1450ae8-2fa3-4ceb-a4f3-b834805418fc'
+        schema:
+          type: string
+          minimum: 1
+        description: The cluster id
+    post:
+      summary: /clusters/{id}/delete
+      operationId: ClustersDelete
+      description: "This will move the cluster to the 'deleting' status while the cluster is being deleted. Once the cluster has entered the 'deleting' status, the account will no longer be billed for the cluster."
+      responses:
+        '200':
+          description: 'Confirms the deletion of a cluster.'
   '/sshkeys':
     get:
       summary: /sshkeys
@@ -1005,6 +1084,235 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/Id'
+    ClustersResponse:
+      type: object
+      required:
+        - clusters
+      properties:
+        clusters:
+          type: array
+          items:
+            $ref: '#/components/schemas/Cluster'
+    Cluster:
+      type: object
+      required:
+        - id
+        - cloud
+        - name
+        - region_info
+        - status
+        - created_at
+        - updated_at
+        - instances
+        - hourly_price
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 8eda86fe-0f36-41ed-9837-0ccf8f6e0fcb
+          description: 'The unique identifier for the cluster.'
+        cloud:
+          type: string
+          example: denvr
+          description: 'The cloud provider for the cluster.'
+        name:
+          type: string
+          example: devnr-cluster1
+          description: 'The name of the cluster.'
+        cloud_cluster_id:
+          type: string
+          nullable: true
+          example: cluster-abc123
+          description: 'The cloud provider assigned cluster ID.'
+        region_info:
+          $ref: '#/components/schemas/ClusterRegionInfo'
+        status:
+          type: string
+          example: active
+          description: 'The current status of the cluster.'
+        status_details:
+          type: string
+          nullable: true
+          example: 'Cluster is provisioning'
+          description: 'Additional details about the cluster status.'
+        created_at:
+          type: string
+          format: date-time
+          description: 'The timestamp when the cluster was created.'
+        updated_at:
+          type: string
+          format: date-time
+          description: 'The timestamp when the cluster was last updated.'
+        instances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Instance'
+          description: 'Array of instances in the cluster.'
+        hourly_price:
+          type: integer
+          example: 1500
+          description: 'The hourly price of the cluster in cents.'
+        cost_estimate:
+          type: string
+          nullable: true
+          example: '$15.00'
+          description: 'Estimated cost of the cluster.'
+        active_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: 'The timestamp when the cluster became active.'
+    ClusterRegionInfo:
+      type: object
+      required:
+        - region
+        - display_name
+      properties:
+        region:
+          type: string
+          example: houston-usa-1
+          description: 'The region code.'
+        display_name:
+          type: string
+          example: 'US, Houston, TX'
+          description: 'Human-readable display name for the region.'
+    ClusterAvailability:
+      type: object
+      required:
+        - region
+        - display_name
+        - available
+      properties:
+        region:
+          type: string
+          example: houston-usa-1
+          description: 'The region code.'
+        display_name:
+          type: string
+          example: 'US, Houston, TX'
+          description: 'Human-readable display name for the region.'
+        available:
+          type: boolean
+          example: true
+          description: 'Whether the cluster type is available in this region.'
+    ClusterTypesResponse:
+      type: object
+      required:
+        - cluster_types
+      properties:
+        cluster_types:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClusterType'
+          example:
+            - cloud: denvr
+              num_instances: 2
+              availability:
+                region: houston-usa-1
+                display_name: US, Houston, TX
+                available: true
+              cluster_type:
+                cloud: denvr
+                shade_instance_type: H100_sxm5x8
+                cloud_instance_type: H100_80GB_SXM_8x
+                configuration:
+                  memory_in_gb: 940
+                  storage_in_gb: 20000
+                  vcpus: 208
+                  num_gpus: 8
+                  gpu_type: H100
+                  interconnect: sxm5
+                  nvlink: true
+                  os_options:
+                    - ubuntu22.04_cuda12.4_shade_os
+                    - ubuntu20.04_cuda12.4_shade_os
+                    - ubuntu20.04
+                    - ubuntu22.04
+                  vram_per_gpu_in_gb: 80
+                  gpu_manufacturer: nvidia
+                memory_in_gb: 940
+                storage_in_gb: 20000
+                vcpus: 208
+                num_gpus: 8
+                gpu_type: H100
+                interconnect: sxm5
+                nvlink: true
+                hourly_price: 1400
+                boot_time:
+                  min_boot_in_sec: 600
+                  max_boot_in_sec: 1200
+                deployment_type: vm
+    ClusterType:
+      type: object
+      required:
+        - cloud
+        - num_instances
+        - availability
+        - cluster_type
+      properties:
+        cloud:
+          type: string
+          example: denvr
+          description: 'The cloud provider.'
+        num_instances:
+          type: integer
+          example: 2
+          description: 'The number of instances in this cluster type.'
+        availability:
+          $ref: '#/components/schemas/ClusterAvailability'
+        cluster_type:
+          $ref: '#/components/schemas/InstanceType'
+    CreateClusterRequest:
+      type: object
+      required:
+        - cloud
+        - region
+        - cluster_type
+        - name
+        - num_instances
+      properties:
+        name:
+          type: string
+          example: protestant-aquamarine-cluster
+          description: 'The name of the cluster.'
+        cloud:
+          type: string
+          example: denvr
+          description: 'The cloud provider for the cluster.'
+        region:
+          type: string
+          example: houston-usa-1
+          description: 'The region where the cluster will be deployed.'
+        cluster_type:
+          type: string
+          example: H100_sxm5x8
+          description: 'The type of GPU cluster to create.'
+        num_instances:
+          type: integer
+          example: 2
+          description: 'The number of instances in the cluster.'
+        ssh_key_id:
+          type: string
+          example: 'f0c6ac6d-7240-4968-8eb7-a11c4a0a5dc6'
+          description: 'The SSH key ID to use for the cluster instances.'
+        os:
+          type: string
+          example: ubuntu20.04
+          description: 'The operating system for the cluster.'
+    CreateClusterResponse:
+      type: object
+      required:
+        - id
+      description: Response of the /clusters/create API call
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 8eda86fe-0f36-41ed-9837-0ccf8f6e0fcb
+          description: 'The unique identifier for the newly created cluster.'
+    ClusterInfoResponse:
+      allOf:
+        - $ref: '#/components/schemas/Cluster'
     Cloud:
       type: string
       example: hyperstack
