@@ -79,6 +79,16 @@
       ]
     },
     {
+      "group": "Clusters",
+      "pages": [
+        "api-reference/clusters/clusters-create",
+        "api-reference/clusters/clusters-info",
+        "api-reference/clusters/clusters-delete",
+        "api-reference/clusters/clusters-types",
+        "api-reference/clusters/clusters"
+      ]
+    },
+    {
       "group": "SSH Keys",
       "pages": [
         "api-reference/sshkeys/sshkeys-add",
