@@ -15,12 +15,7 @@
       "to": "#FFFFFF"
     }
   },
-  "topbarLinks": [
-    {
-      "name": "Support",
-      "url": "https://www.shadeform.ai/?slack=true"
-    }
-  ],
+  "topbarLinks": [],
   "topbarCtaButton": {
     "name": "Platform",
     "url": "https://platform.shadeform.ai"
@@ -31,22 +26,16 @@
       "url": "api-reference"
     }
   ],
-  "anchors": [
-    {
-      "name": "Support",
-      "icon": "slack",
-      "url": "https://www.shadeform.ai/?slack=true"
-    },
-    {
-      "name": "Community",
-      "icon": "discord",
-      "url": "https://discord.gg/dCEd77nQYc"
-    }
-  ],
+  "anchors": [],
   "navigation": [
     {
       "group": "Getting Started",
-      "pages": ["getting-started/introduction", "getting-started/quickstart", "getting-started/concepts", "getting-started/faq"]
+      "pages": [
+        "getting-started/introduction",
+        "getting-started/quickstart",
+        "getting-started/concepts",
+        "getting-started/faq"
+      ]
     },
     {
       "group": "Guides",
@@ -127,14 +116,13 @@
   "footerSocials": {
     "twitter": "https://twitter.com/shadeformai",
     "github": "https://github.com/shadeform",
-    "linkedin": "https://www.linkedin.com/company/shadeformai",
-    "discord": "https://discord.gg/dCEd77nQYc"
+    "linkedin": "https://www.linkedin.com/company/shadeformai"
   },
   "openapi": ["/openapi.yaml"],
   "analytics": {
     "posthog": {
-        "apiKey": "phc_aK2oaWL57uQrcoFZEHrRYV19Aw3ohA5uVo7hwzssamp",
-        "apiHost": "https://app.posthog.com"
+      "apiKey": "phc_aK2oaWL57uQrcoFZEHrRYV19Aw3ohA5uVo7hwzssamp",
+      "apiHost": "https://app.posthog.com"
     },
     "koala": {
       "publicApiKey": "pk_f1ff89b1e5e8274bcf51c880669e44c0b250"
@@ -151,4 +139,3 @@
     }
   }
 }
- 
