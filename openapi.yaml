@@ -72,6 +72,12 @@ paths:
               - price
           example: price
           description: "Sort the order of the instance type results."
+        - in: query
+          name: include
+          schema:
+            type: string
+          example: spot
+          description: "Opt into additional availability entries. `include=spot` adds spot availability entries (with `rental_type` and the spot `hourly_price`) for instance types that support spot."
       summary: /instances/types
       operationId: InstancesTypes
       description: 'Return all the GPU instance types with their corresponding availability and specs.'
@@ -639,6 +645,8 @@ components:
           $ref: '#/components/schemas/CostEstimate'
         hourly_price:
           $ref: '#/components/schemas/HourlyPrice'
+        rental_terms:
+          $ref: '#/components/schemas/RentalTerms'
         launch_configuration:
           $ref: '#/components/schemas/LaunchConfiguration'
         tags:
@@ -879,6 +887,40 @@ components:
           type: string
           example: "Toronto, Canana"
           description: "The display name of the region"
+        rental_type:
+          type: string
+          enum:
+            - spot
+          example: spot
+          description: "Only present on spot availability entries returned when the request includes `include=spot`. Absent on the default on-demand entries."
+        hourly_price:
+          type: string
+          example: "1.50"
+          description: "The spot hourly price as a decimal string in dollars. Only present on spot availability entries."
+    RentalTerms:
+      type: object
+      description: "How the instance is rented and on what terms."
+      required:
+        - rental_type
+      properties:
+        rental_type:
+          type: string
+          enum:
+            - on_demand
+            - spot
+            - commitment
+          example: spot
+          description: "How the instance is rented."
+        hourly_price:
+          type: string
+          example: "1.50"
+          description: "The hourly price as a decimal string in dollars. A spot instance shows its discounted spot rate. Omitted for commitments."
+        ending_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+          description: "The promised end of the rental when one is known. For a spot instance this becomes the reclaim deadline once a reclaim is underway. Null for open-ended rentals."
     BootTime:
       type: object
       properties:
@@ -909,6 +951,14 @@ components:
           $ref: '#/components/schemas/ShadeCloud'
         name:
           $ref: '#/components/schemas/Name'
+        rental_type:
+          type: string
+          enum:
+            - on_demand
+            - spot
+          default: on_demand
+          example: spot
+          description: 'How the instance is rented. Defaults to on_demand. Spot instances run at a discounted hourly price but are interruptible: Shadeform may reclaim the capacity at any time, at which point the instance is terminated. Spot requires an instance type that supports it (see the include=spot catalog entries) and shade_cloud set to true.'
         os:
           type: string
           example: "ubuntu22.04_cuda12.2_shade_os" 
@@ -1381,7 +1431,7 @@ components:
     StatusDetails:
       type: string
       example: downloading
-      description: 'Additional context for the status'
+      description: 'Additional context for the status. A spot instance that was reclaimed by Shadeform (rather than deleted by you) carries the value "preempted" once terminated.'
     CostEstimate:
       type: string
       example: '103.4'
