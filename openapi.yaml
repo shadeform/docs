@@ -72,12 +72,6 @@ paths:
               - price
           example: price
           description: "Sort the order of the instance type results."
-        - in: query
-          name: include
-          schema:
-            type: string
-          example: spot
-          description: "Opt into additional availability entries. `include=spot` adds spot availability entries (with `rental_type` and the spot `hourly_price`) for instance types that support spot."
       summary: /instances/types
       operationId: InstancesTypes
       description: 'Return all the GPU instance types with their corresponding availability and specs.'
@@ -876,6 +870,7 @@ components:
         - region
         - available
         - display_name
+        - rental_type
       properties:
         region:
           $ref: '#/components/schemas/Region'
@@ -893,7 +888,7 @@ components:
             - on_demand
             - spot
           example: spot
-          description: "Only present when the request includes `include=spot`: spot entries are tagged `spot` and the default entries are tagged `on_demand`, so a mixed response never requires inferring a rental type from an absent field. Absent entirely on the default response."
+          description: "The rental type this entry describes. Regular entries are tagged `on_demand`; an instance type that offers spot lists a second entry per region tagged `spot` with its own `available` verdict and `hourly_price`. Filter by `rental_type` rather than assuming one entry per region."
         hourly_price:
           type: string
           example: "1.50"
@@ -959,7 +954,7 @@ components:
             - spot
           default: on_demand
           example: spot
-          description: 'How the instance is rented. Defaults to on_demand. Spot instances run at a discounted hourly price but are interruptible: Shadeform may reclaim the capacity at any time, at which point the instance is terminated. Spot requires an instance type that supports it (see the include=spot catalog entries) and shade_cloud set to true.'
+          description: 'How the instance is rented. Defaults to on_demand. Spot instances run at a discounted hourly price but are interruptible: Shadeform may reclaim the capacity at any time, at which point the instance is terminated. Spot requires an instance type that supports it (see the availability entries tagged rental_type spot in the instance types response) and shade_cloud set to true.'
         os:
           type: string
           example: "ubuntu22.04_cuda12.2_shade_os" 

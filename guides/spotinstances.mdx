@@ -14,18 +14,18 @@ spot rental type are.
 
 ### Finding spot capacity
 Spot is offered on select Shade Cloud instance types. To see which, call the
-[Instance Types API](/api-reference/instances/instances-types) with `include=spot`:
+[Instance Types API](/api-reference/instances/instances-types):
 
 ```bash CLI
 curl --request GET \
---url 'https://api.shadeform.ai/v1/instances/types?include=spot' \
+--url 'https://api.shadeform.ai/v1/instances/types' \
 --header 'X-API-KEY: <api-key>'
 ```
 
-Instance types that support spot include additional entries in their `availability` array,
-marked with `rental_type: "spot"` and carrying the spot hourly price as a decimal string in dollars.
-In an `include=spot` response the regular entries are tagged `rental_type: "on_demand"` so you
-never have to infer a rental type from an absent field:
+Every entry in an instance type's `availability` array carries a `rental_type`. Regular entries
+are tagged `rental_type: "on_demand"`; instance types that support spot list an additional entry
+per region marked `rental_type: "spot"`, carrying the spot hourly price as a decimal string in
+dollars:
 
 ```json Availability
 "availability": [
@@ -47,8 +47,8 @@ never have to infer a rental type from an absent field:
 
 Spot and on-demand availability are evaluated independently — a region can offer spot while
 on-demand is sold out, and vice versa — so always read the entry matching the rental type you
-intend to launch. Without `include=spot`, the response is unchanged and only contains the
-regular on-demand entries.
+intend to launch. Because a region can appear twice, filter the array by `rental_type` rather
+than treating it as one entry per region.
 
 ### Launching a spot instance
 Add `"rental_type": "spot"` to your [Create Instance API](/api-reference/instances/instances-create) request,
@@ -104,6 +104,6 @@ Design your workload to tolerate interruption:
 - Poll your instances and relaunch (spot or on-demand) when one is reclaimed.
 
 ### Pricing
-Spot pricing is set per instance type and shown in the `include=spot` catalog entries.
+Spot pricing is set per instance type and shown on the `rental_type: "spot"` catalog entries.
 Billing works exactly like on-demand — per-second metering at the spot rate — and stops when
 the instance is reclaimed or deleted.
