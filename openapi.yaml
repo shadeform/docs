@@ -890,9 +890,10 @@ components:
         rental_type:
           type: string
           enum:
+            - on_demand
             - spot
           example: spot
-          description: "Only present on spot availability entries returned when the request includes `include=spot`. Absent on the default on-demand entries."
+          description: "Only present when the request includes `include=spot`: spot entries are tagged `spot` and the default entries are tagged `on_demand`, so a mixed response never requires inferring a rental type from an absent field. Absent entirely on the default response."
         hourly_price:
           type: string
           example: "1.50"

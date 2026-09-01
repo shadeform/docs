@@ -23,14 +23,17 @@ curl --request GET \
 ```
 
 Instance types that support spot include additional entries in their `availability` array,
-marked with `rental_type: "spot"` and carrying the spot hourly price as a decimal string in dollars:
+marked with `rental_type: "spot"` and carrying the spot hourly price as a decimal string in dollars.
+In an `include=spot` response the regular entries are tagged `rental_type: "on_demand"` so you
+never have to infer a rental type from an absent field:
 
 ```json Availability
 "availability": [
   {
     "region": "us-central-1",
     "available": true,
-    "display_name": "US, Wichita, KS"
+    "display_name": "US, Wichita, KS",
+    "rental_type": "on_demand"
   },
   {
     "region": "us-central-1",
@@ -42,7 +45,10 @@ marked with `rental_type: "spot"` and carrying the spot hourly price as a decima
 ]
 ```
 
-Without `include=spot`, the response is unchanged and only contains the regular on-demand entries.
+Spot and on-demand availability are evaluated independently — a region can offer spot while
+on-demand is sold out, and vice versa — so always read the entry matching the rental type you
+intend to launch. Without `include=spot`, the response is unchanged and only contains the
+regular on-demand entries.
 
 ### Launching a spot instance
 Add `"rental_type": "spot"` to your [Create Instance API](/api-reference/instances/instances-create) request,
