@@ -70,6 +70,10 @@ curl --request POST \
 }'
 ```
 
+`rental_type` is optional and defaults to `"on_demand"`. Omitting it — as every request written
+before spot existed does — launches a regular on-demand instance, so existing integrations are
+unaffected; you only get a spot instance by asking for one explicitly.
+
 If the instance type does not offer spot in that region, the create request fails with a
 descriptive error — you are never silently given an on-demand instance at the on-demand price.
 
@@ -87,9 +91,11 @@ Instance list/info responses include a `rental_terms` object describing how each
 }
 ```
 
-`hourly_price` is a decimal string in dollars — for a spot instance this is the discounted
-rate you are billed at. `ending_at` is the promised end of the rental when one is known;
-for a spot instance it becomes the reclaim deadline once a reclaim is underway.
+`rental_type` is `spot` for spot instances and `on_demand` for everything else, including
+instances launched without a `rental_type` in the request. `hourly_price` is a decimal string
+in dollars — for a spot instance this is the discounted rate you are billed at. `ending_at` is
+the promised end of the rental when one is known; for a spot instance it becomes the reclaim
+deadline once a reclaim is underway.
 
 ### Interruption behavior
 When Shadeform needs the capacity back, the spot instance is terminated and billing stops.
