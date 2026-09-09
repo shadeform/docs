@@ -94,8 +94,9 @@ Instance list/info responses include a `rental_terms` object describing how each
 `rental_type` is `spot` for spot instances and `on_demand` for everything else, including
 instances launched without a `rental_type` in the request. `hourly_price` is a decimal string
 in dollars — for a spot instance this is the discounted rate you are billed at. `ending_at` is
-the promised end of the rental when one is known; for a spot instance it becomes the reclaim
-deadline once a reclaim is underway.
+the promised end of the rental when one is known, and `null` for open-ended rentals. Spot
+instances are open-ended and can be reclaimed at any time, so `ending_at` is `null`; a reclaim
+shows up as the instance moving to `deleting` with `"status_details": "preempted"` (see below).
 
 ### Interruption behavior
 When Shadeform needs the capacity back, the spot instance is terminated and billing stops.

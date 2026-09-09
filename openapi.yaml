@@ -63,7 +63,7 @@ paths:
           schema:
             type: boolean
           example: true
-          description: "Filter the instance type results by availability."
+          description: "Filter the instance type results by availability. Applies to individual availability entries, so an instance type whose region is available only as spot is still returned with just its spot entry; filter by `rental_type` client-side if you only want on-demand."
         - in: query
           name: sort
           schema:
@@ -74,7 +74,7 @@ paths:
           description: "Sort the order of the instance type results."
       summary: /instances/types
       operationId: InstancesTypes
-      description: 'Return all the GPU instance types with their corresponding availability and specs.'
+      description: "Return all the GPU instance types with their corresponding availability and specs.\n\nEvery `availability` entry carries a `rental_type` (`on_demand` or `spot`). Instance types that offer spot list each region twice, once per rental type, and the two entries can differ in `available`. If your integration keys on `region` or checks whether any region is available, filter to `rental_type: on_demand` first to keep the previous behavior. See the [Spot Instances guide](/guides/spotinstances) for details."
       responses:
         '200':
           description: Returns an InstanceTypesResponse object
@@ -564,9 +564,16 @@ components:
             - region: us-central-1
               available: true
               display_name: US, Wichita, KS
+              rental_type: on_demand
             - region: us-central-2
               available: false
               display_name: US, Wichita, KS
+              rental_type: on_demand
+            - region: us-central-1
+              available: true
+              display_name: US, Wichita, KS
+              rental_type: spot
+              hourly_price: "1.50"
         boot_time:
           $ref: '#/components/schemas/BootTime'
     InstancesResponse:
@@ -722,6 +729,8 @@ components:
           $ref: '#/components/schemas/CostEstimate'
         hourly_price:
           $ref: '#/components/schemas/HourlyPrice'
+        rental_terms:
+          $ref: '#/components/schemas/RentalTerms'
         volume_ids:
           type: array
           description: "List of volume IDs to be mounted. Currently only supports 1 volume at a time."
@@ -916,7 +925,7 @@ components:
           format: date-time
           nullable: true
           example: null
-          description: "The promised end of the rental when one is known. For a spot instance this becomes the reclaim deadline once a reclaim is underway. Null for open-ended rentals."
+          description: "The promised end of the rental when one is known. Null for open-ended rentals. Spot instances are open-ended and can be reclaimed at any time, so this is null; a reclaim shows up as the instance moving to `deleting` with `status_details: \"preempted\"`."
     BootTime:
       type: object
       properties:
