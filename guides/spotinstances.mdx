@@ -1,0 +1,115 @@
+---
+title: 'Spot Instances'
+icon: 'bolt'
+iconType: 'solid'
+---
+### Intro
+Spot instances let you rent GPUs at a discounted hourly price in exchange for interruptibility:
+Shadeform may reclaim the capacity at any time, at which point the instance is terminated.
+They are a great fit for fault-tolerant workloads like batch inference, hyperparameter sweeps,
+checkpointed training, and CI jobs — anything that can stop and resume without losing work.
+
+On-demand instances are never interrupted; only instances you explicitly launch with the
+spot rental type are.
+
+### Finding spot capacity
+Spot is offered on select Shade Cloud instance types. To see which, call the
+[Instance Types API](/api-reference/instances/instances-types):
+
+```bash CLI
+curl --request GET \
+--url 'https://api.shadeform.ai/v1/instances/types' \
+--header 'X-API-KEY: <api-key>'
+```
+
+Every entry in an instance type's `availability` array carries a `rental_type`. Regular entries
+are tagged `rental_type: "on_demand"`; instance types that support spot list an additional entry
+per region marked `rental_type: "spot"`, carrying the spot hourly price as a decimal string in
+dollars:
+
+```json Availability
+"availability": [
+  {
+    "region": "us-central-1",
+    "available": true,
+    "display_name": "US, Wichita, KS",
+    "rental_type": "on_demand"
+  },
+  {
+    "region": "us-central-1",
+    "available": true,
+    "display_name": "US, Wichita, KS",
+    "rental_type": "spot",
+    "hourly_price": "1.50"
+  }
+]
+```
+
+Spot and on-demand availability are evaluated independently — a region can offer spot while
+on-demand is sold out, and vice versa — so always read the entry matching the rental type you
+intend to launch. Because a region can appear twice, filter the array by `rental_type` rather
+than treating it as one entry per region.
+
+### Launching a spot instance
+Add `"rental_type": "spot"` to your [Create Instance API](/api-reference/instances/instances-create) request,
+using the `cloud`, `region`, and `shade_instance_type` from a catalog entry that offers spot.
+Spot instances run on Shade Cloud, so `shade_cloud` must be `true`:
+
+```bash CLI
+curl --request POST \
+--url 'https://api.shadeform.ai/v1/instances/create' \
+--header 'X-API-KEY: <api-key>' \
+--header 'Content-Type: application/json' \
+--data '{
+  "cloud": "excesssupply",
+  "region": "us-central-1",
+  "shade_instance_type": "A6000",
+  "shade_cloud": true,
+  "name": "spot-example",
+  "rental_type": "spot"
+}'
+```
+
+`rental_type` is optional and defaults to `"on_demand"`. Omitting it — as every request written
+before spot existed does — launches a regular on-demand instance, so existing integrations are
+unaffected; you only get a spot instance by asking for one explicitly.
+
+If the instance type does not offer spot in that region, the create request fails with a
+descriptive error — you are never silently given an on-demand instance at the on-demand price.
+
+You can also launch spot instances from the platform by flipping the spot toggle in the
+launch flow; the discounted price is reflected before you deploy.
+
+### Checking rental terms
+Instance list/info responses include a `rental_terms` object describing how each instance is rented:
+
+```json Rental Terms
+"rental_terms": {
+  "rental_type": "spot",
+  "hourly_price": "1.50",
+  "ending_at": null
+}
+```
+
+`rental_type` is `spot` for spot instances and `on_demand` for everything else, including
+instances launched without a `rental_type` in the request. `hourly_price` is a decimal string
+in dollars — for a spot instance this is the discounted rate you are billed at. `ending_at` is
+the promised end of the rental when one is known; for a spot instance it becomes the reclaim
+deadline once a reclaim is underway.
+
+### Interruption behavior
+When Shadeform needs the capacity back, the spot instance is terminated and billing stops.
+A reclaimed instance is distinguishable from one you deleted yourself: its terminal state
+carries `"status_details": "preempted"` in the
+[Instance Info API](/api-reference/instances/instances-info) response.
+
+Design your workload to tolerate interruption:
+
+- Checkpoint progress to a mounted [volume](/guides/attachvolume) or external storage.
+- Make jobs idempotent and resumable so a replacement instance can pick up where the last one left off.
+- Poll your instances and relaunch (spot or on-demand) when one is reclaimed.
+
+### Pricing
+Spot pricing is set per instance type and shown on the `rental_type: "spot"` catalog entries.
+Billing works exactly like on-demand — per-second metering at the spot rate — and stops when
+the instance is reclaimed or deleted.
