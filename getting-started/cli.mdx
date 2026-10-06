@@ -1,0 +1,167 @@
+---
+title: 'CLI'
+description: 'Launch and manage GPU instances from your terminal with the shade CLI.'
+---
+
+The `shade` CLI wraps the full [Shadeform API](/api-reference/instances/instances-create): instances, clusters, volumes, SSH keys and templates. It is generated from the same OpenAPI spec as the API reference, so every endpoint and parameter is available, and it is designed to work equally well for people and for AI coding agents.
+
+Source and releases live at [github.com/shadeform/shadeform-cli](https://github.com/shadeform/shadeform-cli).
+
+## Install
+
+<CodeGroup>
+
+```bash macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/shadeform/shadeform-cli/main/scripts/install.sh | bash
+```
+
+```powershell Windows (PowerShell)
+iwr -useb https://raw.githubusercontent.com/shadeform/shadeform-cli/main/scripts/install.ps1 | iex
+```
+
+```bash Go
+go install github.com/shadeform/shadeform-cli/cmd/shade@latest
+```
+
+</CodeGroup>
+
+Pre-built binaries for every platform are on the [releases page](https://github.com/shadeform/shadeform-cli/releases). Verify the install with:
+
+```bash
+shade version
+```
+
+## Authenticate
+
+Generate an API key in the [Shadeform console](https://platform.shadeform.ai/settings/api), then either store it once or export it for the current shell.
+
+<CodeGroup>
+
+```bash Store it (recommended)
+shade configure
+```
+
+```bash Export it (shells and CI)
+export SHADEFORM_API_KEY="your-api-key"
+```
+
+</CodeGroup>
+
+`shade configure` keeps the key in your OS keychain when one is available and falls back to `~/.config/shade/config.yaml`. Precedence is: `--api-key` flag, then `SHADEFORM_API_KEY`, then the keychain, then the config file. Check what the CLI is using with `shade whoami`.
+
+## Launch your first instance
+
+### 1. Find an available GPU
+
+List instance types, filtered to what you need and sorted by price. Use `--available` to hide capacity that cannot be launched right now.
+
+```bash
+shade instances list-types --shade-instance-type A6000 --available --sort price
+```
+
+Each result tells you the `cloud`, `region` and `shade_instance_type` to pass to `create`. See [Concepts](/getting-started/concepts#shade-instance-type-and-cloud-instance-type) for how Shadeform instance types map to cloud instance types.
+
+### 2. Create it
+
+```bash
+shade instances create \
+  --cloud hyperstack \
+  --region canada-1 \
+  --shade-instance-type A6000 \
+  --shade-cloud=true \
+  --name my-first-gpu
+```
+
+The response includes the new instance `id`. Any field in the [create request](/api-reference/instances/instances-create) is available as a flag (`--os`, `--ssh-key-id`, `--volume-ids`, `--rental-type spot`, ...), or pass a whole request body with `--body '{...}'`. Run `shade instances create --schema` to print the exact JSON Schema.
+
+### 3. Wait for it to become active
+
+```bash
+shade instances get <id>
+```
+
+Poll until `status` is `active`. The response carries the `ip` and `ssh_user` you need to connect.
+
+### 4. Connect over SSH
+
+If you launched with a Shadeform-generated SSH key (the default), download its private key. It is written to `~/.ssh/shadeform-<key-name>.pem` with mode `0600` and the path is printed:
+
+```bash
+shade ssh-keys list
+shade ssh-keys download <ssh-key-id>
+ssh -i ~/.ssh/shadeform-<key-name>.pem shadeform@<ip>
+```
+
+If you uploaded your own public key, use the matching private key you already hold.
+
+<Note>
+Private keys never appear in `shade ssh-keys list` or `shade ssh-keys get`, in any output format. `shade ssh-keys download` is the only command that retrieves one, and it writes to a file rather than your terminal unless you pass `--stdout`.
+</Note>
+
+### 5. Clean up
+
+```bash
+shade instances delete <id>
+```
+
+## Everyday commands
+
+| Task | Command |
+| --- | --- |
+| List running instances | `shade instances list` |
+| Restart an instance | `shade instances restart <id>` |
+| Create a volume | `shade volumes create --cloud <cloud> --region <region> --name data --size-in-gb 500` |
+| Attach a volume at launch | `shade instances create ... --volume-ids <volume-id>` |
+| Multi-node clusters | `shade clusters list-types`, `shade clusters create ...` |
+| Save a launch config | `shade templates save ...` then `shade instances create --template-id <id>` |
+| Browse interactively | `shade explore` |
+
+Every command has `--help`, and most groups have a short alias (`shade sk list` is `shade ssh-keys list`). Shell completion is available for Bash, Zsh, Fish and PowerShell:
+
+```bash
+source <(shade completion zsh)   # or bash, fish, powershell
+```
+
+## Scripting and automation
+
+The CLI defaults to a human-readable `pretty` format on a terminal. For scripts, ask for structured output and filter it with `--jq`:
+
+```bash
+# Every instance id
+shade instances list -o json --jq '.instances[].id' --raw-output
+
+# Cheapest available H100 as a single JSON object
+shade instances list-types --shade-instance-type H100 --available --sort price \
+  -o json --jq '.instance_types[0]'
+```
+
+Useful flags for automation:
+
+| Flag | Purpose |
+| --- | --- |
+| `-o json`, `-o yaml`, `-o table`, `-o toon` | Choose the output format |
+| `--jq <expr>` | Filter output with a jq expression; add `--raw-output` for plain strings |
+| `--dry-run` | Print the request the CLI would send without sending it |
+| `--no-interactive` | Never prompt; fail fast on missing input (set this in CI) |
+| `--timeout 5m` | Override the HTTP timeout for long-running calls |
+
+Exit codes are stable: `0` success, `1` runtime error, `2` usage error, `3` authentication or authorization failure.
+
+## Using the CLI from an AI coding agent
+
+`shade` detects common agent environments (Claude Code, Cursor and others) and switches to **agent mode**: errors become structured, output defaults to the compact `toon` format, and the command tree is discoverable as machine-readable schema.
+
+```bash
+shade --usage                       # the whole command tree as KDL
+shade instances create --schema     # JSON Schema for a request body
+shade instances create --dry-run ... # preview the exact API call
+```
+
+Force it on or off with `--agent-mode` / `--agent-mode=false`.
+
+## Troubleshooting
+
+- **`authentication` exit code 3** - run `shade whoami` to see which credential source is in use, then `shade configure` to replace it. Keys are created and rotated at [platform.shadeform.ai/settings/api](https://platform.shadeform.ai/settings/api).
+- **Command hangs waiting for input** - you are on a non-TTY and a required flag is missing. Add the flag, or pass `--no-interactive` to get a usage error instead.
+- **Need to see what was sent** - add `--debug` to log the request and response to stderr, or `--include-headers` to include response headers in the output.
+- **Can't SSH** - see the [SSH issues guide](/guides/sshissues). The instance must be `active`, and the key you pass to `-i` must match the `ssh_key_id` it was launched with.
