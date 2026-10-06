@@ -314,14 +314,14 @@ paths:
     get:
       summary: /sshkeys/{id}/info
       operationId: SshKeysInfo
-      description: "Get details for the specified SSH Key in the url."
+      description: "Get details for the specified SSH Key in the url, including the private key when Shadeform holds one."
       responses:
         '200':
-          description: "Return an SshKey object."
+          description: "Return an SshKeyInfo object."
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SshKey'
+                $ref: '#/components/schemas/SshKeyInfo'
   '/sshkeys/{id}/setdefault':
     parameters:
       - in: path
@@ -1467,10 +1467,12 @@ components:
             $ref: '#/components/schemas/SshKey'
     SshKey:
       type: object
+      description: "An SSH key as returned by the list endpoint. The private key is never included here; use /sshkeys/{id}/info when `has_private_key` is true."
       required:
         - id
         - name
         - public_key
+        - has_private_key
         - is_default
       properties:
         id:
@@ -1479,6 +1481,30 @@ components:
           $ref: '#/components/schemas/SshKeyName'
         public_key:
           $ref: '#/components/schemas/PublicKey'
+        has_private_key:
+          $ref: '#/components/schemas/HasPrivateKey'
+        is_default:
+          $ref: '#/components/schemas/IsDefault'
+    SshKeyInfo:
+      type: object
+      description: "Full details for one SSH key. This is the only endpoint that returns the private key, and only for keys Shadeform generated; keys you uploaded have no private key on file."
+      required:
+        - id
+        - name
+        - public_key
+        - has_private_key
+        - is_default
+      properties:
+        id:
+          $ref: '#/components/schemas/SshKeyID'
+        name:
+          $ref: '#/components/schemas/SshKeyName'
+        public_key:
+          $ref: '#/components/schemas/PublicKey'
+        has_private_key:
+          $ref: '#/components/schemas/HasPrivateKey'
+        private_key:
+          $ref: '#/components/schemas/PrivateKey'
         is_default:
           $ref: '#/components/schemas/IsDefault'
     AddSshKeyRequest:
@@ -1557,6 +1583,14 @@ components:
       type: boolean
       example: false
       description: "Indicates the default key."
+    HasPrivateKey:
+      type: boolean
+      example: true
+      description: "Whether Shadeform holds the private key for this SSH key. True for keys Shadeform generated (such as the managed key); false for keys you uploaded."
+    PrivateKey:
+      type: string
+      example: '-----BEGIN OPENSSH PRIVATE KEY-----\n...\n-----END OPENSSH PRIVATE KEY-----'
+      description: "The PEM-encoded private key. Only present on /sshkeys/{id}/info, and empty when `has_private_key` is false. Treat it as a secret: write it to a file with mode 0600 and never log it."
     Tag:
       type: string
       example: "tag1"
