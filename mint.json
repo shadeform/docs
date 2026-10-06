@@ -41,6 +41,7 @@
       "group": "Guides",
       "pages": [
         "guides/tutoriallibrary",
+        "guides/mcp",
         "guides/spotinstances",
         "guides/attachvolume",
         "guides/sshissues",
