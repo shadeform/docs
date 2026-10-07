@@ -2,7 +2,10 @@
 title: 'Using Templates'
 icon: 'copy'
 iconType: 'solid'
+description: 'Save an instance configuration once and launch from it repeatedly.'
 ---
+
+import Prerequisites from '/snippets/prerequisites.mdx';
 
 Templates in Shadeform allow you to save and reuse instance configurations, making it easy to launch instances with predefined settings like launch configurations, networking rules, and environment variables. Templates are particularly useful when you need to repeatedly deploy instances with the same configuration or share configurations with team members.
 
@@ -10,13 +13,11 @@ In this guide, we'll cover how to create, use, and manage templates via the Shad
 
 ### Prerequisites
 
-There are two pre-requisites for this guide:
-1. After you have created your account, you must top up your wallet [here](https://platform.shadeform.ai/settings/billing).
-2. After you have topped up your wallet, generate and retrieve your Shadeform API key [here](https://platform.shadeform.ai/settings/api).
+<Prerequisites />
 
 ### Step 1: Create a Template
 
-To create a new template, use the [`/templates/save`](https://docs.shadeform.ai/api-reference/templates/templates-save) endpoint. You can define various configurations including launch settings, networking rules, and environment variables.
+To create a new template, use the [`/templates/save`](/api-reference/templates/templates-save) endpoint. You can define various configurations including launch settings, networking rules, and environment variables.
 
 <CodeGroup>
   ```bash CLI
@@ -62,7 +63,7 @@ To create a new template, use the [`/templates/save`](https://docs.shadeform.ai/
 
 ### Step 2: View Template Details
 
-After creating a template, you can view its details using the [`/templates/{template_id}/info`](https://docs.shadeform.ai/api-reference/templates/templates-info) endpoint. Use the `id` from the response in Step 1. If you want to see templates you have created, use the [`/templates`](https://docs.shadeform.ai/api-reference/templates/templates) endpoint.
+After creating a template, you can view its details using the [`/templates/{template_id}/info`](/api-reference/templates/templates-info) endpoint. Use the `id` from the response in Step 1. If you want to see templates you have created, use the [`/templates`](/api-reference/templates/templates) endpoint.
 
 <CodeGroup>
   ```bash CLI
@@ -105,7 +106,7 @@ After creating a template, you can view its details using the [`/templates/{temp
 
 ### Step 3: Launch an Instance Using a Template
 
-To use a template when creating an instance, include the `template_id` in your instance creation request using the [`/instances/create`](https://docs.shadeform.ai/api-reference/instances/instances-create) endpoint.
+To use a template when creating an instance, include the `template_id` in your instance creation request using the [`/instances/create`](/api-reference/instances/instances-create) endpoint.
 
 <CodeGroup>
   ```bash CLI
@@ -135,7 +136,7 @@ To use a template when creating an instance, include the `template_id` in your i
 
 ### Step 4: Delete a Template
 
-When you no longer need a template, you can delete it using the [`/templates/{template_id}/delete`](https://docs.shadeform.ai/api-reference/templates/templates-delete) endpoint.
+When you no longer need a template, you can delete it using the [`/templates/{template_id}/delete`](/api-reference/templates/templates-delete) endpoint.
 
 <CodeGroup>
   ```bash CLI
@@ -149,11 +150,11 @@ When you no longer need a template, you can delete it using the [`/templates/{te
 
 Templates provide a powerful way to standardize and automate your instance deployments.
 
-For more details about template configurations and available options, check out the [Templates API reference](https://docs.shadeform.ai/api-reference/templates/templates).
+For more details about template configurations and available options, check out the [Templates API reference](/api-reference/templates/templates).
 
 <CardGroup cols={2}>
-  <Card title="Managing Instances" icon="server" href="/guides/instances">
-    Learn more about managing GPU instances.
+  <Card title="Managing Instances" icon="server" href="/interfaces/api">
+    Learn more about managing GPU instances with the API.
   </Card>
   <Card title="API Documentation" icon="code" href="/api-reference/templates/templates">
     Full API reference for templates.

@@ -1,6 +1,7 @@
 ---
 title: 'Find and Deploy the Most Affordable GPU'
 sidebarTitle: 'Most Affordable GPU'
+description: 'Filter and sort the instance catalog to find the cheapest GPU that fits.'
 icon: 'dollar-sign'
 iconType: 'solid'
 ---
@@ -32,10 +33,9 @@ By using the following query parameters, we can filter down the results and sort
 This is an example API call to find the most affordable A100_80G instance available right now.
 <CodeGroup>
   ```bash CLI
-  curl --request POST \
+  curl --request GET \
   --url 'https://api.shadeform.ai/v1/instances/types?gpu_type=A100_80G&available=true&sort=price' \
-  --header 'X-API-KEY: <api-key>' \
-  --header 'Content-Type: application/json'
+  --header 'X-API-KEY: <api-key>'
   ```
 
   ```python Python
@@ -46,7 +46,7 @@ This is an example API call to find the most affordable A100_80G instance availa
   Coming soon!
   ```
 </CodeGroup>
-From array of results returned, we can see that the A100_80G instance from RunPod is the most affordable instance available right now at `$2.03/hr`.
+From the array of results returned, we can see that the A100_80G instance from RunPod is the most affordable instance available right now at `$2.03/hr`.
 ```json Response
 {
   "instance_types": [
@@ -90,13 +90,12 @@ From array of results returned, we can see that the A100_80G instance from RunPo
 ```
 
 ### Find the Most Affordable 8xH100 Instance Available
-This is an example API call to find the most affordable H100 instance available right now.
+This is an example API call to find the most affordable 8xH100 instance available right now.
 <CodeGroup>
   ```bash CLI
-  curl --request POST \
+  curl --request GET \
   --url 'https://api.shadeform.ai/v1/instances/types?gpu_type=H100&num_gpus=8&available=true&sort=price' \
-  --header 'X-API-KEY: <api-key>' \
-  --header 'Content-Type: application/json'
+  --header 'X-API-KEY: <api-key>'
   ```
 
   ```python Python
@@ -107,7 +106,7 @@ This is an example API call to find the most affordable H100 instance available 
   Coming soon!
   ```
 </CodeGroup>
-From array of results returned, we can see that the 8xH100 instance from Oblivus is the most affordable instance available right now at `$32.80/hr`.
+From the array of results returned, we can see that the 8xH100 instance from Oblivus is the most affordable instance available right now at `$32.80/hr`.
 ```json Response
 {
   "instance_types": [
@@ -156,10 +155,9 @@ From array of results returned, we can see that the 8xH100 instance from Oblivus
 To find the most affordable 8xH100 instance regardless of availability, we can use the previous API call and remove the `available=true` parameter.
 <CodeGroup>
   ```bash CLI
-  curl --request POST \
-  --url 'https://api.shadeform.ai/v1/instances/types?gpu_type=H100&num_gpus=8&available=true&sort=price' \
-  --header 'X-API-KEY: <api-key>' \
-  --header 'Content-Type: application/json'
+  curl --request GET \
+  --url 'https://api.shadeform.ai/v1/instances/types?gpu_type=H100&num_gpus=8&sort=price' \
+  --header 'X-API-KEY: <api-key>'
   ```
 
   ```python Python
@@ -219,10 +217,9 @@ After we remove the `available=true` parameter, we now see the top result as Mas
 This is an example API call to find the most affordable A6000 instance available right now.
 <CodeGroup>
   ```bash CLI
-  curl --request POST \
+  curl --request GET \
   --url 'https://api.shadeform.ai/v1/instances/types?gpu_type=A6000&available=true&sort=price' \
-  --header 'X-API-KEY: <api-key>' \
-  --header 'Content-Type: application/json'
+  --header 'X-API-KEY: <api-key>'
   ```
 
   ```python Python
@@ -233,7 +230,7 @@ This is an example API call to find the most affordable A6000 instance available
   Coming soon!
   ```
 </CodeGroup>
-From array of results returned, we can see that the A6000 instance from RunPod is the most affordable instance available right now at `0.57/hr`.
+From the array of results returned, we can see that the A6000 instance from Massed Compute is the most affordable instance available right now at `$0.57/hr`.
 ```json Response
 {
   "instance_types": [

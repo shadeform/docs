@@ -1,5 +1,6 @@
 ---
 title: 'FAQ'
+description: 'Common questions about using Shadeform, pricing and support.'
 icon: 'question'
 iconType: 'solid'
 ---
@@ -19,7 +20,11 @@ iconType: 'solid'
   </Accordion>
 
   <Accordion title="How do I access my GPU instance?">
-    Please see the [Quickstart guide](/getting-started/quickstart#sshing-into-the-instance) on SSHing into your machine.
+    Over SSH, as the `shadeform` user, using the key the instance was launched with. See [accessing your instance](/getting-started/quickstart#5-access-your-instance) in the Quickstart, or [SSHing into the instance](/interfaces/api#sshing-into-the-instance) for the API flow. If the connection fails, check [Common SSH Issues](/guides/sshissues).
+  </Accordion>
+
+  <Accordion title="Can I use Shadeform from the terminal or from an AI assistant?">
+    Yes. The [`shade` CLI](/interfaces/cli) covers every API endpoint and is built for scripting and CI. The hosted [MCP server](/interfaces/mcp) lets Claude Code, Cursor, Claude Desktop and Codex find GPUs and manage instances on your behalf.
   </Accordion>
 
   <Accordion title="What is Shadeform's docker feature?">
@@ -31,7 +36,7 @@ iconType: 'solid'
   </Accordion>
 
   <Accordion title="What's next for Shadeform?">
-    We're focusing on building more platform features such as team management, SSH key management, volumes, and more. We're also focused on adding more providers to increase optionality.
+    We recently shipped persistent volumes, templates, multi-node clusters, spot instances, a CLI and an MCP server. We're continuing to add providers and platform features; email support@shadeform.ai if there is something specific you need.
   </Accordion>
 
   <Accordion title="What machine SLAs do you have?">
