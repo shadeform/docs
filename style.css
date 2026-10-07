@@ -1,0 +1,10 @@
+/* Mintlify's fonts setting covers headings and body only; the console and
+   landing page pair Geist with Geist Mono, so load it here for code. */
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap');
+
+code,
+kbd,
+pre,
+samp {
+  font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
