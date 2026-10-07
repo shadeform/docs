@@ -1,0 +1,102 @@
+---
+title: 'Using the MCP Server'
+icon: 'robot'
+iconType: 'solid'
+---
+
+The Shadeform MCP server lets AI tools such as Claude Code, Cursor, Claude Desktop and Codex work with your Shadeform account directly. Once connected, you can ask your assistant to find available GPUs, launch and manage instances, attach volumes, or save templates, and it calls the Shadeform API for you.
+
+The server is hosted by Shadeform at `https://mcp.shadeform.ai` and speaks the [Model Context Protocol](https://modelcontextprotocol.io) over Streamable HTTP. There is nothing to install or run locally.
+
+### Prerequisites
+
+There are two pre-requisites for this guide:
+1. After you have created your account, you must top up your wallet [here](https://platform.shadeform.ai/settings/billing).
+2. After you have topped up your wallet, generate and retrieve your Shadeform API key [here](https://platform.shadeform.ai/settings/api).
+
+<Warning>
+Your API key grants full access to your Shadeform account, and the MCP server includes tools that create and delete billable resources. The delete tools instruct your assistant to restate the resource and ask for your confirmation before running, but you should still keep your client's tool-approval prompts enabled for write actions, and never commit a configuration file that contains your key.
+</Warning>
+
+### Step 1: Connect your client
+
+Every client needs two values: the server URL `https://mcp.shadeform.ai` and the HTTP header `MCP-SHADEFORM-API-API-KEY-AUTH` set to your API key.
+
+<CodeGroup>
+  ```bash Claude Code
+  claude mcp add shadeform -s user --transport http https://mcp.shadeform.ai \
+    --header "MCP-SHADEFORM-API-API-KEY-AUTH: <api-key>"
+  ```
+
+  ```json Cursor
+  // ~/.cursor/mcp.json
+  {
+    "mcpServers": {
+      "shadeform": {
+        "url": "https://mcp.shadeform.ai",
+        "headers": {
+          "MCP-SHADEFORM-API-API-KEY-AUTH": "<api-key>"
+        }
+      }
+    }
+  }
+  ```
+
+  ```json Claude Desktop
+  // Settings > Developer > Edit Config
+  {
+    "mcpServers": {
+      "shadeform": {
+        "command": "npx",
+        "args": [
+          "-y", "mcp-remote", "https://mcp.shadeform.ai",
+          "--header", "MCP-SHADEFORM-API-API-KEY-AUTH:<api-key>"
+        ]
+      }
+    }
+  }
+  ```
+
+  ```toml Codex
+  # ~/.codex/config.toml
+  [mcp_servers.shadeform]
+  url = "https://mcp.shadeform.ai"
+  http_headers = { "MCP-SHADEFORM-API-API-KEY-AUTH" = "<api-key>" }
+  ```
+</CodeGroup>
+
+<Note>
+Claude Desktop does not yet send custom headers to remote servers, so the configuration above uses the `mcp-remote` bridge, which requires Node.js 18 or newer. In Cursor you can reference an environment variable instead of pasting the key: `"MCP-SHADEFORM-API-API-KEY-AUTH": "${env:SHADEFORM_API_KEY}"`.
+</Note>
+
+Restart the client if it does not pick up the change automatically. It should list the `shadeform` server as connected with 28 tools.
+
+### Step 2: Ask for something
+
+Talk to your assistant as you normally would. A few prompts to start with:
+
+- "Which H100 instances are available right now, and what do they cost per hour?"
+- "Launch the cheapest available A100 in the US with my default SSH key."
+- "List my running instances and restart the one named `training-01`."
+- "Create a template called `vllm-llama` that runs the `vllm/vllm-openai:latest` container."
+
+The assistant will choose from the tools below. Tool arguments mirror the REST API: query parameters, path parameters and the request body are passed as `queryParameters`, `pathParameters` and `body`.
+
+### Available tools
+
+| Area | Read | Write |
+| --- | --- | --- |
+| Instances | `instances_list`, `instances_get`, `instances_list_types` | `instances_create`, `instances_update`, `instances_restart`, `instances_delete` |
+| Clusters | `clusters_list`, `clusters_get`, `clusters_list_types` | `clusters_create`, `clusters_delete` |
+| Volumes | `volumes_list`, `volumes_get`, `volumes_list_types` | `volumes_create`, `volumes_delete` |
+| SSH keys | `ssh_keys_list`, `ssh_keys_get` | `ssh_keys_add`, `ssh_keys_set_default`, `ssh_keys_delete` |
+| Templates | `templates_list`, `templates_list_featured`, `templates_get` | `templates_save`, `templates_update`, `templates_delete` |
+
+Each tool corresponds to one endpoint in the [API Reference](https://docs.shadeform.ai/api-reference/instances/instances-create); for example `instances_list_types` is [`/instances/types`](https://docs.shadeform.ai/api-reference/instances/instances-types) and accepts the same filters such as `gpu_type`, `available` and `region`.
+
+### Troubleshooting
+
+- **`401 unauthorized access` when connecting.** The header is missing, misspelled, or the key is wrong. The header name is exactly `MCP-SHADEFORM-API-API-KEY-AUTH`.
+- **`404 page not found`.** The server is served at the domain root. Use `https://mcp.shadeform.ai` with no path.
+- **Tools are listed but every call fails.** Your key is rejected by the API. Generate a new one in [API settings](https://platform.shadeform.ai/settings/api) and update your client configuration.
+- **Something else.** Reach us at [support@shadeform.ai](mailto:support@shadeform.ai).
