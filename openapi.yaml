@@ -542,6 +542,7 @@ components:
         - configuration
         - hourly_price
         - deployment_type
+        - flex_vm
         - availability
       properties:
         cloud:
@@ -556,6 +557,8 @@ components:
           $ref: '#/components/schemas/HourlyPrice'
         deployment_type:
           $ref: '#/components/schemas/DeploymentType'
+        flex_vm:
+          $ref: '#/components/schemas/FlexVM'
         availability:
           type: array
           items:
@@ -1409,6 +1412,10 @@ components:
       type: string
       example: vm
       description: 'Whether the instance is a "vm" (virtual machine), a "container" (docker container), or "baremetal" (bare metal server).'
+    FlexVM:
+      type: boolean
+      example: false
+      description: 'True when Shadeform virtualizes this instance. cloud remains who owns and operates the hardware. deployment_type remains vm, baremetal, or container.'
     Ip:
       type: string
       example: 1.0.0.1
