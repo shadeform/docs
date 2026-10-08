@@ -2,6 +2,7 @@
 title: 'Serve Model Using vLLM'
 icon: 'microchip'
 iconType: 'solid'
+description: 'Serve an open model behind an OpenAI-compatible endpoint with vLLM.'
 ---
 
 Model Deployment is a very common GPU use case. With Shadeform, it's easy to deploy models right to the most affordable gpu's in the market with just a few commands.
@@ -10,7 +11,7 @@ In this guide, we will deploy [Mistral-7b-v0.1](https://huggingface.co/mistralai
 
 ### Setup
 
-This guide builds off of our others for [finding the best gpu](https://docs.shadeform.ai/findingmostaffordablegpus) and for [deploying gpu containers](https://docs.shadeform.ai/deployinggpucontainers).
+This guide builds off of our others for [finding the best GPU](/guides/mostaffordablegpus) and for [deploying GPU containers](/guides/dockercontainers).
 We have a python notebook already to go for you to deploy this model that you can [find here](https://github.com/shadeform/examples/blob/main/basic_serving_vllm.ipynb).
 The requirements are simple, so in a python environment with (`requests` + optionally `openai`) installed:
 

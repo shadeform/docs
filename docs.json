@@ -1,0 +1,216 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Shadeform Documentation",
+  "colors": {
+    "primary": "#2563eb",
+    "light": "#60a5fa",
+    "dark": "#2563eb"
+  },
+  "background": {
+    "color": {
+      "light": "#ffffff",
+      "dark": "#131416"
+    }
+  },
+  "fonts": {
+    "heading": {
+      "family": "Geist"
+    },
+    "body": {
+      "family": "Geist"
+    }
+  },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light-shadeform.svg",
+    "dark": "/logo/dark-shadeform.svg"
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "getting-started/introduction",
+              "getting-started/quickstart",
+              "getting-started/concepts",
+              "getting-started/faq"
+            ]
+          },
+          {
+            "group": "Interfaces",
+            "pages": [
+              "interfaces/api",
+              "interfaces/cli",
+              "interfaces/mcp"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              {
+                "group": "Launching Instances",
+                "pages": [
+                  "guides/mostaffordablegpus",
+                  "guides/spotinstances",
+                  "guides/templates",
+                  "guides/startupscript",
+                  "guides/dockercontainers"
+                ]
+              },
+              {
+                "group": "Storage and Access",
+                "pages": [
+                  "guides/attachvolume",
+                  "guides/sshkeys",
+                  "guides/sshissues",
+                  "guides/firewall"
+                ]
+              },
+              {
+                "group": "Running Workloads",
+                "pages": [
+                  "guides/jupyter",
+                  "guides/vllm",
+                  "guides/skypilot",
+                  "guides/benchmark"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-reference/authentication"
+            ]
+          },
+          {
+            "group": "Instances",
+            "pages": [
+              "api-reference/instances/instances-create",
+              "api-reference/instances/instances-info",
+              "api-reference/instances/instances-update",
+              "api-reference/instances/instances-delete",
+              "api-reference/instances/instances-restart",
+              "api-reference/instances/instances-types",
+              "api-reference/instances/instances"
+            ]
+          },
+          {
+            "group": "Clusters",
+            "pages": [
+              "api-reference/clusters/clusters-create",
+              "api-reference/clusters/clusters-info",
+              "api-reference/clusters/clusters-delete",
+              "api-reference/clusters/clusters-types",
+              "api-reference/clusters/clusters"
+            ]
+          },
+          {
+            "group": "SSH Keys",
+            "pages": [
+              "api-reference/sshkeys/sshkeys-add",
+              "api-reference/sshkeys/sshkeys-info",
+              "api-reference/sshkeys/sshkeys-delete",
+              "api-reference/sshkeys/sshkeys",
+              "api-reference/sshkeys/sshkeys-setdefault"
+            ]
+          },
+          {
+            "group": "Volumes",
+            "pages": [
+              "api-reference/volumes/volumes-create",
+              "api-reference/volumes/volumes-info",
+              "api-reference/volumes/volumes-delete",
+              "api-reference/volumes/volumes-types",
+              "api-reference/volumes/volumes"
+            ]
+          },
+          {
+            "group": "Templates",
+            "pages": [
+              "api-reference/templates/templates",
+              "api-reference/templates/templates-info",
+              "api-reference/templates/templates-featured",
+              "api-reference/templates/templates-save",
+              "api-reference/templates/templates-update",
+              "api-reference/templates/templates-delete"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "navbar": {
+    "primary": {
+      "type": "button",
+      "label": "Platform",
+      "href": "https://platform.shadeform.ai"
+    }
+  },
+  "footer": {
+    "socials": {
+      "twitter": "https://twitter.com/shadeformai",
+      "github": "https://github.com/shadeform",
+      "linkedin": "https://www.linkedin.com/company/shadeformai"
+    }
+  },
+  "api": {
+    "openapi": [
+      "openapi.yaml"
+    ],
+    "playground": {
+      "display": "interactive"
+    },
+    "mdx": {
+      "server": "https://api.shadeform.ai/v1",
+      "auth": {
+        "method": "key",
+        "name": "X-API-KEY"
+      }
+    }
+  },
+  "redirects": [
+    {
+      "source": "/quickstart",
+      "destination": "/getting-started/quickstart"
+    },
+    {
+      "source": "/getting-started/cli",
+      "destination": "/interfaces/cli"
+    },
+    {
+      "source": "/guides/mcp",
+      "destination": "/interfaces/mcp"
+    },
+    {
+      "source": "/guides/tutoriallibrary",
+      "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/guides/coreconcepts",
+      "destination": "/getting-started/concepts"
+    },
+    {
+      "source": "/guides/tgi",
+      "destination": "/guides/vllm"
+    }
+  ],
+  "integrations": {
+    "koala": {
+      "publicApiKey": "pk_f1ff89b1e5e8274bcf51c880669e44c0b250"
+    },
+    "posthog": {
+      "apiKey": "phc_aK2oaWL57uQrcoFZEHrRYV19Aw3ohA5uVo7hwzssamp",
+      "apiHost": "https://app.posthog.com"
+    }
+  }
+}

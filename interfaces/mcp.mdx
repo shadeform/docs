@@ -1,8 +1,11 @@
 ---
-title: 'Using the MCP Server'
+title: 'MCP Server'
+description: 'Let AI assistants such as Claude Code, Cursor and Codex manage your GPUs through the hosted Shadeform MCP server.'
 icon: 'robot'
 iconType: 'solid'
 ---
+
+import Prerequisites from '/snippets/prerequisites.mdx';
 
 The Shadeform MCP server lets AI tools such as Claude Code, Cursor, Claude Desktop and Codex work with your Shadeform account directly. Once connected, you can ask your assistant to find available GPUs, launch and manage instances, attach volumes, or save templates, and it calls the Shadeform API for you.
 
@@ -10,9 +13,7 @@ The server is hosted by Shadeform at `https://mcp.shadeform.ai` and speaks the [
 
 ### Prerequisites
 
-There are two pre-requisites for this guide:
-1. After you have created your account, you must top up your wallet [here](https://platform.shadeform.ai/settings/billing).
-2. After you have topped up your wallet, generate and retrieve your Shadeform API key [here](https://platform.shadeform.ai/settings/api).
+<Prerequisites />
 
 <Warning>
 Your API key grants full access to your Shadeform account, and the MCP server includes tools that create and delete billable resources. The delete tools instruct your assistant to restate the resource and ask for your confirmation before running, but you should still keep your client's tool-approval prompts enabled for write actions, and never commit a configuration file that contains your key.
@@ -69,7 +70,7 @@ Every client needs two values: the server URL `https://mcp.shadeform.ai` and the
 Claude Desktop does not yet send custom headers to remote servers, so the configuration above uses the `mcp-remote` bridge, which requires Node.js 18 or newer. In Cursor you can reference an environment variable instead of pasting the key: `"MCP-SHADEFORM-API-API-KEY-AUTH": "${env:SHADEFORM_API_KEY}"`.
 </Note>
 
-Restart the client if it does not pick up the change automatically. It should list the `shadeform` server as connected with 28 tools.
+Restart the client if it does not pick up the change automatically. It should list the `shadeform` server as connected, with one tool per API endpoint (see [Available tools](#available-tools)).
 
 ### Step 2: Ask for something
 
@@ -92,7 +93,9 @@ The assistant will choose from the tools below. Tool arguments mirror the REST A
 | SSH keys | `ssh_keys_list`, `ssh_keys_get` | `ssh_keys_add`, `ssh_keys_set_default`, `ssh_keys_delete` |
 | Templates | `templates_list`, `templates_list_featured`, `templates_get` | `templates_save`, `templates_update`, `templates_delete` |
 
-Each tool corresponds to one endpoint in the [API Reference](https://docs.shadeform.ai/api-reference/instances/instances-create); for example `instances_list_types` is [`/instances/types`](https://docs.shadeform.ai/api-reference/instances/instances-types) and accepts the same filters such as `gpu_type`, `available` and `region`.
+Each tool corresponds to one endpoint in the [API Reference](/api-reference/authentication); for example `instances_list_types` is [`/instances/types`](/api-reference/instances/instances-types) and accepts the same filters such as `gpu_type`, `available` and `region`.
+
+If you would rather have your assistant run commands than call tools, the [`shade` CLI](/interfaces/cli) detects agent environments and switches to a machine-friendly agent mode.
 
 ### Troubleshooting
 

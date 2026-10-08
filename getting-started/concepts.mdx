@@ -1,5 +1,6 @@
 ---
 title: 'Core Concepts'
+description: 'The vocabulary used across the console, API, CLI and MCP server.'
 icon: 'apple-core'
 iconType: 'solid'
 ---
@@ -21,8 +22,14 @@ Shadeform is an abstraction layer over lots of cloud providers and data centers.
 
 As you can see, the cloud instance type can vary greatly depending on the provider whereas the shade instance type is standardized across providers. The combination of cloud and shade instance type uniquely denotes a GPU instance type.
 
+### Shade Cloud
+Shade Cloud is the default way to launch. Shadeform deploys the instance into its own account with the underlying cloud provider, so you can use any provider on the marketplace without signing up with them, and you pay Shadeform for the GPU time. In the API and CLI this is `shade_cloud: true`.
+
 ### Cloud Access
-If you prefer not to use Shade Cloud, you can also set up cloud access [here](https://platform.shadeform.ai/settings/cloudaccess) to have Shadeform manage your own cloud account. Setting up cloud access typically means providing Shadeform with your cloud API key but can also mean deploying resource stacks that grant Shadeform permissions in your cloud provider.
+If you prefer not to use Shade Cloud, you can also set up cloud access [here](https://platform.shadeform.ai/settings/cloudaccess) to have Shadeform manage your own cloud account. This is useful when you have existing credits or a negotiated rate with a provider. Setting up cloud access typically means providing Shadeform with your cloud API key but can also mean deploying resource stacks that grant Shadeform permissions in your cloud provider. Launch into a linked account with `shade_cloud: false`.
+
+### Rental Type
+Instances are launched as **on-demand** by default: they run until you delete them and are never interrupted. Some Shade Cloud instance types also offer **spot** capacity at a discounted hourly price in exchange for Shadeform being able to reclaim the instance at any time. Request it with `rental_type: "spot"`. See the [Spot Instances guide](/guides/spotinstances) for details on finding spot capacity and handling interruptions.
 
 ### Launch Configuration
 Launch configurations are additional settings that you can provide when launching a GPU instance through Shadeform.
@@ -34,3 +41,9 @@ Launch configurations are additional settings that you can provide when launchin
 <Warning>
   For Docker Launch Configuration, you are not running a serverless container. Shadeform is merely spinning up the container on the VM that you spun up.
 </Warning>
+
+### Template
+A template is a saved launch configuration: the instance type, operating system, SSH key, launch configuration, environment variables and networking rules you want to reuse. Launching from a template fills in all of those settings in one step. See [Using Templates](/guides/templates).
+
+### Volume
+A volume is persistent block storage that lives independently of any instance. Attach one at launch to keep datasets, checkpoints or model weights across instance lifecycles. Volumes are tied to a single cloud and region. See [Setup a Volume](/guides/attachvolume).

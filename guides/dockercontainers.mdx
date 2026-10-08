@@ -2,6 +2,7 @@
 title: 'Run Docker Container'
 icon: 'docker'
 iconType: 'solid'
+description: 'Launch an instance that pulls and runs a container as soon as it is active.'
 ---
 ### Intro
 Shadeform primarily provides GPUs as virtual machines (VM).
@@ -50,7 +51,7 @@ To launch a VM instance with the vLLM container automatically started, we need t
   ```
 </CodeGroup>
 
-In addition to the base [Create Instance API](/getting-started/quickstart#launching-the-instance) call, we are specifying a `launch_configuration` object.
+In addition to the base [Create Instance API](/interfaces/api#launching-the-instance) call, we are specifying a `launch_configuration` object.
 The `launch_configuration.type` property must be set to `docker` and an additional `docker_configuration` object must be specified.
 In the `docker_configuration` object, we specify `image` as the image that we want to run and `args` as any arguments that should be passed to the container image.
 
