@@ -21,7 +21,7 @@ For a more in-depth guide on using vLLM, see this [guide](/guides/vllm) on runni
 To launch a VM instance with the vLLM container automatically started, we need to call the [Create Instance API](/api-reference/instances/instances-create) with the `launch_configuration` property.
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
   --url 'https://api.shadeform.ai/v1/instances/create' \
   --header 'X-API-KEY: <api-key>' \
@@ -36,18 +36,26 @@ To launch a VM instance with the vLLM container automatically started, we need t
       "type": "docker",
       "docker_configuration": {
         "image": "vllm/vllm-openai:latest",
-        "args": "--model HuggingFaceH4/zephyr-7b-beta",
+        "args": "--model HuggingFaceH4/zephyr-7b-beta"
       }
     }
   }'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region us-central-2 \
+    --shade-instance-type A6000 \
+    --shade-cloud=true \
+    --name docker-example \
+    --launch-configuration '{
+      "type": "docker",
+      "docker_configuration": {
+        "image": "vllm/vllm-openai:latest",
+        "args": "--model HuggingFaceH4/zephyr-7b-beta"
+      }
+    }'
   ```
 </CodeGroup>
 
@@ -60,37 +68,27 @@ This API call will spin up the base A6000 VM and, once the VM is `active`, pull 
   The `status` returned by the Instances API call is the status of the **VM instance** and not the status of the container. The status of the container is not surfaced through Shadeform's API.
 </Note>
 We can follow the progress of the docker container launch by SSHing into the instance and running:
-```bash CLI
+```bash
 journalctl -u init-script -f
 ```
-Once the container is running, you follow the progress of the container by running:
-```bash CLI
+Once the container is running, you can follow its output by running:
+```bash
 docker container ls
-docker container <container_id> logs -f
+docker container logs -f <container_id>
 ```
 After vLLM is fully launched, you can query vLLM using the request:
-<CodeGroup>
-  ```bash CLI
-  curl --request POST \
-  --url '<vm_ip_address>:8000/v1/chat/completions' \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "model": "HuggingFaceH4/zephyr-7b-beta",
-    "messages": [
-      {"role": "system", "content": "You are a helpful assistant."},
-      {"role": "user", "content": "Who won the world series in 2020?"}
-    ]
-  }'
-  ```
-
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
-  ```
-</CodeGroup>
+```bash
+curl --request POST \
+--url '<vm_ip_address>:8000/v1/chat/completions' \
+--header 'Content-Type: application/json' \
+--data '{
+  "model": "HuggingFaceH4/zephyr-7b-beta",
+  "messages": [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "Who won the world series in 2020?"}
+  ]
+}'
+```
 ### Launch Image from Private Registry
 If the Docker image you wish to use is in a private Dockerhub repo or private container registry, you must first configure your container registry access [here](https://platform.shadeform.ai/settings/cloudaccess).
 Find the `Container Registry` row in the table and click on `Set Up`.
@@ -106,7 +104,7 @@ If your docker container needs environment variables at runtime, you can pass th
 In the example below, we are passing in the `HUGGING_FACE_HUB_TOKEN` environment variable which is needed by vLLM to access private HuggingFace repos.
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
   --url 'https://api.shadeform.ai/v1/instances/create' \
   --header 'X-API-KEY: <api-key>' \
@@ -133,12 +131,23 @@ In the example below, we are passing in the `HUGGING_FACE_HUB_TOKEN` environment
   }'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region us-central-2 \
+    --shade-instance-type A6000 \
+    --shade-cloud=true \
+    --name docker-example \
+    --launch-configuration '{
+      "type": "docker",
+      "docker_configuration": {
+        "image": "vllm/vllm-openai:latest",
+        "args": "--model HuggingFaceH4/zephyr-7b-beta",
+        "envs": [
+          { "name": "HUGGING_FACE_HUB_TOKEN", "value": "hugging_face_api_token" }
+        ]
+      }
+    }'
   ```
 </CodeGroup>
 
@@ -147,7 +156,7 @@ If you would like to mount a volume from your VM to a filepath on your container
 Using `volume_mounts` is the equivalent of using the `-v` flag in the Docker cli.
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
   --url 'https://api.shadeform.ai/v1/instances/create' \
   --header 'X-API-KEY: <api-key>' \
@@ -174,12 +183,23 @@ Using `volume_mounts` is the equivalent of using the `-v` flag in the Docker cli
   }'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region us-central-2 \
+    --shade-instance-type A6000 \
+    --shade-cloud=true \
+    --name docker-example \
+    --launch-configuration '{
+      "type": "docker",
+      "docker_configuration": {
+        "image": "vllm/vllm-openai:latest",
+        "args": "--model HuggingFaceH4/zephyr-7b-beta",
+        "volume_mounts": [
+          { "host_path": "~/.cache/huggingface", "container_path": "/root/.cache/huggingface" }
+        ]
+      }
+    }'
   ```
 </CodeGroup>
 
@@ -188,7 +208,7 @@ By default, all containers launched through Shadeform use `--network=host` which
 Therefore, if the container runs on port 8000, then accessing the VM's port 8000 will reach the container.
 If you want the container port to be mapped to a different VM port, you can configure `port_mappings` like in the example below.
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
   --url 'https://api.shadeform.ai/v1/instances/create' \
   --header 'X-API-KEY: <api-key>' \
@@ -215,43 +235,44 @@ If you want the container port to be mapped to a different VM port, you can conf
   }'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region us-central-2 \
+    --shade-instance-type A6000 \
+    --shade-cloud=true \
+    --name docker-example \
+    --launch-configuration '{
+      "type": "docker",
+      "docker_configuration": {
+        "image": "vllm/vllm-openai:latest",
+        "args": "--model HuggingFaceH4/zephyr-7b-beta",
+        "port_mappings": [
+          { "host_port": 80, "container_port": 8000 }
+        ]
+      }
+    }'
   ```
 </CodeGroup>
 
 In the example, the vLLM container natively runs on port 8000. However, by mapping the port to 80, we can call the API directly using the IP address.
-<CodeGroup>
-  ```bash CLI
-  curl --request POST \
-  --url '<vm_ip_address>/v1/chat/completions' \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "model": "HuggingFaceH4/zephyr-7b-beta",
-    "messages": [
-      {"role": "system", "content": "You are a helpful assistant."},
-      {"role": "user", "content": "Who won the world series in 2020?"}
-    ]
-  }'
-  ```
-
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
-  ```
-</CodeGroup>
+```bash
+curl --request POST \
+--url '<vm_ip_address>/v1/chat/completions' \
+--header 'Content-Type: application/json' \
+--data '{
+  "model": "HuggingFaceH4/zephyr-7b-beta",
+  "messages": [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "Who won the world series in 2020?"}
+  ]
+}'
+```
 ### Setting Shared Memory
 By default we run containers with `--ipc="host"` for shared memory. If you would like to limit shared memory, you can configure the property like in the example below:
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
   --url 'https://api.shadeform.ai/v1/instances/create' \
   --header 'X-API-KEY: <api-key>' \
@@ -273,12 +294,21 @@ By default we run containers with `--ipc="host"` for shared memory. If you would
   }'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region us-central-2 \
+    --shade-instance-type A6000 \
+    --shade-cloud=true \
+    --name docker-example \
+    --launch-configuration '{
+      "type": "docker",
+      "docker_configuration": {
+        "image": "vllm/vllm-openai:latest",
+        "args": "--model HuggingFaceH4/zephyr-7b-beta",
+        "shared_memory_in_gb": 8
+      }
+    }'
   ```
 </CodeGroup>
 

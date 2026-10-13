@@ -21,7 +21,7 @@ Load key "ronald.pem": bad permissions
 hotaisle@23.183.40.132: Permission denied (publickey).
 ```
 This issue indicates that the private key file (.pem format) that you have does not have the correct permissions. On unix based systems (Linux or MacOS),
-you can run the following line to change the file to the right permissions.you
+you can run the following line to change the file to the right permissions.
 
 ```
 chmod 600 <path_to_key_file>
@@ -62,7 +62,7 @@ shadeform@23.183.40.132: Permission denied (publickey)
 
 If you are sure you're using the correct private key and are still getting permission denied, it's possible that you have multiple
 other keys in your keychain that SSH is automatically trying first. The target server will automatically reject your SSH attempts after a
-number of back to back failures. In this case, you will need to specifically target a private key file and only use that one for SSH.you
+number of back to back failures. In this case, you will need to specifically target a private key file and only use that one for SSH.
 
 ```
 ssh -i <path_to_private_key> -o IdentitiesOnly=yes shadeform@<ip>

@@ -5,98 +5,157 @@ iconType: 'solid'
 description: 'Run lm-eval-harness against a model on a Shadeform GPU.'
 ---
 
-### Benchmarking Models
+import Prerequisites from '/snippets/prerequisites.mdx';
 
-With the Container Launch config, we can spin up a secure VM, and start a container on it automatically. Let's start with a very simple example - running evals on a new model from Huggingface. 
+With the `docker` [launch configuration](/getting-started/concepts#launch-configuration) you can spin up a GPU VM and start a container on it in one API call. A good first workload is running evals on a new model from Hugging Face.
 
-We have an image that does this with the LM Eval Harness library using HF Transformers. The code for it can be found and forked [here](https://github.com/shadeform/examples/tree/main/lm-eval-harness-benchmarking).
-We also have a [notebook](https://github.com/shadeform/examples/blob/main/deploy_container.ipynb) that automatically launches this image on the most affordable A6000's on the market to run the 
-[Mistral-7b-Instruct-v0.2](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2) model though a benchmark. You can configure the model, gpu type, number of fewshot examples, and the benchmark eval.
+Shadeform publishes [`shadeform/lm-eval-harness`](https://hub.docker.com/r/shadeform/lm-eval-harness), an image that wraps [lm-eval-harness](https://github.com/EleutherAI/lm-evaluation-harness) with HF Transformers. It is configured entirely through environment variables:
 
-### Setup
+| Variable | Description | Example |
+| --- | --- | --- |
+| `model` | Hugging Face model id to evaluate | `mistralai/Mistral-7B-Instruct-v0.2` |
+| `tasks` | Comma-separated lm-eval tasks | `hellaswag` |
+| `num_fewshot` | Number of few-shot examples | `10` |
+| `HUGGING_FACE_HUB_TOKEN` | Read token for gated models (Llama, Gemma, Mistral) | `hf_...` |
 
-The requirements are simple, so in your preferred python environment:
+In this guide we run [Mistral-7B-Instruct-v0.2](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2) through the Hellaswag benchmark on an A6000.
 
-```bash
-git clone https://github.com/shadeform/examples.git
-cd examples/
-```
-Then in `deploy_container.ipynb` you will need to input two things: 1. Your Shadeform API Key from [here](https://platform.shadeform.ai/settings/api), and 2. A `huggingface_token` if the model you need is gated (like Llama2 or Gemma).
+<Prerequisites />
 
-The notebook kicks off a VM request and runs the container specifically on a 1xA6000 Machine which are quite afforable on our platform. The container will download the model and run the benchmark for us. 
+### Find an available A6000
 
-The notebook leverages a lot of the principles found in [this guide](/guides/mostaffordablegpus) for using the platform to _find_ affordable GPU's.
+An A6000 has plenty of memory for a 7B model in fp16 and is one of the most affordable GPUs on the platform. List the ones available right now, sorted by price, and pick the cheapest `cloud` / `region` pair. See [Find the Most Affordable GPUs](/guides/mostaffordablegpus) for more ways to filter.
 
-### Deploying a container
+<CodeGroup>
+  ```bash curl
+  curl --request GET \
+  --url 'https://api.shadeform.ai/v1/instances/types?shade_instance_type=A6000&available=true&sort=price' \
+  --header 'X-API-KEY: <api-key>'
+  ```
 
-Once we have an available instance, we will deploy a container that runs [lm-eval-harness](https://github.com/EleutherAI/lm-evaluation-harness/tree/main) on the model.
-Here is where we pass in environment variables, and select the docker image via our API.
+  ```bash CLI
+  shade instances list-types --shade-instance-type A6000 --available --sort price
+  ```
+</CodeGroup>
 
-```python
-payload = {
-  "cloud": best_instance["cloud"],
-  "region": region,
-  "shade_instance_type": shade_instance_type,
-  "shade_cloud": True,
-  "name": "cool_gpu_server",
-  "launch_configuration": {
-    "type": "docker",
-     #This selects the image to launch, and sets environment variables "tasks" and "num_fewshot"
-    "docker_configuration": {
-      "image": "shadeform/lm-eval-harness",
-      "envs": [
-      	{
-	      	"name": "model",
-	      	"value": "mistralai/Mistral-7B-Instruct-v0.2"
-      	},
-      	{
-	      	"name": "tasks",
-	      	"value": "hellaswag"
-      	},
-        {
-          "name": "num_fewshot",
-          "value": "10"
-        }
-      ]
+### Launch the benchmark
+
+Create the instance with the `shadeform/lm-eval-harness` image and the variables above. The container downloads the model, runs the benchmark and prints the results to its logs.
+
+<CodeGroup>
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/instances/create' \
+  --header 'X-API-KEY: <api-key>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "cloud": "massedcompute",
+    "region": "us-central-2",
+    "shade_instance_type": "A6000",
+    "shade_cloud": true,
+    "name": "lm-eval-mistral",
+    "launch_configuration": {
+      "type": "docker",
+      "docker_configuration": {
+        "image": "shadeform/lm-eval-harness",
+        "envs": [
+          { "name": "model", "value": "mistralai/Mistral-7B-Instruct-v0.2" },
+          { "name": "tasks", "value": "hellaswag" },
+          { "name": "num_fewshot", "value": "10" },
+          { "name": "HUGGING_FACE_HUB_TOKEN", "value": "<hugging-face-token>" }
+        ]
+      }
     }
-  }
+  }'
+  ```
+
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region us-central-2 \
+    --shade-instance-type A6000 \
+    --shade-cloud=true \
+    --name lm-eval-mistral \
+    --launch-configuration '{
+      "type": "docker",
+      "docker_configuration": {
+        "image": "shadeform/lm-eval-harness",
+        "envs": [
+          { "name": "model", "value": "mistralai/Mistral-7B-Instruct-v0.2" },
+          { "name": "tasks", "value": "hellaswag" },
+          { "name": "num_fewshot", "value": "10" },
+          { "name": "HUGGING_FACE_HUB_TOKEN", "value": "<hugging-face-token>" }
+        ]
+      }
+    }'
+  ```
+</CodeGroup>
+
+```json Response
+{
+  "id": "d290f1ee-6c54-4b01-90e6-d701748f0851"
 }
 ```
 
+### Check the results in the console
 
-### Checking Results via the Shadeform Platform
-The first way to check the results is by watching the logs under "Running Instances", clicking our instance, and then the Logs(beta) tab. 
-Here we see a stream of the logs from the docker container. When it is done, it will look something like this
+Open the instance under [Running Instances](https://platform.shadeform.ai/instances) and switch to the **Logs** tab to stream the container output. When the run finishes it looks like this:
+
 ![FinishedBenchmark](/images/finishedbenchmark.png)
 
-From the results of the evaluation, we can see that the Mistral model achieved a normalized accuracy score of 84.6% with 10 few-shot examples on the Hellaswag benchmark.
+Here Mistral-7B-Instruct-v0.2 reaches a normalized accuracy of 84.6% with 10 few-shot examples on Hellaswag.
 
-### Checking Results inside your IDE
-At the bottom of the notebook, there is a cell that prints out the IP address of your instance.
+### Check the results from your terminal
 
-```python
-instance_response = requests.request("GET", base_url, headers=headers)
+Poll the instance until `status` is `active` and take note of the `ip`.
 
-print(instance_response.text)
-instance = json.loads(instance_response.text)["instances"][0]
-instance_status = instance['status']
-if instance_status == 'active':
-    print(f"Instance is active with IP: {instance['ip']}")
-else:
-    print(f"Instance isn't yet active: {instance}" )
-```
+<CodeGroup>
+  ```bash curl
+  curl --request GET \
+  --url 'https://api.shadeform.ai/v1/instances/<instance-id>/info' \
+  --header 'X-API-KEY: <api-key>'
+  ```
 
-We will `ssh` into the instance by leveraging this ip address and our shadeform `.pem` file.
+  ```bash CLI
+  shade instances get <instance-id>
+  ```
+</CodeGroup>
+
+SSH in with the instance's private key and read the container logs. The `-a` flag on `docker ps` lists the container even after it has exited.
+
 ```bash
-ssh -i <location-of-your-pem-file> shadeform@<ip-address-copied-from-cell-output>
-```
-
-Once in, we can check the logs via the container id. The `-a` flag is if it has already finished.
-```bash
+ssh -i <path-to-private-key> shadeform@<instance-ip>
 docker ps -a
 docker container logs <container-id>
 ```
 
-And just like that, we can run a GPU-accelerated computing job in the cloud for affordable pricing without leaving our IDE!
+### Clean up
 
+The container exits when the benchmark is done, but the VM keeps running and billing until you delete it.
 
+<CodeGroup>
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/instances/<instance-id>/delete' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
+  ```bash CLI
+  shade instances delete <instance-id>
+  ```
+</CodeGroup>
+
+<Tip>
+  Set `auto_delete` on the create request to a spend or time threshold and Shadeform will tear the instance down for you. See the [Create Instance API Reference](/api-reference/instances/instances-create).
+</Tip>
+
+### Next steps
+
+<CardGroup cols={2}>
+  <Card title="Serve Model Using vLLM" icon="microchip" href="/guides/vllm">
+    Put the model behind an OpenAI-compatible endpoint.
+  </Card>
+  <Card title="Run Docker Container" icon="docker" href="/guides/dockercontainers">
+    Environment variables, volume mounts, port mappings and private registries.
+  </Card>
+</CardGroup>

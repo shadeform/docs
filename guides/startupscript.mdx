@@ -5,7 +5,7 @@ iconType: 'solid'
 description: 'Run a bash script automatically when an instance becomes active.'
 ---
 ### Intro
-We can configure a bash startup script that automatically runs on a instance immediately after the instance becomes active.
+We can configure a bash startup script that automatically runs on an instance immediately after the instance becomes active.
 
 ### Example
 We can configure a bash startup script using Shadeform's [Create Instance API](/api-reference/instances/instances-create).
@@ -35,7 +35,7 @@ IyEvYmluL2Jhc2gKY291bnRlcj0xCgojIEluZmluaXRlIGxvb3AKd2hpbGUgdHJ1ZTsgZG8KICBlY2hv
 After we have base64 encoded our script, we can create a new GPU instance with the startup script included in the `base64_script` property.
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
   --url 'https://api.shadeform.ai/v1/instances/create' \
   --header 'X-API-KEY: <api-key>' \
@@ -45,7 +45,7 @@ After we have base64 encoded our script, we can create a new GPU instance with t
     "region": "us-central-2",
     "shade_instance_type": "A6000",
     "shade_cloud": true,
-    "name": "docker-example",
+    "name": "startup-script-example",
     "launch_configuration": {
       "type": "script",
       "script_configuration": {
@@ -55,17 +55,29 @@ After we have base64 encoded our script, we can create a new GPU instance with t
   }'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region us-central-2 \
+    --shade-instance-type A6000 \
+    --shade-cloud=true \
+    --name startup-script-example \
+    --launch-configuration "{
+      \"type\": \"script\",
+      \"script_configuration\": {
+        \"base64_script\": \"$(base64 < script.sh | tr -d '\n')\"
+      }
+    }"
   ```
 </CodeGroup>
+
+<Tip>
+  The CLI example encodes `script.sh` for you with `base64`, so you can skip the manual encoding step.
+</Tip>
+
 Once the instance is created, we can get the status and IP address of the instance by calling the [Instances API](/api-reference/instances/instances).
 Once the instance is active, we can verify that the script ran correctly by SSHing into the instance and running:
-```bash CLI
+```bash
 journalctl -u init-script -f
 ```
 

@@ -29,26 +29,22 @@ You can manage your SSH keys using the SSH Keys API. See the [documentation](/ap
 Add a new SSH Key with the API:
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
-  --url https://api.shadeform.ai/v1/sshkeys/add \
+  --url 'https://api.shadeform.ai/v1/sshkeys/add' \
   --header 'Content-Type: application/json' \
   --header 'X-API-KEY: <api-key>' \
   --data '{
     "name": "My ssh key",
-    "public_key": "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU GPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3 Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XA t3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/En mZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbx NrRFi9wrf+M7Q== schacon@mylaptop.local"
+    "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGq9vNkX1yY0mX3kqgWcVYlJ2z8d5nQhHk6k2m9S7XzL user@laptop"
   }'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade ssh-keys add --name "My ssh key" --public-key "$(cat ~/.ssh/id_ed25519.pub)"
   ```
 </CodeGroup>
-```bash Response
+```json Response
 {
   "id":"26bedfa2-1e98-4ff5-9342-a5b0987a2f0f"
 }
@@ -58,7 +54,7 @@ Using the ID returned in the response, you can now create an instance that is ac
 Add the `ssh_key_id` field in the [Create Instance](/api-reference/instances/instances-create) API call.
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
   --url 'https://api.shadeform.ai/v1/instances/create' \
   --header 'X-API-KEY: <api-key>' \
@@ -73,11 +69,13 @@ Add the `ssh_key_id` field in the [Create Instance](/api-reference/instances/ins
   }'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region us-central-1 \
+    --shade-instance-type A6000_plus \
+    --shade-cloud=true \
+    --name quickstart \
+    --ssh-key-id 26bedfa2-1e98-4ff5-9342-a5b0987a2f0f
   ```
 </CodeGroup>
