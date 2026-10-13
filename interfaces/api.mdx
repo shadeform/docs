@@ -17,18 +17,14 @@ In this guide, we will cover the basic operations for GPU instances on Shadeform
 Use the [/instances/types](/api-reference/instances/instances-types) API to query for your desired instance. For this guide, we will query for the cheapest available A6000 instance. Make sure to replace `<api-key>` with your own API Key retrieved from [here](https://platform.shadeform.ai/settings/api).
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request GET \
   --url 'https://api.shadeform.ai/v1/instances/types?gpu_type=A6000&num_gpus=1&available=true&sort=price' \
   --header 'X-API-KEY: <api-key>'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances list-types --gpu-type A6000 --num-gpus 1 --available --sort price
   ```
 </CodeGroup>
 
@@ -85,7 +81,7 @@ You should get a response like the JSON snippet below. The response will have an
 After we have found the cheapest A6000 that's available, we will launch the GPU instance using the [/instances/create](/api-reference/instances/instances-create) API. Using the values from the previous JSON snippet, we can fill in request payload fields for `cloud`, `region`, and `shade_instance_type`.
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
   --url 'https://api.shadeform.ai/v1/instances/create' \
   --header 'X-API-KEY: <api-key>' \
@@ -94,16 +90,18 @@ After we have found the cheapest A6000 that's available, we will launch the GPU 
     "cloud": "massedcompute",
     "region": "kansascity-usa-1",
     "shade_instance_type": "A6000",
+    "shade_cloud": true,
     "name": "quickstart"
   }'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region kansascity-usa-1 \
+    --shade-instance-type A6000 \
+    --shade-cloud=true \
+    --name quickstart
   ```
 </CodeGroup>
 
@@ -122,18 +120,14 @@ The response from the API will look like the JSON snippet below. We will need th
 ### Checking the status of the instance
 Now that we have created the GPU instance, we must wait for the instance to spin up. We can check on the status of the instance by calling the [/instances/info](/api-reference/instances/instances-info) API. We will need to use the `id` from the response of the previous step as a URL parameter.
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request GET \
   --url 'https://api.shadeform.ai/v1/instances/<id>/info' \
   --header 'X-API-KEY: <api-key>'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances get <id>
   ```
 </CodeGroup>
 
@@ -238,18 +232,14 @@ ssh -i ~/Downloads/private_key.pem shadeform@<ip>
 If you ever need to restart an instance, use our [/instances/restart](/api-reference/instances/instances-restart) API using the instance `id` retrieved earlier. Note that a 200 response does not confirm that the instance restarted successfully. It only confirms that the restart request was initiated. You may need to wait a few minutes for the instance to be ready to use again.
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
   --url 'https://api.shadeform.ai/v1/instances/<id>/restart' \
   --header 'X-API-KEY: <api-key>'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances restart <id>
   ```
 </CodeGroup>
 
@@ -257,18 +247,14 @@ If you ever need to restart an instance, use our [/instances/restart](/api-refer
 Once you've done with the instance, you can delete the instance by calling the [/instances/delete](/api-reference/instances/instances-delete) API using the instance `id` retrieved earlier.
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
   --url 'https://api.shadeform.ai/v1/instances/<id>/delete' \
   --header 'X-API-KEY: <api-key>'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances delete <id>
   ```
 </CodeGroup>
 

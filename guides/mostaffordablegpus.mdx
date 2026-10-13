@@ -32,18 +32,14 @@ By using the following query parameters, we can filter down the results and sort
 ### Find the Most Affordable A100_80G Instance Available
 This is an example API call to find the most affordable A100_80G instance available right now.
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request GET \
   --url 'https://api.shadeform.ai/v1/instances/types?gpu_type=A100_80G&available=true&sort=price' \
   --header 'X-API-KEY: <api-key>'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances list-types --gpu-type A100_80G --available --sort price
   ```
 </CodeGroup>
 From the array of results returned, we can see that the A100_80G instance from RunPod is the most affordable instance available right now at `$2.03/hr`.
@@ -92,18 +88,14 @@ From the array of results returned, we can see that the A100_80G instance from R
 ### Find the Most Affordable 8xH100 Instance Available
 This is an example API call to find the most affordable 8xH100 instance available right now.
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request GET \
   --url 'https://api.shadeform.ai/v1/instances/types?gpu_type=H100&num_gpus=8&available=true&sort=price' \
   --header 'X-API-KEY: <api-key>'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances list-types --gpu-type H100 --num-gpus 8 --available --sort price
   ```
 </CodeGroup>
 From the array of results returned, we can see that the 8xH100 instance from Oblivus is the most affordable instance available right now at `$32.80/hr`.
@@ -154,18 +146,14 @@ From the array of results returned, we can see that the 8xH100 instance from Obl
 ### Find the Most Affordable 8xH100 Instance Regardless of Availability
 To find the most affordable 8xH100 instance regardless of availability, we can use the previous API call and remove the `available=true` parameter.
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request GET \
   --url 'https://api.shadeform.ai/v1/instances/types?gpu_type=H100&num_gpus=8&sort=price' \
   --header 'X-API-KEY: <api-key>'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances list-types --gpu-type H100 --num-gpus 8 --sort price
   ```
 </CodeGroup>
 After we remove the `available=true` parameter, we now see the top result as Massed Compute's 8xH100 instance at `$23.92/hr`. However, it is not available at the time of this API call.
@@ -216,18 +204,14 @@ After we remove the `available=true` parameter, we now see the top result as Mas
 ### Find the most Affordable A6000 Instance Available
 This is an example API call to find the most affordable A6000 instance available right now.
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request GET \
   --url 'https://api.shadeform.ai/v1/instances/types?gpu_type=A6000&available=true&sort=price' \
   --header 'X-API-KEY: <api-key>'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances list-types --gpu-type A6000 --available --sort price
   ```
 </CodeGroup>
 From the array of results returned, we can see that the A6000 instance from Massed Compute is the most affordable instance available right now at `$0.57/hr`.
@@ -286,7 +270,7 @@ We will take the following properties from the previous response:
 Using the values of these properties, we can create the following Create request:
 
 <CodeGroup>
-  ```bash CLI
+  ```bash curl
   curl --request POST \
   --url 'https://api.shadeform.ai/v1/instances/create' \
   --header 'X-API-KEY: <api-key>' \
@@ -296,15 +280,16 @@ Using the values of these properties, we can create the following Create request
     "region": "us-central-2",
     "shade_instance_type": "A6000",
     "shade_cloud": true,
-    "name": "most_affordable"
+    "name": "most-affordable"
   }'
   ```
 
-  ```python Python
-  Coming soon!
-  ```
-
-  ```golang Go
-  Coming soon!
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region us-central-2 \
+    --shade-instance-type A6000 \
+    --shade-cloud=true \
+    --name most-affordable
   ```
 </CodeGroup>

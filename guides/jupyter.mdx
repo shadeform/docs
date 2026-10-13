@@ -19,38 +19,47 @@ We will be running the instance on an A6000 GPU at $0.57/hr.
 Make sure to replace `<api-key>` with your account's API Key.
 
 <CodeGroup>
-```bash CLI
-curl --request POST \
---url 'https://api.shadeform.ai/v1/instances/create' \
---header 'X-API-KEY: <api-key>' \
---header 'Content-Type: application/json' \
---data '{
-  "cloud": "massedcompute",
-  "region": "us-central-2",
-  "shade_instance_type": "A6000",
-  "shade_cloud": true,
-  "name": "jupyter-notebook",
-  "launch_configuration": {
-    "type": "docker",
-    "docker_configuration": {
-      "image": "quay.io/jupyter/pytorch-notebook:cuda12-python-3.11.8"
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/instances/create' \
+  --header 'X-API-KEY: <api-key>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "cloud": "massedcompute",
+    "region": "us-central-2",
+    "shade_instance_type": "A6000",
+    "shade_cloud": true,
+    "name": "jupyter-notebook",
+    "launch_configuration": {
+      "type": "docker",
+      "docker_configuration": {
+        "image": "quay.io/jupyter/pytorch-notebook:cuda12-python-3.11.8"
+      }
     }
-  }
-}'
-```
+  }'
+  ```
 
-```python Python
-Coming soon!
-```
-
-```golang Go
-Coming soon!
-```
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region us-central-2 \
+    --shade-instance-type A6000 \
+    --shade-cloud=true \
+    --name jupyter-notebook \
+    --launch-configuration '{
+      "type": "docker",
+      "docker_configuration": {
+        "image": "quay.io/jupyter/pytorch-notebook:cuda12-python-3.11.8"
+      }
+    }'
+  ```
 </CodeGroup>
 
-After making the curl request, you should see a response like this:
-```bash Response
-{"id":"26bedfa2-1e98-4ff5-9342-a5b0987a2f0f","cloud_assigned_id":"b9ecaf4e-d6ac-42eb-a89a-60010065388a"}
+After making the request, you should see a response like this:
+```json Response
+{
+  "id": "26bedfa2-1e98-4ff5-9342-a5b0987a2f0f"
+}
 ```
 
 After you've launched the instance, you can track the instance progress by visiting the [Running Instances page](https://platform.shadeform.ai/instances).
@@ -59,7 +68,7 @@ When you're on the page, select the instance named `jupyter-notebook` and click 
 <img src="/images/jupyter.png"></img>
 You can follow the progress of the container download and spin up in the log feed.
 
-When the container is full spun up and your Jupyter Notebook instance is running, you will see an entry that looks like this:
+When the container is fully spun up and your Jupyter Notebook instance is running, you will see an entry that looks like this:
 
 `http://shadecloud:8888/lab?token=736db552017247000023364f8e215cebebaa2f4431b4b015`
 

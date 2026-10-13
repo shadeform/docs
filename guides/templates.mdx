@@ -20,10 +20,10 @@ In this guide, we'll cover how to create, use, and manage templates via the Shad
 To create a new template, use the [`/templates/save`](/api-reference/templates/templates-save) endpoint. You can define various configurations including launch settings, networking rules, and environment variables.
 
 <CodeGroup>
-  ```bash CLI
-  # Create a new template
-  curl --location 'https://api.shadeform.ai/v1/templates/save' \
-  --header 'x-api-key: <api-key>' \
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/templates/save' \
+  --header 'X-API-KEY: <api-key>' \
   --header 'Content-Type: application/json' \
   --data '{
     "name": "vLLM Deployment",
@@ -51,6 +51,26 @@ To create a new template, use the [`/templates/save`](/api-reference/templates/t
     "tags": ["vllm", "development"]
   }'
   ```
+
+  ```bash CLI
+  shade templates save \
+    --name "vLLM Deployment" \
+    --description "Template for vLLM" \
+    --tags vllm --tags development \
+    --launch-configuration '{
+      "type": "docker",
+      "docker_configuration": {
+        "image": "vllm/vllm-openai:latest",
+        "args": "--model mistralai/Mistral-7B-v0.1",
+        "envs": [
+          { "name": "HUGGING_FACE_HUB_TOKEN", "value": "hugging_face_api_token" }
+        ],
+        "port_mappings": [
+          { "container_port": 8000, "host_port": 8000 }
+        ]
+      }
+    }'
+  ```
 </CodeGroup>
 
 **Example Response**
@@ -66,10 +86,14 @@ To create a new template, use the [`/templates/save`](/api-reference/templates/t
 After creating a template, you can view its details using the [`/templates/{template_id}/info`](/api-reference/templates/templates-info) endpoint. Use the `id` from the response in Step 1. If you want to see templates you have created, use the [`/templates`](/api-reference/templates/templates) endpoint.
 
 <CodeGroup>
+  ```bash curl
+  curl --request GET \
+  --url 'https://api.shadeform.ai/v1/templates/d290f1ee-6c54-4b01-90e6-d701748f0851/info' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
   ```bash CLI
-  # Get template details
-  curl --location 'https://api.shadeform.ai/v1/templates/d290f1ee-6c54-4b01-90e6-d701748f0851/info' \
-  --header 'x-api-key: <api-key>'
+  shade templates get --template-id d290f1ee-6c54-4b01-90e6-d701748f0851
   ```
 </CodeGroup>
 
@@ -77,7 +101,7 @@ After creating a template, you can view its details using the [`/templates/{temp
 
 ```json Response
 {
-  "id": "template-123",
+  "id": "d290f1ee-6c54-4b01-90e6-d701748f0851",
   "name": "vLLM Deployment",
   "description": "Template for vLLM",
   "public": false,
@@ -109,10 +133,10 @@ After creating a template, you can view its details using the [`/templates/{temp
 To use a template when creating an instance, include the `template_id` in your instance creation request using the [`/instances/create`](/api-reference/instances/instances-create) endpoint.
 
 <CodeGroup>
-  ```bash CLI
-  # Create an instance using a template
-  curl --location 'https://api.shadeform.ai/v1/instances/create' \
-  --header 'x-api-key: <api-key>' \
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/instances/create' \
+  --header 'X-API-KEY: <api-key>' \
   --header 'Content-Type: application/json' \
   --data '{
     "cloud": "aws",
@@ -123,14 +147,23 @@ To use a template when creating an instance, include the `template_id` in your i
     "template_id": "d290f1ee-6c54-4b01-90e6-d701748f0851"
   }'
   ```
+
+  ```bash CLI
+  shade instances create \
+    --cloud aws \
+    --region us-east-1 \
+    --shade-instance-type A100_80G \
+    --shade-cloud=true \
+    --name vllm-inference-server \
+    --template-id d290f1ee-6c54-4b01-90e6-d701748f0851
+  ```
 </CodeGroup>
 
 **Example Response**
 
 ```json Response
 {
-  "id": "cc9f6b74-9825-4854-9e9c-dd50c7e97c3a",
-  "cloud_assigned_id": "720f2a6a-e4ee-488a-ade1-e7892f5d730a"
+  "id": "cc9f6b74-9825-4854-9e9c-dd50c7e97c3a"
 }
 ```
 
@@ -139,10 +172,14 @@ To use a template when creating an instance, include the `template_id` in your i
 When you no longer need a template, you can delete it using the [`/templates/{template_id}/delete`](/api-reference/templates/templates-delete) endpoint.
 
 <CodeGroup>
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/templates/d290f1ee-6c54-4b01-90e6-d701748f0851/delete' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
   ```bash CLI
-  # Delete a template
-  curl --location 'https://api.shadeform.ai/v1/templates/d290f1ee-6c54-4b01-90e6-d701748f0851/delete' \
-  --header 'x-api-key: <api-key>'
+  shade templates delete --template-id d290f1ee-6c54-4b01-90e6-d701748f0851
   ```
 </CodeGroup>
 

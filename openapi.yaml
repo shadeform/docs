@@ -1685,7 +1685,8 @@ components:
         required:
           - cloud
           - region
-          - supports_multi_mount
+          - display_name
+          - supports_multiple_mounts
           - fixed_size
           - price_per_gb_per_hour
         properties:
@@ -1693,7 +1694,11 @@ components:
             $ref: '#/components/schemas/Cloud'
           region:
             $ref: '#/components/schemas/Region'
-          supports_multi_mount:
+          display_name:
+            type: string
+            example: 'CA, Toronto'
+            description: 'Human-readable name of the region.'
+          supports_multiple_mounts:
             $ref: '#/components/schemas/VolumeSupportsMultiMount'
           fixed_size:
             $ref: '#/components/schemas/VolumeFixedSize'

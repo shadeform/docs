@@ -22,41 +22,48 @@ Currently, volumes can only be attached to instances in the same cloud provider 
 To create a volume, you first need to know what volume types are available. Use the [`/volumes/types`](/api-reference/volumes/volumes-types) endpoint to fetch this information.
 
 <CodeGroup>
+  ```bash curl
+  curl --request GET \
+  --url 'https://api.shadeform.ai/v1/volumes/types' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
   ```bash CLI
-  # Retrieve available volume types
-  curl --location 'https://api.shadeform.ai/v1/volumes/types' \
-  --header 'x-api-key: <api-key>'
+  shade volumes list-types
   ```
 </CodeGroup>
 
 **Example Response**
 
-The response will list the supported volume types. Here is an example (this is example data and may not have correct values):
+The response will list the supported volume types. Here is an example (prices are illustrative):
 
 ```json Response
 {
   "volume_types": [
     {
-      "cloud": "datacrunch",
-      "region": "FIN-01",
+      "cloud": "verda",
+      "region": "helsinki-finland-1",
+      "display_name": "FI, Central",
       "supports_multiple_mounts": false,
       "fixed_size": true,
       "price_per_gb_per_hour": "0.00028"
     },
     {
       "cloud": "nebius",
-      "region": "eu-north1",
+      "region": "paris-france-2",
+      "display_name": "FR, Paris",
       "supports_multiple_mounts": false,
       "fixed_size": true,
-      "price_per_gb_per_hour": ".000097"
+      "price_per_gb_per_hour": "0.000097"
     },
     {
       "cloud": "digitalocean",
-      "region": "tor1",
+      "region": "toronto-canada-1",
+      "display_name": "CA, Toronto",
       "supports_multiple_mounts": false,
       "fixed_size": true,
-      "price_per_gb_per_hour": ".000084"
-    },
+      "price_per_gb_per_hour": "0.000084"
+    }
   ]
 }
 ```
@@ -74,17 +81,25 @@ Now that you know the volume type and region, create the volume using the [`/vol
 Replace `<api-key>` with your API key, and customize the `cloud`, `region`, and `size_in_gb` fields to match your requirements.
 
 <CodeGroup>
-  ```bash CLI
-  # Create a new volume
-  curl --location 'https://api.shadeform.ai/v1/volumes/create' \
-  --header 'x-api-key: <api-key>' \
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/volumes/create' \
+  --header 'X-API-KEY: <api-key>' \
   --header 'Content-Type: application/json' \
   --data '{
-      "cloud": "digitalocean",
-      "region": "tor1",
-      "size_in_gb": 100,
-      "name": "mystoragevolume"
+    "cloud": "digitalocean",
+    "region": "toronto-canada-1",
+    "size_in_gb": 100,
+    "name": "mystoragevolume"
   }'
+  ```
+
+  ```bash CLI
+  shade volumes create \
+    --cloud digitalocean \
+    --region toronto-canada-1 \
+    --size-in-gb 100 \
+    --name mystoragevolume
   ```
 </CodeGroup>
 
@@ -109,30 +124,39 @@ To attach the volume, pass its `id` in the `volume_ids` field while creating the
 <Note> "volume_ids" must be an array of size one. This is because we only allow attaching one volume to one instance right now. Attaching multiple volumes to a single instance is a feature we will add in the future. </Note>
 
 <CodeGroup>
-  ```bash CLI
-  # Create an instance with the volume attached
-  curl --location 'https://api.shadeform.ai/v1/instances/create' \
-  --header 'x-api-key: <api-key>' \
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/instances/create' \
+  --header 'X-API-KEY: <api-key>' \
   --header 'Content-Type: application/json' \
   --data '{
     "cloud": "digitalocean",
-    "region": "tor1",
+    "region": "toronto-canada-1",
     "shade_instance_type": "H100_sxm5",
     "shade_cloud": true,
-    "name": "the-super-cool-digitalocean-server-volume",
-    "volume_ids": ["b1f2c5d3-29ab-4e7b-9f7e-2c35a1e34d4e"] # be sure to include this line
+    "name": "digitalocean-server-with-volume",
+    "volume_ids": ["df5c952c-0567-4140-94d6-59cee96f8caa"]
   }'
+  ```
+
+  ```bash CLI
+  shade instances create \
+    --cloud digitalocean \
+    --region toronto-canada-1 \
+    --shade-instance-type H100_sxm5 \
+    --shade-cloud=true \
+    --name digitalocean-server-with-volume \
+    --volume-ids df5c952c-0567-4140-94d6-59cee96f8caa
   ```
 </CodeGroup>
 
 **Example Response**
 
-The response will include the `id` for the instance and a `cloud_assigned_id`. Save this for further operations.
+The response will include the `id` of the instance. Save it for the remaining steps.
 
 ```json Response
 {
-  "id": "cc9f6b74-9825-4854-9e9c-dd50c7e97c3a",
-  "cloud_assigned_id": "720f2a6a-e4ee-488a-ade1-e7892f5d730a"
+  "id": "cc9f6b74-9825-4854-9e9c-dd50c7e97c3a"
 }
 ```
 
@@ -166,7 +190,7 @@ vdb     252:16   0    50G  0 disk # this is the volume I mounted
 nvme0n1 259:0    0 894.3G  0 disk 
 ```
 
-This command will display all block devices attached to the instance. You should see your volume listed as a new device, such as `vdb`, `sbd`, or similar.
+This command will display all block devices attached to the instance. You should see your volume listed as a new device, such as `vdb`, `sdb`, or similar.
 
 ---
 
@@ -194,10 +218,14 @@ Before you can delete a volume, you must delete the instance it is attached to.
 Use the [`/instances/delete`](/api-reference/instances/instances-delete) endpoint to remove the instance.
 
 <CodeGroup>
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/instances/<instance-id>/delete' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
   ```bash CLI
-  # Delete the instance
-  curl --location 'https://api.shadeform.ai/v1/instances/<instance-id>/delete' \
-  --header 'x-api-key: <api-key>'
+  shade instances delete <instance-id>
   ```
 </CodeGroup>
 
@@ -208,10 +236,14 @@ Replace `<instance-id>` with the `id` of your instance.
 Once the instance has been deleted, you can safely delete the volume using the [`/volumes/delete`](/api-reference/volumes/volumes-delete) endpoint.
 
 <CodeGroup>
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/volumes/<volume-id>/delete' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
   ```bash CLI
-  # Delete the volume
-  curl --location 'https://api.shadeform.ai/v1/volumes/<volume-id>/delete' \
-  --header 'x-api-key: <api-key>'
+  shade volumes delete <volume-id>
   ```
 </CodeGroup>
 

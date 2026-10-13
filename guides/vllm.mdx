@@ -5,129 +5,185 @@ iconType: 'solid'
 description: 'Serve an open model behind an OpenAI-compatible endpoint with vLLM.'
 ---
 
-Model Deployment is a very common GPU use case. With Shadeform, it's easy to deploy models right to the most affordable gpu's in the market with just a few commands.
+import Prerequisites from '/snippets/prerequisites.mdx';
 
-In this guide, we will deploy [Mistral-7b-v0.1](https://huggingface.co/mistralai/Mistral-7B-v0.1) with vLLM onto an A6000.
+Model serving is one of the most common GPU workloads. With Shadeform you can deploy a model onto the most affordable GPU on the market with a single API call, using the `docker` [launch configuration](/getting-started/concepts#launch-configuration) to start [vLLM](https://docs.vllm.ai/) as soon as the instance is active.
 
-### Setup
+In this guide we deploy [Mistral-7B-Instruct-v0.2](https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.2) behind vLLM's OpenAI-compatible server on an A6000.
 
-This guide builds off of our others for [finding the best GPU](/guides/mostaffordablegpus) and for [deploying GPU containers](/guides/dockercontainers).
-We have a python notebook already to go for you to deploy this model that you can [find here](https://github.com/shadeform/examples/blob/main/basic_serving_vllm.ipynb).
-The requirements are simple, so in a python environment with (`requests` + optionally `openai`) installed:
+<Prerequisites />
 
-```bash
-git clone https://github.com/shadeform/examples.git
-cd examples/
-```
-Then in `basic_serving_vllm.ipynb` you will need to input your [Shadeform API Key](https://platform.shadeform.ai/settings/api).
+This guide builds on [finding the best GPU](/guides/mostaffordablegpus) and [running Docker containers](/guides/dockercontainers).
 
-### Serving a Model
+### Find an available A6000
 
-Once we have an instance, we deploy a model serving container with this request payload.
-
-```python
-model_id = "mistralai/Mistral-7B-v0.1"
-
-payload = {
-  "cloud": best_instance["cloud"],
-  "region": region,
-  "shade_instance_type": shade_instance_type,
-  "shade_cloud": True,
-  "name": "cool_gpu_server",
-  "launch_configuration": {
-    "type": "docker",
-     #This selects the image to launch, and sets environment variables "tasks" and "num_fewshot"
-    "docker_configuration": {
-      "image": "vllm/vllm-openai:latest",
-      "args": "--model " + model_id,
-      "envs": [],
-      "port_mappings": [
-        {
-          "container_port": 8000,
-          "host_port": 8000
-        }
-      ]
-    }
-  }
-}
-
-#request the best instance that is available
-response = requests.request("POST", create_url, json=payload, headers=headers)
-#easy way to visually see if this request worked
-print(response.text)
-```
-
-Once we request it, Shadeform will provision the machine, and deploy a docker container based on the image, arguments, and environment variables that we selected.
-This might take 5-10 minutes depending on the machine chosen and the size of the model weights you choose.
-For more information on the API fields, check out the [Create Instance API Reference](/api-reference/instances/instances-create).
-
-We can see that this will deploy an openai compatible server with vLLM serving Mistral-7b-v0.1.
-
-### Checking on our Model server
-
-There are three main steps that we need to wait for: VM Provisioning, image building, and spinning up vLLM.
-
-```python
-instance_response = requests.request("GET", base_url, headers=headers)
-ip_addr = ""
-print(instance_response.text)
-instance = json.loads(instance_response.text)["instances"][0]
-instance_status = instance['status']
-if instance_status == 'active':
-    print(f"Instance is active with IP: {instance['ip']}")
-    ip_addr = instance['ip']
-else:
-    print(f"Instance isn't yet active: {instance}" )
-```
-
-This cell will print the IP address once it has provisioned. However, the image needs to download, and vLLM needs to download the model and spin up, which should take a few minutes.
-#### Watch via the notebook
-Once the model is ready, this code will output the model list and a response to our query. We can use either requests or OpenAI's completions library.
+List A6000 instance types that are available right now, sorted by price, and pick the cheapest `cloud` / `region` pair from the response.
 
 <CodeGroup>
-  ```python requests
-  #Wait until the previous cell has an IP address associated with it, and then add a few minutes for the vLLM server to stand up.
-  #It is usually best to look at the logs on the dashboard to tell when the model is loaded.
+  ```bash curl
+  curl --request GET \
+  --url 'https://api.shadeform.ai/v1/instances/types?shade_instance_type=A6000&available=true&sort=price' \
+  --header 'X-API-KEY: <api-key>'
+  ```
 
-  model_list_response = requests.get(f'http://{ip_addr}:8000/v1/models')
-  print(model_list_response.text)
+  ```bash CLI
+  shade instances list-types --shade-instance-type A6000 --available --sort price
+  ```
+</CodeGroup>
 
-  vllm_headers = {
-  'Content-Type': 'application/json',
+### Launch vLLM
+
+Create the instance with a `docker` launch configuration. The `vllm/vllm-openai` image takes the model as an argument and listens on port 8000. Because containers run with `--network=host`, port 8000 on the VM reaches vLLM directly.
+
+<Note>
+  Mistral's Hugging Face repos are gated. Accept the license on Hugging Face and pass a read token as `HUGGING_FACE_HUB_TOKEN`. Ungated models such as `HuggingFaceH4/zephyr-7b-beta` do not need the token.
+</Note>
+
+<CodeGroup>
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/instances/create' \
+  --header 'X-API-KEY: <api-key>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "cloud": "massedcompute",
+    "region": "us-central-2",
+    "shade_instance_type": "A6000",
+    "shade_cloud": true,
+    "name": "vllm-mistral",
+    "launch_configuration": {
+      "type": "docker",
+      "docker_configuration": {
+        "image": "vllm/vllm-openai:latest",
+        "args": "--model mistralai/Mistral-7B-Instruct-v0.2",
+        "envs": [
+          {
+            "name": "HUGGING_FACE_HUB_TOKEN",
+            "value": "<hugging-face-token>"
+          }
+        ]
+      }
+    }
+  }'
+  ```
+
+  ```bash CLI
+  shade instances create \
+    --cloud massedcompute \
+    --region us-central-2 \
+    --shade-instance-type A6000 \
+    --shade-cloud=true \
+    --name vllm-mistral \
+    --launch-configuration '{
+      "type": "docker",
+      "docker_configuration": {
+        "image": "vllm/vllm-openai:latest",
+        "args": "--model mistralai/Mistral-7B-Instruct-v0.2",
+        "envs": [
+          { "name": "HUGGING_FACE_HUB_TOKEN", "value": "<hugging-face-token>" }
+        ]
+      }
+    }'
+  ```
+</CodeGroup>
+
+```json Response
+{
+  "id": "d290f1ee-6c54-4b01-90e6-d701748f0851"
 }
+```
 
-  json_data = {
-  'model': model_id,
-  'prompt': 'San Francisco is a',
-  'max_tokens': 7,
-  'temperature': 0,
-}
+Shadeform provisions the VM, pulls the image and starts the container. Expect 5-10 minutes end to end depending on the cloud and the size of the model weights. See the [Create Instance API Reference](/api-reference/instances/instances-create) for every field.
 
-  completion_response = requests.post(f'http://{ip_addr}:8000/v1/completions', headers=vllm_headers, json=json_data)
+### Wait for the instance
 
-  print(completion_response.text)
+Poll the instance until `status` is `active` and take note of the `ip`.
+
+<CodeGroup>
+  ```bash curl
+  curl --request GET \
+  --url 'https://api.shadeform.ai/v1/instances/<instance-id>/info' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
+  ```bash CLI
+  shade instances get <instance-id>
+  ```
+</CodeGroup>
+
+<Note>
+  `status` describes the VM, not the container. After the VM is `active`, vLLM still needs to download the model and load it onto the GPU, which takes a few more minutes.
+</Note>
+
+You can watch the container start from the **Logs** tab of the instance under [Running Instances](https://platform.shadeform.ai/instances), or SSH in and follow it directly:
+
+```bash
+ssh -i <path-to-private-key> shadeform@<instance-ip>
+docker container ls
+docker container logs -f <container-id>
+```
+
+vLLM is ready once the log shows the server listening:
+
+![StartedServing](/images/startedserving.png)
+
+### Query the model
+
+vLLM exposes the OpenAI API. List the loaded model, then send a completion.
+
+<CodeGroup>
+  ```bash curl
+  curl http://<instance-ip>:8000/v1/models
+
+  curl --request POST \
+  --url 'http://<instance-ip>:8000/v1/chat/completions' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "mistralai/Mistral-7B-Instruct-v0.2",
+    "messages": [
+      {"role": "user", "content": "San Francisco is a"}
+    ],
+    "max_tokens": 32
+  }'
   ```
 
   ```python openai
-  #Alternatively, you can call this with the Open AI library, but requires that to be downloaded
   from openai import OpenAI
 
-  # Modify OpenAI's API key and API base to use vLLM's API server.
-  openai_api_key = "EMPTY"
-  openai_api_base = f"http://{ip_addr}:8000/v1"
-  client = OpenAI(
-  api_key=openai_api_key,
-  base_url=openai_api_base,
+  client = OpenAI(api_key="EMPTY", base_url="http://<instance-ip>:8000/v1")
+
+  completion = client.chat.completions.create(
+      model="mistralai/Mistral-7B-Instruct-v0.2",
+      messages=[{"role": "user", "content": "San Francisco is a"}],
+      max_tokens=32,
   )
-  completion = client.completions.create(model=model_id,
-  prompt="San Francisco is a")
-  print("Completion result:", completion)
+  print(completion.choices[0].message.content)
   ```
 </CodeGroup>
-#### Watching with the Shadeform UI
-Or once we've made the request, we can watch the logs under [Running Instances](https://platform.shadeform.ai/instances). Once it is ready to serve it should look something like this:
-![StartedServing](/images/startedserving.png)
 
+### Clean up
 
-Happy Serving!
+Delete the instance when you are done so you stop being billed.
 
+<CodeGroup>
+  ```bash curl
+  curl --request POST \
+  --url 'https://api.shadeform.ai/v1/instances/<instance-id>/delete' \
+  --header 'X-API-KEY: <api-key>'
+  ```
+
+  ```bash CLI
+  shade instances delete <instance-id>
+  ```
+</CodeGroup>
+
+### Next steps
+
+<CardGroup cols={2}>
+  <Card title="Run Docker Container" icon="docker" href="/guides/dockercontainers">
+    Environment variables, volume mounts, port mappings and private registries.
+  </Card>
+  <Card title="Templates" icon="copy" href="/guides/templates">
+    Save this launch configuration and reuse it with one field.
+  </Card>
+</CardGroup>
