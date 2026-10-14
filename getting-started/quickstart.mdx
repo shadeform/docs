@@ -15,11 +15,19 @@ Go to [platform.shadeform.ai](https://platform.shadeform.ai) and choose **Sign u
 
 ### 2. Find a GPU in the Compute Marketplace
 
-The **Compute Marketplace** is the console's home page. Pick a GPU type at the top (or switch the toggle to CPU), then narrow the list with the filters: number of GPUs, cloud, region, interconnect, NVLink, availability, on-demand or spot pricing, instance type, Flex VMs and compliance. The search box matches GPUs, clouds and regions at once.
+The **Compute Marketplace** is the console's home page. The **GPU types** cards at the top summarize every GPU across all providers: VRAM, the cheapest price available right now, the best price overall, and which GPU counts you can get. Click a card to narrow the list to that GPU, or switch the toggle to **CPU** for machines without GPUs.
 
-Each card shows the cloud, region, hourly price and the hardware you get. Cards with capacity right now show **Launch** (or **Launch spot** when you have filtered to spot pricing). Cards without capacity offer **Request Capacity** and **Schedule** instead. A **Flex VM** badge marks instances that Shadeform virtualizes itself on a partner's hardware; see [Core Concepts](/getting-started/concepts#flex-vm).
+<Frame caption="GPU types across every provider, with the cheapest available price per GPU.">
+  <img src="/images/quickstart-marketplace-gpu-types.png" alt="Compute Marketplace GPU types cards" />
+</Frame>
 
-{/* MEDIA B: screenshot, Compute Marketplace with filters, one card showing "Launch", one with the "Flex VM" badge */}
+Below that, **Instances** lists every matching configuration. Filter by number of GPUs, cloud, region, interconnect, NVLink, availability, on-demand or spot pricing, instance type, Flex VMs and compliance, or type in the search box to match GPUs, clouds and regions at once. Each card shows the hardware (VM or bare metal, form factor, vCPUs, RAM, disk), the on-demand and spot price per hour, how many regions it is offered in, and the cloud and location.
+
+Cards with capacity right now show **Launch**, or **Launch spot** when spot is the available option. Cards without capacity offer **Request Capacity** and **Schedule** instead. A **Flex VM** marker next to the name means Shadeform virtualizes that instance itself on a partner's hardware; see [Core Concepts](/getting-started/concepts#flex-vm).
+
+<Frame caption="Filters, then one card per configuration. Flex VM instances are marked next to the GPU name.">
+  <img src="/images/quickstart-marketplace-instances.png" alt="Compute Marketplace instance cards with filters" />
+</Frame>
 
 ### 3. Configure and deploy
 
