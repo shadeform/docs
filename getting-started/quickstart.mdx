@@ -9,61 +9,48 @@ This guide walks through launching, accessing and deleting a GPU instance from t
 
 ### 1. Create an account
 
-Go to [shadeform.ai](https://shadeform.ai) and click "Sign up for free". After signing up you will be asked for your name and organization details.
+Go to [platform.shadeform.ai](https://platform.shadeform.ai) and choose **Sign up**. After you verify your email address, the console asks for your name and organization, then a few questions about what you plan to run. Click **Finish** and you land in the Compute Marketplace.
 
-<video
-  controls
-  autoPlay
-  muted
-  loop
-  playsInline
-  className="w-full aspect-video"
-  src="https://res.cloudinary.com/ddwu8qth1/video/upload/f_auto:video,q_auto/mt8neqq6b5tlnqecyjux"
-></video>
+{/* MEDIA A: clip, sign up -> verify email -> "Welcome to Shadeform" -> "Help us tailor Shadeform to you" -> Compute Marketplace */}
 
-### 2. Find the right GPU
+### 2. Find a GPU in the Compute Marketplace
 
-Open the Marketplace to see every GPU instance you can launch. The dropdowns in the top right filter by GPU type, number of GPUs per instance and interconnect. Each row shows the provider, region, hourly price and whether capacity is available right now.
+The **Compute Marketplace** is the console's home page. Pick a GPU type at the top (or switch the toggle to CPU), then narrow the list with the filters: number of GPUs, cloud, region, interconnect, NVLink, availability, on-demand or spot pricing, instance type, Flex VMs and compliance. The search box matches GPUs, clouds and regions at once.
 
-![GPU Filters](/images/platform-filter.png)
+Each card shows the cloud, region, hourly price and the hardware you get. Cards with capacity right now show **Launch** (or **Launch spot** when you have filtered to spot pricing). Cards without capacity offer **Request Capacity** and **Schedule** instead. A **Flex VM** badge marks instances that Shadeform virtualizes itself on a partner's hardware; see [Core Concepts](/getting-started/concepts#flex-vm).
 
-### 3. Launch your instance
+{/* MEDIA B: screenshot, Compute Marketplace with filters, one card showing "Launch", one with the "Flex VM" badge */}
 
-Click "Launch" on the instance you want to open the launch sidebar. There you can review the hardware, choose an operating system image, pick an SSH key, optionally add a startup script or container, name the instance and confirm.
+### 3. Configure and deploy
 
-<video
-  controls
-  autoPlay
-  muted
-  loop
-  playsInline
-  className="w-full aspect-video"
-  src="https://res.cloudinary.com/ddwu8qth1/video/upload/f_auto:video,q_auto/gnho6bkhenxb31wxbuzz"
-></video>
+Clicking **Launch** opens the **Launch Instance** page. Under **Basic Configuration**, give the instance a name, confirm the region, choose an operating system image, and pick an SSH key. Click **New key** to add your own public key, or leave the field as is and Shadeform generates a managed key for the instance that you download after launch. Leave **Interruptible (Spot)** off for your first instance.
 
-### 4. Add funds to your wallet
+Everything else is optional. **Instance Tags** and **Alerts & Auto Delete** sit below the basics. Expand **Advanced** for a saved [template](/guides/templates), a [container to run on boot](/guides/dockercontainers), environment variables, [volumes](/guides/attachvolume) and a [startup script](/guides/startupscript).
 
-The first time you launch, you will be prompted to fund your Shadeform Wallet, shown in the top right corner. Payment is handled through Stripe. You can also enable Auto Top Up so your card is charged automatically when the balance drops below a threshold you set.
+The review panel on the right summarizes the configuration and the total hourly price. It can also show the equivalent API command, which is a quick way to move from the console to the [API](/interfaces/api). Click **Deploy** when you are ready. **Save as Template** stores the same configuration for next time.
 
-<img
-  className="block w-32 rounded-lg"
-  style={{ width: '600px' }}
-  src="/images/console.png"
-  alt="Fund your wallet"
-/>
+{/* MEDIA C: clip, Launch -> Launch Instance page -> Machine Name, Region, Operating System, SSH key -> expand Advanced -> review "Total .../hr" -> Deploy */}
 
-### 5. Access your instance
+### 4. Add funds
 
-Once the wallet is funded, the instance starts provisioning. Track it on the "Running Instances" page; depending on the provider it can stay in a pending state for up to 10 minutes. When it reaches "Active", click the instance to open its details and copy the SSH command.
+Instances are billed per second against your account balance. If the balance is too low when you click **Deploy**, the console asks you to add funds before it continues. You can also top up ahead of time from **Billing** in the sidebar, which shows your current balance alongside **Add Funds** and **Configure Auto Top-Up**. Payments go through Stripe; the minimum one-time top-up is $20. Auto top-up charges your card for a fixed amount whenever the balance drops below a threshold you choose.
 
-If you launched with the default Shadeform-managed key, download the private key with the "Download Private Key" button on the same page, restrict its permissions, then connect:
+{/* MEDIA D: screenshot, Billing page with Current Balance, Add Funds, Configure Auto Top-Up */}
+
+### 5. Connect to your instance
+
+After you deploy, the console opens the instance page. The status moves from **Creating** through **Pending Provider** and **Pending** to **Active**; depending on the cloud this takes anywhere from a minute to about ten. You can find the instance again at any time under **Instances** in the sidebar, on the **Running** tab. The full set of statuses is described in [Core Concepts](/getting-started/concepts#instance-status).
+
+Once the instance is **Active**, the **Connect** section on the instance page shows the IP address, the SSH key it was launched with and a ready-to-copy SSH command. If you launched with a Shadeform-managed key, click **Get private key** to download `private_key.pem`, restrict its permissions, then connect:
 
 ```bash
 chmod 600 private_key.pem
 ssh -i private_key.pem shadeform@<ip>
 ```
 
-![Access machine](/images/running.png)
+The same section has one-click buttons to open the instance in VS Code or Cursor over SSH. The **Logs** tab shows the instance's boot and container output if something does not come up as expected.
+
+{/* MEDIA E: screenshot, Active instance page with the Connect section (IP address, SSH key, Get private key, Terminal command) */}
 
 <Note>
   Having trouble connecting? See [Common SSH Issues](/guides/sshissues).
@@ -71,17 +58,9 @@ ssh -i private_key.pem shadeform@<ip>
 
 ### 6. Delete your instance
 
-Billing runs per second while the instance exists, including while it is idle. Delete it from the "Running Instances" page when you are done.
+Billing runs per second for as long as the instance exists, including while it is idle. When you are done, open the instance and click **Delete Instance**. Type the instance name to confirm. The instance moves to **Deleting** and then to the **History** tab under **Instances**, and billing stops.
 
-<video
-  controls
-  autoPlay
-  muted
-  loop
-  playsInline
-  className="w-full aspect-video"
-  src="https://res.cloudinary.com/ddwu8qth1/video/upload/f_auto:video,q_auto/i4qcts15jyt4crdvf8hd"
-></video>
+{/* MEDIA F: clip, Instances -> Running -> open instance -> Delete Instance -> type name -> confirm -> History tab */}
 
 ## Next steps
 
