@@ -172,7 +172,7 @@ The response from the API looks like the JSON snippet below. Just like before, w
 }
 ```
 
-You can query this API on a loop until `status` changes from the `pending_*` states to `active`. This will typically take 4-5 minutes for A6000 instances. When the status turns to `active`, the `ip` field will also become populated. The response below is when the instance becomes ready.
+You can query this API on a loop until `status` changes from the `pending_*` states to `active` (every value is described under [Instance Status](/getting-started/concepts#instance-status)). This will typically take 4-5 minutes for A6000 instances. When the status turns to `active`, the `ip` field will also become populated. The response below is when the instance becomes ready.
 ``` json Active Response
 {
   "id": "1dc915dd-8899-4b4f-862a-f63fb2b3dc3d",
