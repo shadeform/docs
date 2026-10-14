@@ -25,11 +25,35 @@ As you can see, the cloud instance type can vary greatly depending on the provid
 ### Shade Cloud
 Shade Cloud is the default way to launch. Shadeform deploys the instance into its own account with the underlying cloud provider, so you can use any provider on the marketplace without signing up with them, and you pay Shadeform for the GPU time. In the API and CLI this is `shade_cloud: true`.
 
+### Flex VM
+A Flex VM is a GPU instance that Shadeform virtualizes itself on a partner's bare-metal hardware, rather than one the provider virtualizes in their own cloud. For you nothing changes: the `cloud` field still names the partner whose hardware the VM runs on, you launch it with the same create request, and billing works the same way. The catalog marks these instance types with `"flex_vm": true` on the [instance types response](/api-reference/instances/instances-types), and the console shows a Flex VM badge next to them.
+
+If you operate GPU hardware and want to list it as Flex VMs, see [shadeform.com/flex-vms](https://shadeform.com/flex-vms).
+
 ### Cloud Access
 If you prefer not to use Shade Cloud, you can also set up cloud access [here](https://platform.shadeform.ai/settings/cloudaccess) to have Shadeform manage your own cloud account. This is useful when you have existing credits or a negotiated rate with a provider. Setting up cloud access typically means providing Shadeform with your cloud API key but can also mean deploying resource stacks that grant Shadeform permissions in your cloud provider. Launch into a linked account with `shade_cloud: false`.
 
 ### Rental Type
 Instances are launched as **on-demand** by default: they run until you delete them and are never interrupted. Some Shade Cloud instance types also offer **spot** capacity at a discounted hourly price in exchange for Shadeform being able to reclaim the instance at any time. Request it with `rental_type: "spot"`. See the [Spot Instances guide](/guides/spotinstances) for details on finding spot capacity and handling interruptions.
+
+### Instance Status
+Every instance carries a `status` that tells you where it is in its lifecycle. Creation is asynchronous: the create call returns immediately and the instance moves through the pending states on its own, so poll [`/instances/{id}/info`](/api-reference/instances/instances-info) (or run `shade instances get <id>`) until it is `active`.
+
+| Status | What is happening | What to do |
+|---|---|---|
+| `creating` | Shadeform has accepted the request and is placing the instance with the provider, retrying if the first attempt fails. | Wait. An instance cannot be deleted while it is `creating`. |
+| `pending_provider` | The provider is provisioning the VM. There is no IP yet. | Wait. This is usually the longest step; see `boot_time` on the instance type for the expected range. |
+| `pending` | The VM is reachable and Shadeform is running its bootstrap: installing your SSH key, then pulling your container or running your startup script if you set a [launch configuration](#launch-configuration). The `ip` is normally populated at this point. | Wait. You can already SSH in to watch progress with `journalctl -u init-script -f`. |
+| `active` | The instance is ready and billing is running. | Use it. |
+| `deleting` | A delete request was received and teardown is in progress. | Nothing. |
+| `deleted` | The instance is gone and billing has stopped. | Nothing. Deleted instances drop out of the default [instance list](/api-reference/instances/instances); pass `status=deleted` to see them. |
+| `error` | Creation failed after Shadeform's retries. `status_details` explains why. | Delete the instance and try the next available entry from the instance types response. Capacity changes quickly. |
+
+`status_details` is free text that adds context to the current status, such as a provider capacity message or the current bootstrap step. A spot instance that Shadeform reclaimed ends up `deleted` with `status_details` set to `preempted`, which is how you tell a preemption apart from a delete you requested. See the [Spot Instances guide](/guides/spotinstances).
+
+<Note>
+  `status` describes the VM. If you launched a container through a Docker launch configuration, `active` means the VM is up and the container has been started, not that the process inside it is ready. Check the container's own logs for that.
+</Note>
 
 ### Launch Configuration
 Launch configurations are additional settings that you can provide when launching a GPU instance through Shadeform.
