@@ -9,9 +9,11 @@ This guide walks through launching, accessing and deleting a GPU instance from t
 
 ### 1. Create an account
 
-Go to [platform.shadeform.ai](https://platform.shadeform.ai) and choose **Sign up**. After you verify your email address, the console asks for your name and organization, then a few questions about what you plan to run. Click **Finish** and you land in the Compute Marketplace.
+Go to [platform.shadeform.ai](https://platform.shadeform.ai) and choose **Sign up**. After you verify your email address, a two-step form asks for your name and organization (your name appears on invoices and team invites; the organization names your workspace), then a few questions about what you plan to run. Click **Finish** and you land in the Compute Marketplace.
 
-{/* MEDIA A: clip, sign up -> verify email -> "Welcome to Shadeform" -> "Help us tailor Shadeform to you" -> Compute Marketplace */}
+<Frame caption="The first of two onboarding steps after you verify your email.">
+  <img src="/images/quickstart-onboarding.png" alt="Welcome to Shadeform onboarding form" />
+</Frame>
 
 ### 2. Find a GPU in the Compute Marketplace
 
@@ -74,7 +76,9 @@ SSH usually accepts connections within a minute of the instance turning **Active
 
 Billing runs per second for as long as the instance exists, including while it is idle. When you are done, open the instance and click **Delete Instance**. Type the instance name to confirm. The instance moves to **Deleting** and then to the **History** tab under **Instances**, and billing stops.
 
-{/* MEDIA F: clip, Instances -> Running -> open instance -> Delete Instance -> type name -> confirm -> History tab */}
+<Frame caption="Deleting is irreversible, so the console asks you to type the instance name.">
+  <img src="/images/quickstart-delete-instance.png" alt="Delete Instance confirmation dialog" />
+</Frame>
 
 ## Next steps
 
