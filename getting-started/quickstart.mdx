@@ -53,16 +53,18 @@ Instances are billed per second against your account balance, shown in the top r
 
 After you deploy, the console opens the instance page. The status moves from **Creating** through **Pending Provider** and **Pending** to **Active**; depending on the cloud this takes anywhere from a minute to about ten. You can find the instance again at any time under **Instances** in the sidebar, on the **Running** tab. The full set of statuses is described in [Core Concepts](/getting-started/concepts#instance-status).
 
-Once the instance is **Active**, the **Connect** section on the instance page shows the IP address, the SSH key it was launched with and a ready-to-copy SSH command. If you launched with the **Shadeform Managed Key**, click **Get private key** to download `private_key.pem`, restrict its permissions, then connect:
+Once the instance is **Active**, the **Connect** section on the instance page shows the IP address, the SSH key it was launched with, and a **Terminal** box with the exact commands to paste. If you launched with the **Shadeform Managed Key**, click **Get private key** to download `private_key.pem` first, then run the two commands: one restricts the key's permissions, the other opens the SSH session as the `shadeform` user.
 
 ```bash
-chmod 600 private_key.pem
-ssh -i private_key.pem shadeform@<ip>
+chmod 600 ~/Downloads/private_key.pem
+ssh -i ~/Downloads/private_key.pem shadeform@<ip>
 ```
 
-The same section has one-click buttons to open the instance in VS Code or Cursor over SSH. The **Logs** tab shows the instance's boot and container output if something does not come up as expected.
+SSH usually accepts connections within a minute of the instance turning **Active**. The same section has one-click buttons to open the instance in VS Code or Cursor over SSH, and the **Spend** card next to it tracks the hourly rate, cost so far and uptime. The **Logs** tab further down shows the instance's boot and container output if something does not come up as expected.
 
-{/* MEDIA E: screenshot, Active instance page with the Connect section (IP address, SSH key, Get private key, Terminal command) */}
+<Frame caption="An Active instance: the Connect section with the IP address, managed key download and ready-to-paste SSH commands.">
+  <img src="/images/quickstart-instance-connect.png" alt="Instance page with the Connect section" />
+</Frame>
 
 <Note>
   Having trouble connecting? See [Common SSH Issues](/guides/sshissues).
