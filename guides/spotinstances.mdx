@@ -6,7 +6,7 @@ description: 'Rent discounted, interruptible GPU capacity and design for preempt
 ---
 ### Intro
 Spot instances let you rent GPUs at a discounted hourly price in exchange for interruptibility:
-Shadeform may reclaim the capacity at any time, at which point the instance is terminated.
+the capacity may be reclaimed at any time, at which point the instance is terminated.
 They are a great fit for fault-tolerant workloads like batch inference, hyperparameter sweeps,
 checkpointed training, and CI jobs — anything that can stop and resume without losing work.
 
@@ -14,7 +14,8 @@ On-demand instances are never interrupted; only instances you explicitly launch 
 spot rental type are.
 
 ### Finding spot capacity
-Spot is offered on select Shade Cloud instance types. To see which, call the
+Spot is offered on select instance types, on Shade Cloud and on participating partner clouds.
+The catalog is the source of truth for which. To see them, call the
 [Instance Types API](/api-reference/instances/instances-types):
 
 <CodeGroup>
@@ -60,7 +61,8 @@ than treating it as one entry per region.
 ### Launching a spot instance
 Add `"rental_type": "spot"` to your [Create Instance API](/api-reference/instances/instances-create) request,
 using the `cloud`, `region`, and `shade_instance_type` from a catalog entry that offers spot.
-Spot instances run on Shade Cloud, so `shade_cloud` must be `true`:
+Spot instances are always launched with Shadeform's own provider accounts, so `shade_cloud`
+must be `true` regardless of the cloud:
 
 <CodeGroup>
   ```bash curl
@@ -118,16 +120,29 @@ instances are open-ended and can be reclaimed at any time, so `ending_at` is `nu
 shows up as the instance moving to `deleting` with `"status_details": "preempted"` (see below).
 
 ### Interruption behavior
-When Shadeform needs the capacity back, the spot instance is terminated and billing stops.
+A spot instance is terminated when the capacity is needed elsewhere, and billing stops. On
+Shade Cloud that happens when on-demand demand needs the hardware. On a partner cloud it happens
+when the partner needs the capacity or when the partner's spot market price rises above what
+Shadeform will pay for it; your price never changes either way, and the outcome is identical.
 A reclaimed instance is distinguishable from one you deleted yourself: its terminal state
 carries `"status_details": "preempted"` in the
 [Instance Info API](/api-reference/instances/instances-info) response.
+
+Expect little or no advance warning. Some backends send a `SIGTERM` to processes inside the
+VM shortly before stopping it (on the order of a minute); none publish a deadline through the
+API, so `ending_at` stays `null`. If your workload can act on it, trap `SIGTERM` to flush a final
+checkpoint.
 
 Design your workload to tolerate interruption:
 
 - Checkpoint progress to a mounted [volume](/guides/attachvolume) or external storage.
 - Make jobs idempotent and resumable so a replacement instance can pick up where the last one left off.
 - Poll your instances and relaunch (spot or on-demand) when one is reclaimed.
+
+### Restarting a spot instance
+The [Restart API](/api-reference/instances/instances-restart) is not available for spot
+instances on some partner clouds and returns a `NOT_SUPPORTED` error there. Use `sudo reboot`
+from inside the instance instead; it keeps the instance and its disk.
 
 ### Pricing
 Spot pricing is set per instance type and shown on the `rental_type: "spot"` catalog entries.
