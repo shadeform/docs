@@ -144,6 +144,10 @@ The [Restart API](/api-reference/instances/instances-restart) is not available f
 instances on some partner clouds and returns a `NOT_SUPPORTED` error there. Use `sudo reboot`
 from inside the instance instead; it keeps the instance and its disk.
 
+Do not power a spot instance off from inside (`poweroff`, `shutdown -h`, `halt`). On those
+clouds a powered-off spot instance cannot be told apart from one the provider reclaimed: it
+is treated as preempted, billing stops, and the instance and its disk are deleted.
+
 ### Pricing
 Spot pricing is set per instance type and shown on the `rental_type: "spot"` catalog entries.
 Billing works exactly like on-demand — per-second metering at the spot rate — and stops when
