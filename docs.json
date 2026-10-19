@@ -165,13 +165,14 @@
   },
   "api": {
     "openapi": [
-      "openapi.yaml"
+      "https://api.shadeform.ai/v1/openapi.json",
+      "openapi-clusters.yaml"
     ],
     "playground": {
       "display": "interactive"
     },
     "mdx": {
-      "server": "https://api.shadeform.ai/v1",
+      "server": "https://api.shadeform.ai",
       "auth": {
         "method": "key",
         "name": "X-API-KEY"
@@ -179,6 +180,10 @@
     }
   },
   "redirects": [
+    {
+      "source": "/openapi.yaml",
+      "destination": "https://api.shadeform.ai/v1/openapi.json"
+    },
     {
       "source": "/quickstart",
       "destination": "/getting-started/quickstart"
