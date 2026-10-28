@@ -34,26 +34,34 @@ shade version
 ```
 
 <Note>
-The CLI is in beta and may change between releases. For scripts and CI, pin a version with `SHADEFORM_VERSION=v0.1.6` in front of the install command, or `go install github.com/shadeform/shadeform-cli/cmd/shade@v0.1.6`.
+The CLI is in beta and may change between releases. For scripts and CI, pin a version with `SHADEFORM_VERSION=v0.3.0` in front of the install command, or `go install github.com/shadeform/shadeform-cli/cmd/shade@v0.3.0`.
 </Note>
 
-## Authenticate
+## Sign in
 
-Generate an API key in the [Shadeform console](https://platform.shadeform.ai/settings/api), then either store it once or export it for the current shell.
+```bash
+shade auth login
+```
+
+Your browser opens to confirm a short code. Once you approve, the CLI creates an API key for this machine, named `shade CLI (<hostname>)` so you can recognise it under [Settings > API Keys](https://platform.shadeform.ai/settings/api), and stores it in your OS keychain (or `~/.config/shade/config.yaml` with `--no-keyring`). Nothing else is stored; the browser sign-in is used once and forgotten. On a machine without a browser, run `shade auth login --no-browser` and open the printed URL anywhere.
+
+Signing in again on the same machine replaces the previous key. `shade auth logout` revokes the key in your account and clears it locally.
+
+For shells and CI, use a key you created in the console instead:
 
 <CodeGroup>
 
-```bash Store it (recommended)
-shade configure
+```bash Environment variable
+export SHADEFORM_API_KEY="your-api-key"
 ```
 
-```bash Export it (shells and CI)
-export SHADEFORM_API_KEY="your-api-key"
+```bash Store an existing key
+shade auth login --api-key "your-api-key"
 ```
 
 </CodeGroup>
 
-`shade configure` keeps the key in your OS keychain when one is available and falls back to `~/.config/shade/config.yaml`. Precedence is: `--api-key` flag, then `SHADEFORM_API_KEY`, then the keychain, then the config file. Check what the CLI is using with `shade whoami`.
+Precedence is: `--api-key` flag, then `SHADEFORM_API_KEY`, then the keychain, then the config file. Check what the CLI is using with `shade whoami`.
 
 ## Launch your first instance
 
@@ -167,7 +175,7 @@ Force it on or off with `--agent-mode` / `--agent-mode=false`.
 
 ## Troubleshooting
 
-- **`authentication` exit code 3** - run `shade whoami` to see which credential source is in use, then `shade configure` to replace it. Keys are created and rotated at [platform.shadeform.ai/settings/api](https://platform.shadeform.ai/settings/api).
+- **`authentication` exit code 3** - run `shade whoami` to see which credential source is in use, then `shade auth login` to sign in again. Keys are listed and revoked at [platform.shadeform.ai/settings/api](https://platform.shadeform.ai/settings/api).
 - **Command hangs waiting for input** - you are on a non-TTY and a required flag is missing. Add the flag, or pass `--no-interactive` to get a usage error instead.
 - **Need to see what was sent** - add `--debug` to log the request and response to stderr, or `--include-headers` to include response headers in the output.
 - **Can't SSH** - see the [SSH issues guide](/guides/sshissues). The instance must be `active`, and the key you pass to `-i` must match the `ssh_key_id` it was launched with.

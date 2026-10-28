@@ -1,0 +1,172 @@
+---
+title: 'Python SDK'
+description: 'Find, launch and manage GPU instances from Python with the shadeform package.'
+icon: 'python'
+iconType: 'brands'
+---
+
+The `shadeform` package is a typed Python client for the full [Shadeform API](/api-reference/authentication): instances, volumes, SSH keys and templates. It is generated from the same OpenAPI spec as the API reference and the [CLI](/interfaces/cli), so every endpoint and field is available, with Pydantic models, sync and async clients, and Python 3.10 or newer.
+
+Source and releases live at [github.com/shadeform/shadeform-python](https://github.com/shadeform/shadeform-python).
+
+## Install
+
+<CodeGroup>
+
+```bash pip
+pip install shadeform
+```
+
+```bash uv
+uv add shadeform
+```
+
+```bash poetry
+poetry add shadeform
+```
+
+</CodeGroup>
+
+<Note>
+The SDK is in beta and may change between minor versions. Pin a version in production, for example `shadeform==0.1.0`.
+</Note>
+
+## Authenticate
+
+The client reads `SHADEFORM_API_KEY` from the environment. Create a key under [Settings > API Keys](https://platform.shadeform.ai/settings/api), or let the CLI do it for you: `shade auth login` signs you in through the browser and stores a key for this machine (see [Sign in](/interfaces/cli#sign-in)).
+
+<CodeGroup>
+
+```bash Environment variable
+export SHADEFORM_API_KEY="your-api-key"
+```
+
+```python Explicit
+from shadeform import Shadeform, models
+
+sf = Shadeform(security=models.Security(api_key="your-api-key"))
+```
+
+</CodeGroup>
+
+Use the client as a context manager so the underlying HTTP connections are closed when you are done:
+
+```python
+from shadeform import Shadeform
+
+with Shadeform() as sf:
+    print(len(sf.instances.list().instances), "instances")
+```
+
+## Launch your first instance
+
+### 1. Find an available GPU
+
+List instance types filtered to what you need and sorted by price. `available="true"` hides capacity that cannot be launched right now.
+
+```python
+from shadeform import Shadeform
+
+sf = Shadeform()  # reads SHADEFORM_API_KEY
+
+types = sf.instances.list_types(
+    shade_instance_type="A6000", available="true", sort="price"
+).instance_types
+
+t = types[0]
+region = next(a.region for a in t.availability if a.available)
+print(t.cloud, region, t.shade_instance_type, t.hourly_price, "cents/hr")
+```
+
+Each result carries the `cloud`, `region` and `shade_instance_type` to pass to `create`. See [Concepts](/getting-started/concepts#shade-instance-type-and-cloud-instance-type) for how Shadeform instance types map to cloud instance types. The following steps keep using the same `sf` client.
+
+### 2. Create it
+
+```python
+created = sf.instances.create(
+    cloud=t.cloud,
+    region=region,
+    shade_instance_type=t.shade_instance_type,
+    shade_cloud=True,
+    name="my-first-gpu",
+)
+instance_id = created.id
+```
+
+Every field in the [create request](/api-reference/instances/instances-create) is a keyword argument (`os=`, `ssh_key_id=`, `volume_ids=`, `rental_type="spot"`, `launch_configuration={...}`, `template_id=`). Nested objects can be passed as plain dicts or as the matching `models.*` classes.
+
+### 3. Wait for it to become active
+
+```python
+import time
+
+while (info := sf.instances.get(instance_id=instance_id)).status != "active":
+    time.sleep(10)
+print(info.ip, info.ssh_user, info.ssh_port)
+```
+
+### 4. Connect over SSH
+
+If you launched with a Shadeform-generated SSH key (the default), fetch the private key with the CLI: `shade ssh-keys download <ssh-key-id>` writes it to `~/.ssh/shadeform-<key-name>.pem`. The key id is on the instance as `info.ssh_key_id`. If you uploaded your own public key with `sf.ssh_keys.add(...)`, use the private key you already hold.
+
+```bash
+ssh -i ~/.ssh/shadeform-<key-name>.pem shadeform@<ip>
+```
+
+### 5. Clean up
+
+```python
+sf.instances.delete(instance_id=instance_id)
+```
+
+## Everyday calls
+
+| Task | Call |
+| --- | --- |
+| List running instances | `sf.instances.list().instances` |
+| Restart an instance | `sf.instances.restart(instance_id=id)` |
+| Create a volume | `sf.volumes.create(cloud=..., region=..., name="data", size_in_gb=500)` |
+| Attach a volume at launch | `sf.instances.create(..., volume_ids=[volume_id])` |
+| Add your own SSH key | `sf.ssh_keys.add(name="laptop", public_key=pub)` |
+| Save a launch config | `sf.templates.save(...)` then `sf.instances.create(..., template_id=id)` |
+
+Every method has an `_async` twin for use with `asyncio`:
+
+```python
+import asyncio
+from shadeform import Shadeform
+
+async def main():
+    async with Shadeform() as sf:
+        res = await sf.instances.list_types_async(gpu_type="H100", available="true")
+        print(len(res.instance_types), "H100 configurations available")
+
+asyncio.run(main())
+```
+
+## Errors
+
+API errors raise `shadeform.errors.ShadeformError`. `HTTPError` carries the parsed problem body (`status`, `title`, `detail`, `errors`) alongside `status_code` and the raw `httpx` response:
+
+```python
+from shadeform import Shadeform, errors
+
+with Shadeform() as sf:
+    try:
+        sf.instances.get(instance_id="does-not-exist")
+    except errors.HTTPError as e:
+        print(e.status_code, e.data.title, e.data.detail)
+```
+
+Set `SHADEFORM_DEBUG=true` to log every request and response, or pass your own `httpx.Client` for timeouts, proxies and custom headers; see the [README](https://github.com/shadeform/shadeform-python#custom-http-client) for details.
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="CLI" icon="terminal" href="/interfaces/cli">
+    The same API from your terminal; `shade auth login` is the quickest way to get a key.
+  </Card>
+  <Card title="MCP Server" icon="robot" href="/interfaces/mcp">
+    Let an AI assistant manage your GPUs through the hosted MCP server.
+  </Card>
+</CardGroup>

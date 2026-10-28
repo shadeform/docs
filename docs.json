@@ -44,6 +44,7 @@
             "group": "Interfaces",
             "pages": [
               "interfaces/api",
+              "interfaces/python",
               "interfaces/cli",
               "interfaces/mcp"
             ]
